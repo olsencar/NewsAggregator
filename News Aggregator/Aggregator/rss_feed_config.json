@@ -1,0 +1,30 @@
+{
+    "sources": [
+        {
+            "source": "Fox",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "http://feeds.foxnews.com/foxnews/politics"
+                },
+                {
+                    "category": "latest",
+                    "url": "http://feeds.foxnews.com/foxnews/latest"
+                }
+            ]
+        },
+        {
+            "source": "CNN",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "http://rss.cnn.com/rss/cnn_allpolitics.rss"
+                },
+                {
+                    "category": "latest",
+                    "url": "http://rss.cnn.com/rss/cnn_latest.rss"
+                }
+            ]
+        }
+    ]
+}
