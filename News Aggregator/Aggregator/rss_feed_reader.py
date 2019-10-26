@@ -5,17 +5,23 @@ import boto3
 from rake_nltk import Rake
 from decimal import Decimal
 import re
+import requests
+from lxml.html import parse
 
 
 CATEGORIES = ["politics"]        
-IGNORED_KEYWORDS = []
+
+# Start DynamoDB resource
 dynamodb = boto3.resource('dynamodb')
 
+# Removes html from the description
+# Used in keyword searching so it doesn't look inside HTML
 def remove_html(text):
     return re.search(r"([^<]+)", text).group(1)
 
-def generate_hash(source, title, published):
-    combined_str = "{}{}{}".format(source, title, published)
+# Generates the 512 character source, title and url
+def generate_hash(source, title, url):
+    combined_str = "{}{}{}".format(source, title, url)
     hash_object = hashlib.sha512(combined_str.encode())
     hex_digest = hash_object.hexdigest()
     return hex_digest
@@ -27,9 +33,10 @@ def parse_feed(source_name, feed_info):
 
         for item in feed['entries']:
             if ('published' in item):
-                rake = Rake()
+                rake = Rake() # start nlp 
                 desc = remove_html(item['description'])
                 rake.extract_keywords_from_text(desc)
+                
                 keywords = []
                 for kw in rake.get_ranked_phrases_with_scores():
                     keywords.append(
@@ -42,12 +49,12 @@ def parse_feed(source_name, feed_info):
                     {
                         'source': source_name, 
                         'title': item['title'], 
-                        'description': desc, 
+                        'description': desc,
                         'link': item['link'], 
                         'orig_link': item['id'],
                         'keywords': keywords,
                         'publish_date': item['published'],
-                        'article_id': generate_hash(source_name, item['title'], item['published'])
+                        'article_id': generate_hash(source_name, item['title'], item['link'])
                     }
                 )
     except Exception as error:
@@ -72,21 +79,26 @@ def main():
 
     table = dynamodb.Table('news_stories')
 
-    with table.batch_writer() as batch:
         
-        for story in data_to_push:
-            batch.put_item(
-                Item={
-                    'article_id': story['article_id'],
-                    'source': story['source'], 
-                    'title': story['title'], 
-                    'description': story['description'], 
-                    'link': story['link'],
-                    'keywords': story['keywords'],
-                    'orig_link': story['orig_link'], 
-                    'publish_date': story['publish_date']
-                }
-            )
+    for story in data_to_push:
+        # the update_item function performs an upsert if the item does not exist
+        table.update_item(
+            Key={
+                'article_id': story['article_id']
+            },
+            UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, orig_link = :orig_link, publish_date = :publish_date",
+            ConditionExpression="attribute_not_exists(article_id) OR article_id = :article_id",
+            ExpressionAttributeValues={
+                ':article_id': story['article_id'],
+                ':source': story['source'], 
+                ':title': story['title'], 
+                ':description': story['description'], 
+                ':link': story['link'],
+                ':keywords': story['keywords'],
+                ':orig_link': story['orig_link'], 
+                ':publish_date': story['publish_date']
+            }
+        )
 
 if __name__ == "__main__":
     main()          
