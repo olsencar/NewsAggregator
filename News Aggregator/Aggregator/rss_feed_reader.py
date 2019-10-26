@@ -2,10 +2,17 @@ import feedparser
 import json
 import hashlib
 import boto3
+from rake_nltk import Rake
+from decimal import Decimal
+import re
+
 
 CATEGORIES = ["politics"]        
-
+IGNORED_KEYWORDS = []
 dynamodb = boto3.resource('dynamodb')
+
+def remove_html(text):
+    return re.search(r"([^<]+)", text).group(1)
 
 def generate_hash(source, title, published):
     combined_str = "{}{}{}".format(source, title, published)
@@ -20,13 +27,25 @@ def parse_feed(source_name, feed_info):
 
         for item in feed['entries']:
             if ('published' in item):
+                rake = Rake()
+                desc = remove_html(item['description'])
+                rake.extract_keywords_from_text(desc)
+                keywords = []
+                for kw in rake.get_ranked_phrases_with_scores():
+                    keywords.append(
+                        {
+                            'keyword': kw[1],
+                            'score': Decimal(str(kw[0]))
+                        }
+                    )
                 stories.append(
                     {
                         'source': source_name, 
                         'title': item['title'], 
-                        'description': item['description'], 
+                        'description': desc, 
                         'link': item['link'], 
                         'orig_link': item['id'],
+                        'keywords': keywords,
                         'publish_date': item['published'],
                         'article_id': generate_hash(source_name, item['title'], item['published'])
                     }
@@ -63,6 +82,7 @@ def main():
                     'title': story['title'], 
                     'description': story['description'], 
                     'link': story['link'],
+                    'keywords': story['keywords'],
                     'orig_link': story['orig_link'], 
                     'publish_date': story['publish_date']
                 }
