@@ -2,14 +2,14 @@ import feedparser
 import json
 import hashlib
 import boto3
-from rake_nltk import Rake
 from decimal import Decimal
 import re
 import requests
-from lxml.html import parse
+from concurrent.futures import ThreadPoolExecutor
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
+
 
 CATEGORIES = ["politics"]        
 
@@ -123,29 +123,34 @@ def parse_feed(source_name, feed_info):
                 # this description is used in the UI, so keep case and special characters in it.
                 desc = remove_html(item['description'])
 
-                stories.append(
-                    {
-                        'source': source_name, 
-                        'title': item['title'], 
-                        'description': desc,
-                        'link': item['link'], 
-                        'orig_link': item['id'],
-                        'keywords': [],
-                        'publish_date': item['published'],
-                        'article_id': generate_hash(source_name, item['title'], item['link'])
-                    }
-                )
-                docs.append(desc_for_kw_processing)
+                # only add if we have a news story with a description
+                if (len(desc) > 10):
+                    stories.append(
+                        {
+                            'source': source_name, 
+                            'title': item['title'], 
+                            'description': desc,
+                            'link': item['link'], 
+                            'orig_link': item['id'],
+                            'keywords_w_scores': [],
+                            'keywords': [],
+                            'category': feed_info['category'],
+                            'publish_date': item['published'],
+                            'article_id': generate_hash(source_name, item['title'], item['link'])
+                        }
+                    )
+                    docs.append(desc_for_kw_processing)
         
         (transformer, feature_names, cv) = generate_tf_idf(docs)
         for story in stories:
-            story['keywords'] = get_keywords(cv, transformer, feature_names, story['description'])
+            story['keywords_w_scores'] = get_keywords(cv, transformer, feature_names, story['description'])
+            for kw in story['keywords_w_scores']:
+                story['keywords'].append(kw['keyword'])
 
     except Exception as error:
         print(error.with_traceback())
         exit()
     return stories
-
 
 def main():
     data_to_push = []
@@ -160,17 +165,16 @@ def main():
                 # If feed category exists in the constant CATEGORIES list, then get the RSS feed
                 if (CATEGORIES.__contains__(feed["category"])):
                     data_to_push.extend(parse_feed(source_name, feed))
-
+    
     table = dynamodb.Table('news_stories')
 
-        
     for story in data_to_push:
         # the update_item function performs an upsert if the item does not exist
         table.update_item(
             Key={
                 'article_id': story['article_id']
             },
-            UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, orig_link = :orig_link, publish_date = :publish_date",
+            UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, keywords_w_scores = :keywords_w_scores, orig_link = :orig_link, category = :category, publish_date = :publish_date",
             ConditionExpression="attribute_not_exists(article_id) OR article_id = :article_id",
             ExpressionAttributeValues={
                 ':article_id': story['article_id'],
@@ -178,7 +182,9 @@ def main():
                 ':title': story['title'], 
                 ':description': story['description'], 
                 ':link': story['link'],
+                ':keywords_w_scores': story['keywords_w_scores'],
                 ':keywords': story['keywords'],
+                ':category': story['category'],
                 ':orig_link': story['orig_link'], 
                 ':publish_date': story['publish_date']
             }

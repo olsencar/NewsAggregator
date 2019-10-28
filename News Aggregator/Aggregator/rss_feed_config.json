@@ -25,6 +25,24 @@
                     "url": "http://rss.cnn.com/rss/cnn_latest.rss"
                 }
             ]
+        },
+        {
+            "source": "Huffington Post",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "https://www.huffingtonpost.com/section/politics/feed"
+                }
+            ]
+        },
+        {
+            "source": "Breitbart",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "http://feeds.feedburner.com/breitbart"
+                }
+            ]
         }
     ]
 }
