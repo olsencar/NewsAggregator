@@ -109,7 +109,8 @@ def generate_hash(source, title, url):
     hash_object = hashlib.sha512(combined_str.encode())
     hex_digest = hash_object.hexdigest()
     return hex_digest
-    
+
+# Parse the feed 
 def parse_feed(source_name, feed_info, text, results, idx):
     try:
         feed = feedparser.parse(text)
@@ -156,7 +157,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
     
     results[idx] = stories
 
-
 def main():
     feeds = []
     with open("./rss_feed_config.json", "r") as rss_feeds:
@@ -170,15 +170,16 @@ def main():
                 if (CATEGORIES.__contains__(feed["category"])):
                     feeds.append((source_name, feed))
     
-    table = dynamodb.Table('news_stories')
-    threads = []
-
+    # Concurrently send the HTTP requests
+    # Set Mozilla User agent to avoid 403 errors
     reqs = [grequests.get(feed[1]['url'], headers={'User-Agent': 'Mozilla/5.0'}) for feed in feeds]
     resps = grequests.map(reqs)
 
     # Generate the results array
     results = [[] for x in feeds]
 
+    # array to store the threads
+    threads = []
     # Create a thread for each feed and start parsing
     for i in range(len(feeds)):
         if (resps[i].ok):
@@ -192,6 +193,7 @@ def main():
     for process in threads:
         process.join()
 
+    table = dynamodb.Table('news_stories')
     # Loop through the results, and upload each story
     for source in results:
         for story in source:
