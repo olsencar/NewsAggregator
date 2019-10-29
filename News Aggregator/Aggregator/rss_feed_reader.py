@@ -1,5 +1,5 @@
 from gevent import monkey
-monkey.patch_all(select=False, threah=False)
+monkey.patch_all(select=False, thread=False)
 import feedparser
 import json
 import hashlib
