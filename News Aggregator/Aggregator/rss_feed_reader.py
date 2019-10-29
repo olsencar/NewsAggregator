@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
 import logging
+
 logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")
 
 CATEGORIES = ["politics"]        
@@ -195,28 +196,24 @@ def main():
 
     table = dynamodb.Table('news_stories')
     # Loop through the results, and upload each story
-    for source in results:
-        for story in source:
-            # the update_item function performs an upsert if the item does not exist
-            table.update_item(
-                Key={
-                    'article_id': story['article_id']
-                },
-                UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, keywords_w_scores = :keywords_w_scores, orig_link = :orig_link, category = :category, publish_date = :publish_date",
-                ConditionExpression="attribute_not_exists(article_id) OR article_id = :article_id",
-                ExpressionAttributeValues={
-                    ':article_id': story['article_id'],
-                    ':source': story['source'], 
-                    ':title': story['title'], 
-                    ':description': story['description'], 
-                    ':link': story['link'],
-                    ':keywords_w_scores': story['keywords_w_scores'],
-                    ':keywords': story['keywords'],
-                    ':category': story['category'],
-                    ':orig_link': story['orig_link'], 
-                    ':publish_date': story['publish_date']
-                }
-            )
+    with table.batch_writer() as batch:
+        for source in results:
+            for story in source:
+                # the update_item function performs an upsert if the item does not exist
+                batch.put_item(
+                   Item={
+                        'article_id': story['article_id'],
+                        'source_name': story['source'], 
+                        'title': story['title'], 
+                        'description': story['description'], 
+                        'link': story['link'],
+                        'keywords_w_scores': story['keywords_w_scores'],
+                        'keywords': story['keywords'],
+                        'category': story['category'],
+                        'orig_link': story['orig_link'], 
+                        'publish_date': story['publish_date']
+                    }
+                )
 
 if __name__ == "__main__":
     main()          
