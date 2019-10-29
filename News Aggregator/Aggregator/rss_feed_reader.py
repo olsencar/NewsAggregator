@@ -1,15 +1,18 @@
+from gevent import monkey
+monkey.patch_all(select=False, threah=False)
 import feedparser
 import json
 import hashlib
 import boto3
 from decimal import Decimal
 import re
-import requests
-from concurrent.futures import ThreadPoolExecutor
+import grequests
+from threading import Thread
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
-
+import logging
+logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")
 
 CATEGORIES = ["politics"]        
 
@@ -106,10 +109,10 @@ def generate_hash(source, title, url):
     hash_object = hashlib.sha512(combined_str.encode())
     hex_digest = hash_object.hexdigest()
     return hex_digest
-
-def parse_feed(source_name, feed_info):
+    
+def parse_feed(source_name, feed_info, text, results, idx):
     try:
-        feed = feedparser.parse(feed_info["url"])
+        feed = feedparser.parse(text)
         stories = []
 
         docs = []
@@ -148,13 +151,14 @@ def parse_feed(source_name, feed_info):
                 story['keywords'].append(kw['keyword'])
 
     except Exception as error:
-        print(error.with_traceback())
-        exit()
-    return stories
+        logging.error(error.with_traceback())
+        results[idx] = []
+    
+    results[idx] = stories
+
 
 def main():
-    data_to_push = []
-
+    feeds = []
     with open("./rss_feed_config.json", "r") as rss_feeds:
         data = json.load(rss_feeds)
         # for each source in the data sources
@@ -164,31 +168,53 @@ def main():
             for feed in source["feeds"]:
                 # If feed category exists in the constant CATEGORIES list, then get the RSS feed
                 if (CATEGORIES.__contains__(feed["category"])):
-                    data_to_push.extend(parse_feed(source_name, feed))
+                    feeds.append((source_name, feed))
     
     table = dynamodb.Table('news_stories')
+    threads = []
 
-    for story in data_to_push:
-        # the update_item function performs an upsert if the item does not exist
-        table.update_item(
-            Key={
-                'article_id': story['article_id']
-            },
-            UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, keywords_w_scores = :keywords_w_scores, orig_link = :orig_link, category = :category, publish_date = :publish_date",
-            ConditionExpression="attribute_not_exists(article_id) OR article_id = :article_id",
-            ExpressionAttributeValues={
-                ':article_id': story['article_id'],
-                ':source': story['source'], 
-                ':title': story['title'], 
-                ':description': story['description'], 
-                ':link': story['link'],
-                ':keywords_w_scores': story['keywords_w_scores'],
-                ':keywords': story['keywords'],
-                ':category': story['category'],
-                ':orig_link': story['orig_link'], 
-                ':publish_date': story['publish_date']
-            }
-        )
+    reqs = [grequests.get(feed[1]['url'], headers={'User-Agent': 'Mozilla/5.0'}) for feed in feeds]
+    resps = grequests.map(reqs)
+
+    # Generate the results array
+    results = [[] for x in feeds]
+
+    # Create a thread for each feed and start parsing
+    for i in range(len(feeds)):
+        if (resps[i].ok):
+            process = Thread(target=parse_feed, args=[feeds[i][0], feeds[i][1], resps[i].text, results, i])
+            process.start()
+            threads.append(process)
+        else:
+            logging.warning("Status code {}: {} | {}".format(resps[i].status_code, feeds[i][0], resps[i].text))
+
+    # Now wait for the processes to finish before uploading to db
+    for process in threads:
+        process.join()
+
+    # Loop through the results, and upload each story
+    for source in results:
+        for story in source:
+            # the update_item function performs an upsert if the item does not exist
+            table.update_item(
+                Key={
+                    'article_id': story['article_id']
+                },
+                UpdateExpression="set source_name = :source, title = :title, description = :description, link = :link, keywords = :keywords, keywords_w_scores = :keywords_w_scores, orig_link = :orig_link, category = :category, publish_date = :publish_date",
+                ConditionExpression="attribute_not_exists(article_id) OR article_id = :article_id",
+                ExpressionAttributeValues={
+                    ':article_id': story['article_id'],
+                    ':source': story['source'], 
+                    ':title': story['title'], 
+                    ':description': story['description'], 
+                    ':link': story['link'],
+                    ':keywords_w_scores': story['keywords_w_scores'],
+                    ':keywords': story['keywords'],
+                    ':category': story['category'],
+                    ':orig_link': story['orig_link'], 
+                    ':publish_date': story['publish_date']
+                }
+            )
 
 if __name__ == "__main__":
     main()          
