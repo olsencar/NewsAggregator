@@ -3,7 +3,7 @@ monkey.patch_all(select=False, thread=False)
 import feedparser
 import json
 import hashlib
-import boto3
+from pymongo import MongoClient, UpdateOne
 from decimal import Decimal
 import re
 import grequests
@@ -12,13 +12,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
 import logging
+import urllib.parse
 
 logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")
 
 CATEGORIES = ["politics"]        
-
-# Start DynamoDB resource
-dynamodb = boto3.resource('dynamodb')
 
 #****************************************************
 # EXTRACTION OF KEYWORDS
@@ -122,7 +120,7 @@ def parse_feed(source_name, feed_info, text, results, idx):
             # only parse if the item has a publish date
             if ('published' in item):
                 # pre process the description to remove unnecessary characters
-                desc_for_kw_processing = pre_process(item['description'])
+                # desc_for_kw_processing = pre_process(item['description'])
 
                 # remove the html tags from the description
                 # this description is used in the UI, so keep case and special characters in it.
@@ -137,26 +135,33 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'description': desc,
                             'link': item['link'], 
                             'orig_link': item['id'],
-                            'keywords_w_scores': [],
-                            'keywords': [],
                             'category': feed_info['category'],
                             'publish_date': item['published'],
                             'article_id': generate_hash(source_name, item['title'], item['link'])
                         }
                     )
-                    docs.append(desc_for_kw_processing)
+                    # docs.append(desc_for_kw_processing)
         
-        (transformer, feature_names, cv) = generate_tf_idf(docs)
-        for story in stories:
-            story['keywords_w_scores'] = get_keywords(cv, transformer, feature_names, story['description'])
-            for kw in story['keywords_w_scores']:
-                story['keywords'].append(kw['keyword'])
+        # (transformer, feature_names, cv) = generate_tf_idf(docs)
+        # for story in stories:
+        #     story['keywords_w_scores'] = get_keywords(cv, transformer, feature_names, story['description'])
+        #     for kw in story['keywords_w_scores']:
+        #         story['keywords'].append(kw['keyword'])
 
     except Exception as error:
         logging.error(error.with_traceback())
         results[idx] = []
     
     results[idx] = stories
+
+# Opens the mongoDB client connection
+def openMongoClient():
+    with open("connectionDetails.json", "r") as conn:
+        config = json.load(conn)
+        user = urllib.parse.quote(config['user'])
+        pwd = urllib.parse.quote(config['password'])
+        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+
 
 def main():
     feeds = []
@@ -194,26 +199,35 @@ def main():
     for process in threads:
         process.join()
 
-    table = dynamodb.Table('news_stories')
+    client = openMongoClient()
+    
+    db = client['NewsAggregator']
     # Loop through the results, and upload each story
-    with table.batch_writer() as batch:
-        for source in results:
-            for story in source:
-                # the update_item function performs an upsert if the item does not exist
-                batch.put_item(
-                   Item={
-                        'article_id': story['article_id'],
-                        'source_name': story['source'], 
-                        'title': story['title'], 
-                        'description': story['description'], 
-                        'link': story['link'],
-                        'keywords_w_scores': story['keywords_w_scores'],
-                        'keywords': story['keywords'],
-                        'category': story['category'],
-                        'orig_link': story['orig_link'], 
-                        'publish_date': story['publish_date']
-                    }
+    ops = []
+    for source in results:
+        for story in source:
+            ops.append(
+                UpdateOne({"_id": story['article_id']}, 
+                    { 
+                        "$set": {
+                            'title': story['title'],
+                            'description': story['description'],
+                            'source_name': story['source'],
+                            'category': story['category'],
+                            'rss_link': story['link'],
+                            'orig_link': story['orig_link'],
+                            'publish_date': story['publish_date']
+                        } 
+                    }, 
+                    upsert=True
                 )
+            )
+            if ( len(ops) == 1000):
+                db.news_stories.bulk_write(ops, ordered=False)
+                ops = []
+    if (len(ops) > 0):
+        db.news_stories.bulk_write(ops, ordered=False)
+
 
 if __name__ == "__main__":
     main()          
