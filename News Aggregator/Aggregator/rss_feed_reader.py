@@ -13,6 +13,8 @@ from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
 import logging
 import urllib.parse
+from datetime import datetime
+from dateutil import parser
 
 logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")
 
@@ -136,10 +138,11 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'link': item['link'], 
                             'orig_link': item['id'],
                             'category': feed_info['category'],
-                            'publish_date': item['published'],
+                            'publish_date': parser.parse(item['published']),
                             'article_id': generate_hash(source_name, item['title'], item['link'])
                         }
                     )
+                    
                     # docs.append(desc_for_kw_processing)
         
         # (transformer, feature_names, cv) = generate_tf_idf(docs)
