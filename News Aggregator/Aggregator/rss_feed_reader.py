@@ -13,7 +13,6 @@ from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from sklearn.feature_extraction.text import TfidfTransformer
 import logging
 import urllib.parse
-from datetime import datetime
 from dateutil import parser
 
 logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")

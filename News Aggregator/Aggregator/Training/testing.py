@@ -12,6 +12,7 @@ import operator
 # stopwords = nltk.download('stopwords')
 stopword_set = set(stopwords.words('english'))
 lemma = WordNetLemmatizer()
+special_chars = re.compile(r"[^a-z ]+")
 
 def get_wordnet_pos(word):
     """Map POS tag to first character lemmatize() accepts"""
@@ -26,24 +27,11 @@ def get_wordnet_pos(word):
 # pre process the text to remove unnecessary characters and words
 def pre_process(text):
     #remove special characters
-    text = re.sub("(\\d)+"," ",text)
-    text = re.sub(r"[^A-Za-z0-9(),!.?\'`]", " ", text )
-    text = re.sub(r"\'s", " 's ", text )
-    text = re.sub(r"\'ve", " 've ", text )
-    text = re.sub(r"n\'t", " 't ", text )
-    text = re.sub(r"\'re", " 're ", text )
-    text = re.sub(r"\'d", " 'd ", text )
-    text = re.sub(r"\'ll", " 'll ", text )
-    text = re.sub(r",", " ", text )
-    text = re.sub(r"\.", " ", text )
-    text = re.sub(r"!", " ", text )
-    text = re.sub(r"\(", " ( ", text )
-    text = re.sub(r"\)", " ) ", text )
-    text = re.sub(r"\?", " ", text )
-    text = re.sub(r"\s{2,}", " ", text )
-    # convert to lowercase
     text = text.lower()
-    
+    text = special_chars.sub("", text)
+    text = re.sub(r"\s{2,}", " ", text)
+    text = text.rstrip()
+
     return text
 
 def openMongoClient():
@@ -68,30 +56,31 @@ def main():
 
     articles_to_search_for = []
     for (i, j) in most_sim:
-        articles_to_search_for.append(i)
+        print("{} : {}\n".format(i, j))
 
-    client = openMongoClient()
-    db = client['NewsAggregator']
-    coll = db.news_stories
-    arr = []
-    for item in coll.find({ "_id": { "$in" : articles_to_search_for }}):
-        score = 0
-        for (i, j) in most_sim:
-            if (item['_id'] == i):
-                score = j
-                arr.append(
-                    {
-                        "_id": item['_id'],
-                        "desc": item['description'],
-                        "title": item['title'],
-                        "score": score
-                    }
-                )
-                break
-    arr.sort(key=operator.itemgetter('score'), reverse=True)
-    for obj in arr:
-        print("TITLE: {}".format(obj['title']))
-        print("DESC: {}".format(obj['desc']))
-        print("SCORE: {}\n".format(obj['score']))
+
+    # client = openMongoClient()
+    # db = client['NewsAggregator']
+    # coll = db.news_stories
+    # arr = []
+    # for item in coll.find({ "_id": { "$in" : articles_to_search_for }}):
+    #     score = 0
+    #     for (i, j) in most_sim:
+    #         if (item['_id'] == i):
+    #             score = j
+    #             arr.append(
+    #                 {
+    #                     "_id": item['_id'],
+    #                     "desc": item['description'],
+    #                     "title": item['title'],
+    #                     "score": score
+    #                 }
+    #             )
+    #             break
+    # arr.sort(key=operator.itemgetter('score'), reverse=True)
+    # for obj in arr:
+    #     print("TITLE: {}".format(obj['title']))
+    #     print("DESC: {}".format(obj['desc']))
+    #     print("SCORE: {}\n".format(obj['score']))
 if __name__ == "__main__":
     main()
