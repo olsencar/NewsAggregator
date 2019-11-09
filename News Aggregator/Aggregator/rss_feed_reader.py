@@ -15,7 +15,7 @@ import logging
 import urllib.parse
 from dateutil import parser
 
-logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s")
+logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s", level=logging.INFO)
 
 CATEGORIES = ["politics"]        
 
@@ -225,11 +225,19 @@ def main():
                 )
             )
             if ( len(ops) == 1000):
-                db.news_stories.bulk_write(ops, ordered=False)
-                ops = []
-    if (len(ops) > 0):
-        db.news_stories.bulk_write(ops, ordered=False)
+                try:
+                    results = db.news_stories.bulk_write(ops, ordered=False)
+                    logging.info("Inserted {} articles".format(results.upserted_count))
+                    ops = []
+                except Exception as e:
+                    logging.error(e)
 
+    if (len(ops) > 0):
+        try:
+            results = db.news_stories.bulk_write(ops, ordered=False)
+            logging.info("Inserted {} articles".format(results.upserted_count))
+        except Exception as e:
+            logging.error(e)
 
 if __name__ == "__main__":
     main()          
