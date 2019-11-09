@@ -138,7 +138,8 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'orig_link': item['id'],
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
-                            'article_id': generate_hash(source_name, item['title'], item['link'])
+                            'article_id': generate_hash(source_name, item['title'], item['link']),
+                            'bias': feed_info['bias']
                         }
                     )
                     
@@ -218,7 +219,8 @@ def main():
                             'category': story['category'],
                             'rss_link': story['link'],
                             'orig_link': story['orig_link'],
-                            'publish_date': story['publish_date']
+                            'publish_date': story['publish_date'],
+                            'bias': story['bias']
                         } 
                     }, 
                     upsert=True
