@@ -15,8 +15,8 @@ import logging
 import urllib
 from dateutil import parser
 
-logging.basicConfig(filename='reader-log.log', format="%(levelname)s:%(asctime)s %(message)s", level=logging.INFO)
-
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 CATEGORIES = ["politics"]        
 
 #****************************************************
@@ -152,7 +152,7 @@ def parse_feed(source_name, feed_info, text, results, idx):
         #         story['keywords'].append(kw['keyword'])
 
     except Exception as error:
-        logging.error(error.with_traceback())
+        logger.error(error.with_traceback())
         results[idx] = []
     
     results[idx] = stories
@@ -196,7 +196,7 @@ def main():
             process.start()
             threads.append(process)
         else:
-            logging.warning("Status code {}: {} | {}".format(resps[i].status_code, feeds[i][0], resps[i].text))
+            logger.warning("Status code {}: {} | {}".format(resps[i].status_code, feeds[i][0], resps[i].text))
 
     # Now wait for the processes to finish before uploading to db
     for process in threads:
@@ -207,6 +207,7 @@ def main():
     db = client['NewsAggregator']
     # Loop through the results, and upload each story
     ops = []
+    insertQty = 0
     for source in results:
         for story in source:
             ops.append(
@@ -229,23 +230,25 @@ def main():
             if ( len(ops) == 1000):
                 try:
                     results = db.news_stories.bulk_write(ops, ordered=False)
-                    logging.info("Inserted {} articles".format(results.upserted_count))
+                    insertQty += results.upserted_count
                     ops = []
                 except Exception as e:
-                    logging.error(e)
+                    logger.error(e)
 
     if (len(ops) > 0):
         try:
             results = db.news_stories.bulk_write(ops, ordered=False)
-            logging.info("Inserted {} articles".format(results.upserted_count))
+            insertQty += results.upserted_count
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
+    
+    logger.info("Inserted {} articles".format(results.upserted_count))
 
 def lambda_handler(event, context):
     main()
     return {
         "statusCode": 200,
-        "body": "\"Finished Successfully\""
+        "body": json.dumps("Finished Successfully")
     }
 if __name__ == "__main__":
     main()          
