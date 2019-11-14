@@ -108,5 +108,6 @@ def main():
         print("DESC: {}".format(items[simListSorted[i][0]][1]))
         print("SCORE: {}\n".format(simListSorted[i][1]))
     
+    
 if __name__ == "__main__":
     main()

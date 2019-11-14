@@ -1,1 +1,0 @@
-"C:/Users/olsencar/AppData/Local/Programs/Python/Python37-32/python.exe" "c:/Users/olsencar/Desktop/Senior Captsone/NewsAggregator/News Aggregator/Aggregator/rss_feed_reader.py"
