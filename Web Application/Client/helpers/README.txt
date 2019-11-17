@@ -1,0 +1,1 @@
+This folder contains all helper JS functions that can be reused.

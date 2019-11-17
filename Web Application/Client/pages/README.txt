@@ -1,0 +1,1 @@
+This folder contains all pages used by Next.js

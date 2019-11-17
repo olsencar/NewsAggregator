@@ -1,0 +1,1 @@
+This folder contains all config files necessary for routing and for Next.js
