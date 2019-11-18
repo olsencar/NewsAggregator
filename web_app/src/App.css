@@ -20,3 +20,11 @@
 .App-link {
   color: #09d3ac;
 }
+
+.left-article .card-body {
+  background-color: rgba(7, 47, 95, 0.507);
+}
+
+.right-article .card-body {
+  background-color: rgba(233, 29, 14, 0.527);
+}

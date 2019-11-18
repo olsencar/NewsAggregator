@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Article from './components/Article.js';
+import ArticleGroup from './components/ArticleGroup.js';
 
 class App extends Component {
   constructor(props) {
@@ -18,9 +18,7 @@ class App extends Component {
             News Aggregator
           </p>
         </header>
-        {this.state.data.map((article, idx)=>{
-          return <Article key={idx} title={this.state.data[idx].title} img={this.state.data[idx].img} author={this.state.data[idx].author} content={this.state.data[idx].content} />;
-        })}
+        <ArticleGroup data={this.state.data} />
       </div>
     );
   }
