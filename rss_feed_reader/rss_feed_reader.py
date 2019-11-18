@@ -118,7 +118,6 @@ def getArticleImage(item):
             if (media['medium'] is not None and media['medium'] == 'image'):
                 try:
                     img = media_content[0]
-                    print(img)
                     return {
                         'url': img['url'],
                         'height': img['height'],
