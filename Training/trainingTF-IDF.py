@@ -11,6 +11,7 @@ from pymongo import MongoClient
 import re
 import os.path
 import csv
+from datetime import datetime
 
 INDEX_FILE_NAME = "./data/test.index"
 DICTIONARY_FILE_NAME = "./data/dictionary.dict"
@@ -60,8 +61,12 @@ def main():
         client = openMongoClient()
         coll = client['NewsAggregator'].news_stories
         items = []
-        for item in coll.find({}, { "description": 1 }):
-            items.append((item['_id'], item['description']))
+        
+        most_recent_date = None
+        for item in coll.find({}, { "description": 1, "publish_date": 1 }):
+            items.append((item['_id'], item['description'], item['publish_date']))
+            if (most_recent_date is None or item['publish_date'] > most_recent_date):
+                most_recent_date = item['publish_date']
 
         if os.path.exists("./data/docs.csv"):
             append_write = "a"
@@ -71,10 +76,10 @@ def main():
         with open("./data/docs.csv", append_write, encoding="utf8", newline="") as docs_file:
             writer = csv.writer(docs_file)
             for item in items:
-                writer.writerow([item[0], item[1]])
+                writer.writerow([item[0], item[1], item[2]])
 
         docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(text)) if w not in stopword_set]
-                    for article_id, text in items]
+                    for article_id, text, date in items]
 
     
         dictionary = Dictionary(docs)
@@ -83,13 +88,20 @@ def main():
         sims = gensim.similarities.Similarity(INDEX_FILE_NAME, corpus,num_features=len(dictionary))
     else:
         items = []
+        with open("./data/most_recent_date.txt", "r") as file:
+            most_recent_date = datetime.strptime(file.readline(), "%Y-%m-%dT%H:%M:%S")
         with open("./data/docs.csv", "r", encoding="utf8", newline="") as docs_file:
             reader = csv.reader(docs_file)
-            items = [(row[0], row[1]) for row in reader]
+            items = [(row[0], row[1], row[2]) for row in reader]
 
         dictionary = Dictionary().load(DICTIONARY_FILE_NAME)
         sims = Similarity.load(INDEX_FILE_NAME)
         tf_idf = TfidfModel.load(TFIDF_FILE_PATH)
+    
+            
+
+    with open("./data/most_recent_date.txt", "w") as file:
+        file.write(most_recent_date.strftime("%Y-%m-%dT%H:%M:%S"))
 
     sims.save(INDEX_FILE_NAME)
     tf_idf.save(TFIDF_FILE_PATH)
@@ -106,8 +118,7 @@ def main():
     print("\nSIMILAR STORIES\n")
     for i in range(10):
         print("DESC: {}".format(items[simListSorted[i][0]][1]))
-        print("SCORE: {}\n".format(simListSorted[i][1]))
-    
-    
+        print("PUBLISHED: {}".format(items[simListSorted[i][0]][2]))
+        print("SCORE: {}".format(simListSorted[i][1]))    
 if __name__ == "__main__":
     main()
