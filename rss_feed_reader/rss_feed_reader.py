@@ -115,9 +115,10 @@ def getArticleImage(item):
     if (hasattr(item, 'media_content')):
         media_content = item.media_content
         for media in media_content:
-            if (hasattr(media, 'medium') and media['medium'] == 'image'):
+            if (media['medium'] is not None and media['medium'] == 'image'):
                 try:
                     img = media_content[0]
+                    print(img)
                     return {
                         'url': img['url'],
                         'height': img['height'],
