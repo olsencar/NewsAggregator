@@ -21,10 +21,29 @@
   color: #09d3ac;
 }
 
-.left-article .card-body {
-  background-color: rgba(7, 47, 95, 0.507);
+.banner-source {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: black;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-.right-article .card-body {
-  background-color: rgba(233, 29, 14, 0.527);
+.banner-source-left {
+  background-color: rgb(9, 91, 192);
+}
+
+.banner-source-right {
+  background-color: rgb(189, 23, 11)
+}
+.grouped-articles {
+  background-color: rgba(117, 117, 117, 0.185);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.article-container {
+  position: relative;
 }

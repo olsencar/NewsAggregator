@@ -13,10 +13,10 @@ class ArticleGroup extends Component {
             <div className="container grouped-articles">
                 <div className="row">
                     <div className="col left-article article-container">
-                        <Article key={0} title={this.state.data[0].title} img={this.state.data[0].img} author={this.state.data[0].author} content={this.state.data[0].content} />;
+                        <Article key={0} title={this.state.data[0].title} img={this.state.data[0].img} author={this.state.data[0].author} content={this.state.data[0].content} source={this.state.data[0].source} bias={this.state.data[0].bias} />
                     </div>
                     <div className="col right-article article-container">
-                        <Article key={1} title={this.state.data[1].title} img={this.state.data[1].img} author={this.state.data[1].author} content={this.state.data[1].content} />;
+                        <Article key={1} title={this.state.data[1].title} img={this.state.data[1].img} author={this.state.data[1].author} content={this.state.data[1].content} source={this.state.data[1].source} bias={this.state.data[1].bias} />
                     </div>
                 </div>
             </div>

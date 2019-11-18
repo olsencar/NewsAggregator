@@ -20,7 +20,7 @@ class App extends Component {
         </header>
         <ArticleGroup data={this.state.data} />
       </div>
-    );
+    )
   }
 }
 
