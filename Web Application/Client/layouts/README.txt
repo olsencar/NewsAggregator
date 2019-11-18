@@ -1,1 +1,0 @@
-This folder contains all layout files. This is useful for reusing basic layouts for each page.

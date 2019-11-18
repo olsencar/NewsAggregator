@@ -110,6 +110,27 @@ def generate_hash(source, title, url):
     hex_digest = hash_object.hexdigest()
     return hex_digest
 
+#returns an image object that contains the image url, height, and width of the image
+def getArticleImage(item):
+    if (hasattr(item, 'media_content')):
+        media_content = item.media_content
+        for media in media_content:
+            if (media['medium'] is not None and media['medium'] == 'image'):
+                try:
+                    img = media_content[0]
+                    return {
+                        'url': img['url'],
+                        'height': img['height'],
+                        'width': img['width']
+                    }
+                except Exception as e:
+                    pass
+            else: 
+                pass
+    
+    return None
+        
+
 # Parse the feed 
 def parse_feed(source_name, feed_info, text, results, idx):
     try:
@@ -139,6 +160,7 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
                             'article_id': generate_hash(source_name, item['title'], item['link']),
+                            'image': getArticleImage(item),
                             'bias': feed_info['bias']
                         }
                     )
@@ -221,6 +243,7 @@ def main():
                             'rss_link': story['link'],
                             'orig_link': story['orig_link'],
                             'publish_date': story['publish_date'],
+                            'image': story['image'],
                             'bias': story['bias']
                         } 
                     }, 
