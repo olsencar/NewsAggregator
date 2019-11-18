@@ -115,7 +115,7 @@ def getArticleImage(item):
     if (hasattr(item, 'media_content')):
         media_content = item.media_content
         for media in media_content:
-            if (media['medium'] is not None and media['medium'] == 'image'):
+            if ('medium' in media  and media['medium'] == 'image'):
                 try:
                     img = media_content[0]
                     return {
