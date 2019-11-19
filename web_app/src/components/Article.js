@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-
 // the actual article component takes in props from the article_data file and returns JSX with that data
 // uses bootstraps card content box to format article
 class Article extends Component {
@@ -16,11 +15,13 @@ class Article extends Component {
         return (
             <div className="article card">
                 <div className={"banner-source banner-source-" + this.getPartyColor(this.props.bias)}>{this.props.source}</div>
-                <img src={this.props.img} className="card-img-top" alt="..."></img>
+                <img src={this.props.img} className="card-img-top article-img" alt="..."></img>
                 <div className="card-body">
                     <h5 className="card-title">{this.props.title}</h5>
-                    <div className="card-header">{this.props.author}</div>
                     <p className="card-text">{this.props.content}</p>
+                    <hr />
+                    <span className="card-link">Published: {this.props.published.substr(0,10)}</span>
+                    <a href={this.props.link} target="_blank" className="card-link">Link to full article</a>
                 </div>
                 <button type="button" className="btn btn-primary">Upvote</button>
                 <button type="button" className="btn btn-danger">Downvote</button>

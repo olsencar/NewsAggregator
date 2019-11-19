@@ -18,7 +18,11 @@ class App extends Component {
             News Aggregator
           </p>
         </header>
-        <ArticleGroup data={this.state.data} />
+        {
+          this.props.data.articles.map((group, index) => {
+            return <ArticleGroup key={index} data={group} />
+          })
+        }
       </div>
     )
   }

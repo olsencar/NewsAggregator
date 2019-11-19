@@ -39,11 +39,13 @@
   background-color: rgb(189, 23, 11)
 }
 .grouped-articles {
-  background-color: rgba(117, 117, 117, 0.185);
+  background-color: rgba(82, 82, 82, 0.185);
   border-radius: 4px;
   padding: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.article-container {
-  position: relative;
+.article-img {
+  max-height: 400px;
 }

@@ -1,22 +1,80 @@
-[
-    {
-        "title":"Intimidation among key takeaways from the Trump impeachment hearing with Marie Yovanovitch",
-        "author":"Ledyard King",
-        "date":"November 15, 2019",
-        "img":"https://static.politico.com/dims4/default/be7910c/2147483647/resize/1160x/quality/90/?url=https%3A%2F%2Fstatic.politico.com%2F12%2Fa0%2Feba7679548798e6f9f30ad20eee6%2F191114-donald-trump2-ap-773.jpg",
-        "content":"WASHINGTON – Marie Yovanovitch told lawmakers she had only U.S. interests in mind while serving as ambassador to Ukraine at an impeachment inquiry hearing Friday during which President Donald Trump tweeted insults at her. Yovanovitch, 61, also responded to debunked GOP claims that Ukraine meddled in the 2016 U.S. elections, and agreed that the military aid the Trump administration endorsed – and is now at the heart of the investigation – has benefited the Eastern European country in its war against Russia.",
-        "url":"https://www.usatoday.com/story/news/politics/2019/11/15/key-takeaways-trump-impeachment-hearing-marie-yovanovitch/4197205002/?utm_source=feedblitz&utm_medium=FeedBlitzRss&utm_campaign=usatodaycomwashington-topstories",
-        "source": "USA Today",
-        "bias": -1
-    },
-    {
-        "title":"A day that underscored the corruption swamping the Trump presidency",
-        "author":"Stephen Collinson",
-        "date":"November 16, 2019",
-        "img":"https://ichef.bbci.co.uk/news/624/cpsprodpb/A917/production/_108978234_hi056797616.jpg",
-        "content":"(CNN)A fateful convergence of events Friday reflected a culture of corruption and intimidation endemic to the circle of a President who vowed to drain the swamp but instead became its incarnation. First, a US ambassador told how her reputation was shredded and she was hounded out of her job by President Donald Trump's rogue associates after a faultless 30-year career advancing America's interests.",
-        "url":"https://www.cnn.com/2019/11/16/politics/donald-trump-roger-stone-maria-yovanovitch-impeachment/index.html",
-        "source": "CNN",
-        "bias": -1
-    }
-]
+{
+    "articles": [
+        [
+            {
+                "_id": "6a1b4280473a260c09e58864438cab98d44cf4aa54686ec2620c5ed4e05e8cc6b0e19ea3b146f2d043ad9c398c2ebe250c3b8289096a63cc08ebb0bb9a54aa03",
+                "bias": -1,
+                "category": "politics",
+                "description": "Several Republican senators said Monday they had not seen anything \"new\" that changed their stance on the impeachment inquiry into President Donald Trump and there wasn't anything impeachable in the President's behavior, despite dramatic testimony by senior State Department officials and other Trump administration aides over the past few days.    ",
+                "image": {
+                    "url": "https://cdn.cnn.com/cnnnext/dam/assets/190903121338-02-mitch-mcconnell-july-2019-super-169.jpg",
+                    "height": "619",
+                    "width": "1100"
+                },
+                "orig_link": "https://www.cnn.com/2019/11/18/politics/republican-senators-reaction-impeachment/index.html",
+                "publish_date": {
+                    "$date": "2019-11-19T02:40:02.000+0000"
+                },
+                "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/_EIHS3cNdlI/index.html",
+                "source_name": "CNN",
+                "title": "GOP senators downplay developments in impeachment inquiry"
+            },
+            {
+                "_id": "3218de7c8c0b047fc4430b4cb6bb17eaceb45eea8aaba082a5e9251a6d5fce132670a6a7511bfcb0c3f33913472369777f3acdec601f0b363d8492e6d3f4f966",
+                "bias": 2,
+                "category": "politics",
+                "description": "The viewership of the nationally televised public impeachment hearings dropped more than one million viewers in its second session.",
+                "image": {
+                    "url": "https://media.breitbart.com/media/2019/11/yovanovitch-testimony-teary-eyed-getty.jpg",
+                    "height": "480",
+                    "width": "640"
+                },
+                "orig_link": "https://www.breitbart.com/politics/2019/11/18/viewership-tanks-for-second-day-of-public-impeachment-hearings/",
+                "publish_date": {
+                    "$date": "2019-11-19T00:43:34.000+0000"
+                },
+                "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/yU12-_MHTB8/",
+                "source_name": "Breitbart",
+                "title": "Viewership Tanks for Second Round of Public Impeachment Hearings"
+            }
+        ],
+        [
+            {
+                "_id": "5aeb1592c953dd55b1553b698f981932880e2023bc67fb89ac6383fa0fb3bf2f4625b2c9110435207190dd3307ce40aeff5ce850de9eb4a67b3e065fab9dde6a",
+                "bias": 2,
+                "category": "politics",
+                "description": "Sen. Ron Johnson R-WI recalled that President Donald Trump had rejected a quid pro quo out of hand, and said Ukraine felt no pressure.",
+                "image": {
+                    "url": "https://media.breitbart.com/media/2018/01/Ron-Johnson-r-wi-12-17-getty.jpg",
+                    "height": "480",
+                    "width": "640"
+                },
+                "orig_link": "https://www.breitbart.com/national-security/2019/11/18/ron-johnson-trump-said-no-way-to-tying-ukraine-aid-to-investigations/",
+                "publish_date": {
+                    "$date": "2019-11-19T00:17:11.000+0000"
+                },
+                "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/tab4THHDlXM/",
+                "source_name": "Breitbart",
+                "title": "Ron Johnson: Trump Said 'No Way' to Tying Ukraine Aid to Investigations"
+            },
+            {
+                "_id": "3f9b347dfc3bebe578a2d601008cdfac2b35274920ed7fca03d438436b2574225ff0804298007f649bfcf0c834ceb05f653dda65e83d42a479f8f3fcb90d5d56",
+                "bias": -1,
+                "category": "politics",
+                "description": "David Holmes, a top aide in the United States Embassy in Ukraine who overheard President Trump talking about the investigations he wanted the country to start, is scheduled to testify on Thursday.",
+                "image": {
+                    "url": "https://static01.nyt.com/images/2019/11/18/us/politics/18DC-IMPEACH/18DC-IMPEACH-jumbo.jpg?quality=90&auto=webp",
+                    "height": "151",
+                    "width": "151"
+                },
+                "orig_link": "https://www.nytimes.com/2019/11/18/us/politics/trump-impeachment.html",
+                "publish_date": {
+                    "$date": "2019-11-18T22:24:35.000+0000"
+                },
+                "rss_link": "https://www.nytimes.com/2019/11/18/us/politics/trump-impeachment.html?emc=rss&partner=rss",
+                "source_name": "New York Times",
+                "title": "Impeachment Inquiry Calls Aide Who Overheard Trump Asking for Ukraine Investigations"
+            }
+        ]
+    ]
+}
