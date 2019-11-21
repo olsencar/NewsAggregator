@@ -116,15 +116,9 @@ def getArticleImage(item):
         media_content = item.media_content
         for media in media_content:
             if ('medium' in media  and media['medium'] == 'image'):
-                try:
-                    img = media_content[0]
-                    return {
-                        'url': img['url'],
-                        'height': img['height'],
-                        'width': img['width']
-                    }
-                except Exception as e:
-                    pass
+                return {
+                    'url': media['url']
+                }
             else: 
                 pass
     
