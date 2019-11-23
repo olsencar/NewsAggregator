@@ -21,10 +21,10 @@ class Article extends Component {
                     <p className="card-text">{this.props.content}</p>
                     <hr />
                     <span className="card-link">Published: {this.props.published.substr(0,10)}</span>
-                    <a href={this.props.link} target="_blank" className="card-link">Link to full article</a>
+                    <a href={this.props.link} target="_blank" rel="noopener noreferrer" className="card-link">Link to full article</a>
                 </div>
-                <button type="button" className="btn btn-primary">Upvote</button>
-                <button type="button" className="btn btn-danger">Downvote</button>
+                {/* <button type="button" className="btn btn-primary">Upvote</button>
+                <button type="button" className="btn btn-danger">Downvote</button> */}
             </div>
         )
     }

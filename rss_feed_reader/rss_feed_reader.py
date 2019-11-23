@@ -115,16 +115,10 @@ def getArticleImage(item):
     if (hasattr(item, 'media_content')):
         media_content = item.media_content
         for media in media_content:
-            if ('medium' in media and media['medium'] == 'image'):
-                try:
-                    if ('width' in media and int(media['width']) > 250):
-                        return {
-                            'url': media['url'],
-                            'height': media['height'],
-                            'width': media['width']
-                        }
-                except Exception as e:
-                    pass
+            if ('medium' in media  and media['medium'] == 'image'):
+                return {
+                    'url': media['url']
+                }
             else: 
                 pass
     
