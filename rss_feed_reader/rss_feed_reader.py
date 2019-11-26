@@ -10,6 +10,7 @@ import grequests
 from threading import Thread
 import os
 import boto3
+from base64 import b64decode
 # from sklearn.feature_extraction.text import CountVectorizer
 # from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 # from sklearn.feature_extraction.text import TfidfTransformer
@@ -176,8 +177,8 @@ def parse_feed(source_name, feed_info, text, results, idx):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    decrypted_user = boto3.client('kms').decrypt(CipherTextBlob=b64decode(os.environ['user']))['Plaintext']
-    decrypted_pw = boto3.client('kms').decrypt(CipherTextBlob=b64decode(os.environ['password']))['Plaintext']
+    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
     user = urllib.parse.quote(decrypted_user)
     pwd = urllib.parse.quote(decrypted_pw)
     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
