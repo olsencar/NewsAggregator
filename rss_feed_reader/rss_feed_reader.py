@@ -8,6 +8,9 @@ from decimal import Decimal
 import re
 import grequests
 from threading import Thread
+import os
+import boto3
+from base64 import b64decode
 # from sklearn.feature_extraction.text import CountVectorizer
 # from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 # from sklearn.feature_extraction.text import TfidfTransformer
@@ -46,62 +49,62 @@ def remove_html(text):
 
 # generate the tf_idf for all of the documents
 # returns the transformer, feature names and the count vectorizer
-def generate_tf_idf(docs):
-    cv = CountVectorizer(max_df=0.85, stop_words=ENGLISH_STOP_WORDS, max_features=10000)
-    word_count_vector = cv.fit_transform(docs)
-    transformer = TfidfTransformer(smooth_idf=True, use_idf=True)
-    transformer.fit(word_count_vector)
-    feature_names = cv.get_feature_names()
+# def generate_tf_idf(docs):
+#     cv = CountVectorizer(max_df=0.85, stop_words=ENGLISH_STOP_WORDS, max_features=10000)
+#     word_count_vector = cv.fit_transform(docs)
+#     transformer = TfidfTransformer(smooth_idf=True, use_idf=True)
+#     transformer.fit(word_count_vector)
+#     feature_names = cv.get_feature_names()
 
-    return (transformer, feature_names, cv)
+#     return (transformer, feature_names, cv)
 
 # Sorts a coo matrix based on the score it received    
-def sort_coo(coo_matrix):
-    tuples = zip(coo_matrix.col, coo_matrix.data)
-    return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
+# def sort_coo(coo_matrix):
+#     tuples = zip(coo_matrix.col, coo_matrix.data)
+#     return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
 
-# Extracts the top (n) keywords from a list of keywords
-def extract_topn_from_vector(feature_names, sorted_items, topn=10):
-    sorted_items = sorted_items[:topn]
+# # Extracts the top (n) keywords from a list of keywords
+# def extract_topn_from_vector(feature_names, sorted_items, topn=10):
+#     sorted_items = sorted_items[:topn]
 
-    scores = []
-    feature_vals = []
+#     scores = []
+#     feature_vals = []
 
-    for idx, score in sorted_items:
-        # Keep track of feature name and its corresponding score
-        scores.append(round(score, 3))
-        feature_vals.append(feature_names[idx])
+#     for idx, score in sorted_items:
+#         # Keep track of feature name and its corresponding score
+#         scores.append(round(score, 3))
+#         feature_vals.append(feature_names[idx])
 
-    #create a tuples of feature,score
-    #results = zip(feature_vals,score_vals)
-    results= {}
-    for idx in range(len(feature_vals)):
-        results[feature_vals[idx]]=scores[idx]
+#     #create a tuples of feature,score
+#     #results = zip(feature_vals,score_vals)
+#     results= {}
+#     for idx in range(len(feature_vals)):
+#         results[feature_vals[idx]]=scores[idx]
     
-    return results
+#     return results
 
-# Returns a list of keywords for a specific document
-def get_keywords(cv, transformer, feature_names, text):
-    # generate tf_idf for the text
-    tf_idf_vector = transformer.transform(cv.transform([text]))
+# # Returns a list of keywords for a specific document
+# def get_keywords(cv, transformer, feature_names, text):
+#     # generate tf_idf for the text
+#     tf_idf_vector = transformer.transform(cv.transform([text]))
 
-    # sort the tf_idf vectors by desc order of scores
-    sorted_items = sort_coo(tf_idf_vector.tocoo())
+#     # sort the tf_idf vectors by desc order of scores
+#     sorted_items = sort_coo(tf_idf_vector.tocoo())
 
-    # extract only the top 10
-    keywords = extract_topn_from_vector(feature_names, sorted_items, 15)
+#     # extract only the top 10
+#     keywords = extract_topn_from_vector(feature_names, sorted_items, 15)
 
-    # Convert keywords array into something useful in DynamoDB
-    kw_obj_arr = []
-    for k in keywords:
-        kw_obj_arr.append(
-            {
-                'keyword': k,
-                'score': Decimal(keywords[k]).__round__(3)
-            }
-        )
+#     # Convert keywords array into something useful in DynamoDB
+#     kw_obj_arr = []
+#     for k in keywords:
+#         kw_obj_arr.append(
+#             {
+#                 'keyword': k,
+#                 'score': Decimal(keywords[k]).__round__(3)
+#             }
+#         )
 
-    return kw_obj_arr
+#     return kw_obj_arr
 
 # Generates the 512 character source, title and url
 def generate_hash(source, title, url):
@@ -174,11 +177,11 @@ def parse_feed(source_name, feed_info, text, results, idx):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    with open("connectionDetails.json", "r") as conn:
-        config = json.load(conn)
-        user = urllib.parse.quote(config['user'])
-        pwd = urllib.parse.quote(config['password'])
-        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
+    user = urllib.parse.quote(decrypted_user)
+    pwd = urllib.parse.quote(decrypted_pw)
+    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
 
 
 def main():
