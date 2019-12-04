@@ -3,6 +3,10 @@ from gensim.similarities import Similarity
 from gensim.corpora import Dictionary
 from gensim.models import TfidfModel
 import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 import urllib.parse
