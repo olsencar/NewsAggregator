@@ -17,6 +17,7 @@ from base64 import b64decode
 import logging
 import urllib
 from dateutil import parser
+from text_processing import pre_process, remove_html
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -27,25 +28,6 @@ CATEGORIES = ["politics"]
 #****************************************************
 # ** Credit to https://www.freecodecamp.org/news/how-to-extract-keywords-from-text-with-tf-idf-and-pythons-scikit-learn-b2a0f3d7e667/
 # ** for the code and explanation of how to implement this
-
-# pre process the text to remove unnecessary characters and words
-def pre_process(text):
-    # remove html tags
-    text = remove_html(text)
-
-    #remove special characters
-    text = re.sub("(\\d)+"," ",text)
-
-    # convert to lowercase
-    text = text.lower()
-    return text
-
-# Removes html from the description
-# Used in keyword searching so it doesn't look inside HTML
-def remove_html(text):
-    tmp = re.sub("<[^>]*>", "", text)
-    tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
-    return tmp
 
 # generate the tf_idf for all of the documents
 # returns the transformer, feature names and the count vectorizer
