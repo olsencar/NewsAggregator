@@ -20,10 +20,11 @@ from datetime import datetime, timedelta
 INDEX_FILE_NAME = "/tmp/index.index"
 special_chars = re.compile(r"[^a-z ]+")
 lemmatizer = WordNetLemmatizer()
-# stopwords = nltk.download('stopwords')
 stopword_set = set(stopwords.words('english'))
+
+# Determines if the word is an adjective, noun, verb or adverb
 def get_wordnet_pos(word):
-    """Map POS tag to first character lemmatize() accepts"""
+    # Map POS tag to first character lemmatize() accepts
     tag = nltk.pos_tag([word])[0][1][0].upper()
     tag_dict = {"J": wordnet.ADJ,
                 "N": wordnet.NOUN,
@@ -31,10 +32,40 @@ def get_wordnet_pos(word):
                 "R": wordnet.ADV}
 
     return tag_dict.get(tag, wordnet.NOUN)
-# pre process the text to remove unnecessary characters and words
-def pre_process(text):
+
+def remove_html(text):
+    """
+
+    Removes HTML tags and strings in between the tags from the ``text`` parameter.
+
+    :param text: 
+        The text to remove HTML tags from.
+
+    :return:
+        Returns the text with the HTML removed from it.
+    """
+
+    tmp = re.sub("<[^>]*>", "", text)
+    tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
+    return tmp
+
+def pre_process(text, remove_html=False):
+    """
+
+    Pre-processes a piece of text by removing all characters except for a-z and the space character.
+
+    :param text: 
+        The piece of text to pre-process.
+    
+    :param remove_html:
+        True if ``text`` contains HTML. False by default.
+    
+    :return:
+        Returns the pre-processed text.
+    """
     # remove html tags
-    # text = remove_html(text)
+    if (remove_html):
+        text = remove_html(text)
     #remove special characters
     text = text.lower()
     text = special_chars.sub("", text)
