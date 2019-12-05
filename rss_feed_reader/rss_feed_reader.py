@@ -17,35 +17,30 @@ from base64 import b64decode
 import logging
 import urllib
 from dateutil import parser
+from text_processing import pre_process, remove_html, get_wordnet_pos, get_similar_articles, articles_to_docs, create_corpus, create_dictionary
+import gensim
+from gensim.similarities import Similarity
+from gensim.corpora import Dictionary
+from gensim.models import TfidfModel
+from datetime import datetime, timedelta
+from bson.objectid import ObjectId
+from sys import platform
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-CATEGORIES = ["politics"]        
-special_chars = re.compile(r"[^a-z ]+")
+CATEGORIES = ["politics"]
+
+# If we are running this on AWS, we want to write to /tmp/
+if platform.startswith("linux"):
+    INDEX_FILE_NAME = "/tmp/temp.index" 
+else:
+    INDEX_FILE_NAME = "./temp.index"        
 
 #****************************************************
 # EXTRACTION OF KEYWORDS
 #****************************************************
 # ** Credit to https://www.freecodecamp.org/news/how-to-extract-keywords-from-text-with-tf-idf-and-pythons-scikit-learn-b2a0f3d7e667/
 # ** for the code and explanation of how to implement this
-
-# pre process the text to remove unnecessary characters and words
-def pre_process(text):
-    text = text.lower()
-    # remove html tags
-    text = remove_html(text)
-    #remove special characters
-    text = special_chars.sub("", text)
-    text = re.sub(r"\s{2,}", " ", text)
-    text = text.rstrip()
-    return text
-
-# Removes html from the description
-# Used in keyword searching so it doesn't look inside HTML
-def remove_html(text):
-    tmp = re.sub("<[^>]*>", "", text)
-    tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
-    return tmp
 
 # generate the tf_idf for all of the documents
 # returns the transformer, feature names and the count vectorizer
@@ -126,51 +121,27 @@ def getArticleImages(item):
         return images
     return []
 
-# Generates an array of similar articles and finds a match
-def findGroupedArticles(db, results):
+def get_articles(client, days_back=7):
+    """
+
+    Gets articles from the past `days_back` to now from MongoDB
+
+    `client` : A `MongoClient` object that has been instantiated.
+
+    `days_back` :
+        This parameter defines how many days back to search in the DB. This is 7 by default.
+
+    Returns: 
+        A List of articles as triplets (_id, description, publish_date)
+    """
+    coll = client['NewsAggregator'].news_stories
+    items = []
     
-
-# Uploads the news stories to the database
-def uploadNewsStories(db, results):
-    # Loop through the results, and upload each story
-    ops = []
-    insertQty = 0
-    for source in results:
-        for story in source:
-            ops.append(
-                UpdateOne({"_id": story['article_id']}, 
-                    { 
-                        "$set": {
-                            'title': story['title'],
-                            'description': story['description'],
-                            'source_name': story['source'],
-                            'category': story['category'],
-                            'rss_link': story['link'],
-                            'orig_link': story['orig_link'],
-                            'publish_date': story['publish_date'],
-                            'images': story['images'],
-                            'bias': story['bias']
-                        } 
-                    }, 
-                    upsert=True
-                )
-            )
-            if ( len(ops) == 1000):
-                try:
-                    response = db.news_stories.bulk_write(ops, ordered=False)
-                    insertQty += response.upserted_count
-                    ops = []
-                except Exception as e:
-                    logger.error(e)
-
-    if (len(ops) > 0):
-        try:
-            response = db.news_stories.bulk_write(ops, ordered=False)
-            insertQty += response.upserted_count
-        except Exception as e:
-            logger.error(e)
-
-    return insertQty 
+    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
+        # Add the item to the dictionary
+        items.append((item['_id'], item['description'], item['publish_date']))
+    
+    return items
 
 # Parse the feed 
 def parse_feed(source_name, feed_info, text, results, idx):
@@ -220,13 +191,26 @@ def parse_feed(source_name, feed_info, text, results, idx):
     
     results[idx] = stories
 
+def get_article(client, article_id):
+    """
+
+    Retrieves an article from the DB if it exists.
+    """
+    return client['NewsAggregator'].news_stories.find({"_id": article_id}, {"similar_articles": 1}).limit(1)
+
 # Opens the mongoDB client connection
 def openMongoClient():
-    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
-    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
-    user = urllib.parse.quote(decrypted_user)
-    pwd = urllib.parse.quote(decrypted_pw)
-    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    # decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    # decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
+    # user = urllib.parse.quote(decrypted_user)
+    # pwd = urllib.parse.quote(decrypted_pw)
+    # return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    with open("connectionDetails.json", "r") as conn:
+        config = json.load(conn)
+        user = urllib.parse.quote(config['user'])
+        pwd = urllib.parse.quote(config['password'])
+        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+
 
 
 def main():
@@ -268,10 +252,73 @@ def main():
     client = openMongoClient()
     
     db = client['NewsAggregator']
+    
+    # Generate the similarity matrix index
+    articles = get_articles(client)
+    docs = articles_to_docs(articles)
+    dictionary = create_dictionary(docs)
+    corpus = create_corpus(dictionary, docs)
+    tf_idf = TfidfModel(corpus)
+    similarity_matrix = Similarity(INDEX_FILE_NAME, corpus, num_features=len(dictionary))
 
-    findGroupedArticles(db, results)
-    insertedQty = uploadNewsStories(db, results)
-    logger.info("Inserted {} articles".format(insertedQty))
+    # Loop through the results, and upload each story
+    ops = []
+    insertQty = 0
+    for source in results:
+        for story in source:
+            resp = get_article(client, story['article_id'])
+            item = None
+            for i in resp:
+                item = i
+
+            # If the item does not exist in the DB or its similar articles list has 2 or less items
+            #   then update/insert the item in the DB
+            
+            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) < 3)):
+                similar_articles = get_similar_articles(
+                    pre_process(story['description']),
+                    similarity_matrix,
+                    tf_idf,
+                    dictionary,
+                    articles, 
+                    publish_date=story["publish_date"],
+                    topn=5
+                )
+                ops.append(
+                    UpdateOne({"_id": story['article_id']}, 
+                        { 
+                            "$set": {
+                                'title': story['title'],
+                                'description': story['description'],
+                                'source_name': story['source'],
+                                'category': story['category'],
+                                'rss_link': story['link'],
+                                'orig_link': story['orig_link'],
+                                'publish_date': story['publish_date'],
+                                'similar_articles': similar_articles,
+                                'images': story['images'],
+                                'bias': story['bias']
+                            } 
+                        }, 
+                        upsert=True
+                    )
+                )
+            if ( len(ops) == 1000):
+                try:
+                    response = db.news_stories.bulk_write(ops, ordered=False)
+                    insertQty += response.upserted_count
+                    ops = []
+                except Exception as e:
+                    logger.error(e)
+
+    if (len(ops) > 0):
+        try:
+            response = db.news_stories.bulk_write(ops, ordered=False)
+            insertQty += response.upserted_count
+        except Exception as e:
+            logger.error(e)
+    print("Inserted {} articles".format(insertQty))
+    logger.info("Inserted {} articles".format(insertQty))
 
 def lambda_handler(event, context):
     main()

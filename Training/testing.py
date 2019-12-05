@@ -59,28 +59,28 @@ def main():
         print("{} : {}\n".format(i, j))
 
 
-    # client = openMongoClient()
-    # db = client['NewsAggregator']
-    # coll = db.news_stories
-    # arr = []
-    # for item in coll.find({ "_id": { "$in" : articles_to_search_for }}):
-    #     score = 0
-    #     for (i, j) in most_sim:
-    #         if (item['_id'] == i):
-    #             score = j
-    #             arr.append(
-    #                 {
-    #                     "_id": item['_id'],
-    #                     "desc": item['description'],
-    #                     "title": item['title'],
-    #                     "score": score
-    #                 }
-    #             )
-    #             break
-    # arr.sort(key=operator.itemgetter('score'), reverse=True)
-    # for obj in arr:
-    #     print("TITLE: {}".format(obj['title']))
-    #     print("DESC: {}".format(obj['desc']))
-    #     print("SCORE: {}\n".format(obj['score']))
+    client = openMongoClient()
+    db = client['NewsAggregator']
+    coll = db.news_stories
+    arr = []
+    for item in coll.find({ "_id": { "$in" : articles_to_search_for }}):
+        score = 0
+        for (i, j) in most_sim:
+            if (item['_id'] == i):
+                score = j
+                arr.append(
+                    {
+                        "_id": item['_id'],
+                        "desc": item['description'],
+                        "title": item['title'],
+                        "score": score
+                    }
+                )
+                break
+    arr.sort(key=operator.itemgetter('score'), reverse=True)
+    for obj in arr:
+        print("TITLE: {}".format(obj['title']))
+        print("DESC: {}".format(obj['desc']))
+        print("SCORE: {}\n".format(obj['score']))
 if __name__ == "__main__":
     main()
