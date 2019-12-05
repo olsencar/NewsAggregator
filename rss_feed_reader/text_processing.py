@@ -13,11 +13,21 @@ import urllib.parse
 import json
 from pymongo import MongoClient
 import re
-import os.path
+import tempfile
+from sys import platform 
 import csv
 from datetime import datetime, timedelta
+import logging
 
-INDEX_FILE_NAME = "/tmp/index.index"
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# If we are running this on AWS, we want to write to /tmp/
+if platform.startswith("linux"):
+    INDEX_FILE_NAME = "/tmp/temp.index" 
+else:
+    INDEX_FILE_NAME = "./temp.index"
+
 special_chars = re.compile(r"[^a-z ]+")
 lemmatizer = WordNetLemmatizer()
 stopword_set = set(stopwords.words('english'))
@@ -103,7 +113,7 @@ def main():
     dictionary = Dictionary(docs)
     corpus = [dictionary.doc2bow(doc) for doc in docs]
     tf_idf = gensim.models.TfidfModel(corpus)
-    sims = gensim.similarities.Similarity(INDEX_FILE_NAME, corpus,num_features=len(dictionary))
+    sims = gensim.similarities.Similarity(INDEX_FILE_NAME,corpus,num_features=len(dictionary))
     
 
     testStr = input("What sentence would you like to test against? ")
@@ -118,12 +128,12 @@ def main():
             datediff = (datetime.utcnow() - items[i][2]).days
             sim[i] = sim[i] - pow((datediff * .05), 3)
 
-
     simListSorted = sorted(enumerate(sim), key=lambda item: -item[1])
     print("\nSIMILAR STORIES\n")
     for i in range(10):
         print("DESC: {}".format(items[simListSorted[i][0]][1]))
         print("PUBLISHED: {}".format(items[simListSorted[i][0]][2]))
         print("SCORE: {}\n".format(simListSorted[i][1]))
+    
 if __name__ == "__main__":
     main()
