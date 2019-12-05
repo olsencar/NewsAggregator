@@ -85,7 +85,7 @@ def get_all_docs():
     with open("docs.csv", "a", encoding="utf8", newline="") as docs:
         rows = []
         for doc in collection.find({}):
-            rows.append([doc['_id'], doc['source_name'], doc['title'], doc['description'], doc['rss_link'], doc['orig_link'], doc['publish_date']])
+            rows.append([doc['_id'], doc['description']])
         writer = csv.writer(docs)
         writer.writerows(rows)
 
@@ -99,12 +99,12 @@ def pre_process_docs(idx, row):
 def main():            
     docLabels = []
     # colNames = ["Column1","article_id","category","description","link","orig_link","publish_date","source_name","title"]
-    # get_all_docs()
+    get_all_docs()
 
     # Read from training docs
     nrows = 80000
     print("Reading {} rows from training set...".format(nrows))
-    docs = pd.read_csv(filepath_or_buffer="newsCorpora.csv", delimiter="\t", skipinitialspace=True,usecols=[0, 1], nrows=nrows, header=None)
+    docs = pd.read_csv(filepath_or_buffer="docs.csv", delimiter=",", skipinitialspace=True,usecols=[0, 1], nrows=nrows, header=None)
     print("Done reading rows")
     print("First row:")
     print(docs.loc[0,:])
