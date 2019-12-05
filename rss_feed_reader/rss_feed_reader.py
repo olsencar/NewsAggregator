@@ -21,6 +21,7 @@ from dateutil import parser
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 CATEGORIES = ["politics"]        
+special_chars = re.compile(r"[^a-z ]+")
 
 #****************************************************
 # EXTRACTION OF KEYWORDS
@@ -30,14 +31,13 @@ CATEGORIES = ["politics"]
 
 # pre process the text to remove unnecessary characters and words
 def pre_process(text):
+    text = text.lower()
     # remove html tags
     text = remove_html(text)
-
     #remove special characters
-    text = re.sub("(\\d)+"," ",text)
-
-    # convert to lowercase
-    text = text.lower()
+    text = special_chars.sub("", text)
+    text = re.sub(r"\s{2,}", " ", text)
+    text = text.rstrip()
     return text
 
 # Removes html from the description
@@ -125,7 +125,52 @@ def getArticleImages(item):
                 pass
         return images
     return []
-        
+
+# Generates an array of similar articles and finds a match
+def findGroupedArticles(db, results):
+    
+
+# Uploads the news stories to the database
+def uploadNewsStories(db, results):
+    # Loop through the results, and upload each story
+    ops = []
+    insertQty = 0
+    for source in results:
+        for story in source:
+            ops.append(
+                UpdateOne({"_id": story['article_id']}, 
+                    { 
+                        "$set": {
+                            'title': story['title'],
+                            'description': story['description'],
+                            'source_name': story['source'],
+                            'category': story['category'],
+                            'rss_link': story['link'],
+                            'orig_link': story['orig_link'],
+                            'publish_date': story['publish_date'],
+                            'images': story['images'],
+                            'bias': story['bias']
+                        } 
+                    }, 
+                    upsert=True
+                )
+            )
+            if ( len(ops) == 1000):
+                try:
+                    response = db.news_stories.bulk_write(ops, ordered=False)
+                    insertQty += response.upserted_count
+                    ops = []
+                except Exception as e:
+                    logger.error(e)
+
+    if (len(ops) > 0):
+        try:
+            response = db.news_stories.bulk_write(ops, ordered=False)
+            insertQty += response.upserted_count
+        except Exception as e:
+            logger.error(e)
+
+    return insertQty 
 
 # Parse the feed 
 def parse_feed(source_name, feed_info, text, results, idx):
@@ -223,45 +268,10 @@ def main():
     client = openMongoClient()
     
     db = client['NewsAggregator']
-    # Loop through the results, and upload each story
-    ops = []
-    insertQty = 0
-    for source in results:
-        for story in source:
-            ops.append(
-                UpdateOne({"_id": story['article_id']}, 
-                    { 
-                        "$set": {
-                            'title': story['title'],
-                            'description': story['description'],
-                            'source_name': story['source'],
-                            'category': story['category'],
-                            'rss_link': story['link'],
-                            'orig_link': story['orig_link'],
-                            'publish_date': story['publish_date'],
-                            'images': story['images'],
-                            'bias': story['bias']
-                        } 
-                    }, 
-                    upsert=True
-                )
-            )
-            if ( len(ops) == 1000):
-                try:
-                    results = db.news_stories.bulk_write(ops, ordered=False)
-                    insertQty += results.upserted_count
-                    ops = []
-                except Exception as e:
-                    logger.error(e)
 
-    if (len(ops) > 0):
-        try:
-            results = db.news_stories.bulk_write(ops, ordered=False)
-            insertQty += results.upserted_count
-        except Exception as e:
-            logger.error(e)
-    
-    logger.info("Inserted {} articles".format(results.upserted_count))
+    findGroupedArticles(db, results)
+    insertedQty = uploadNewsStories(db, results)
+    logger.info("Inserted {} articles".format(insertedQty))
 
 def lambda_handler(event, context):
     main()
