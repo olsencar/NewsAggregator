@@ -98,8 +98,6 @@ def main():
         sims = Similarity.load(INDEX_FILE_NAME)
         tf_idf = TfidfModel.load(TFIDF_FILE_PATH)
     
-            
-
     with open("./data/most_recent_date.txt", "w") as file:
         file.write(most_recent_date.strftime("%Y-%m-%dT%H:%M:%S"))
 
@@ -113,12 +111,11 @@ def main():
     query_doc_bow = dictionary.doc2bow(query_doc)
     query_doc_tf_idf = tf_idf[query_doc_bow]
     sim = sims[query_doc_tf_idf]
-    
     simListSorted = sorted(enumerate(sim), key=lambda item: -item[1])
     print("\nSIMILAR STORIES\n")
     for i in range(10):
-        print("DESC: {}".format(items[simListSorted[i][0]][1]))
-        print("PUBLISHED: {}".format(items[simListSorted[i][0]][2]))
+        print("DESC: {}".format(items[ simListSorted[i][0] ][1]))
+        print("PUBLISHED: {}".format(items[ simListSorted[i][0] ][2]))
         print("SCORE: {}".format(simListSorted[i][1]))    
 if __name__ == "__main__":
     main()
