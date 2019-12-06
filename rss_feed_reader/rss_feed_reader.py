@@ -104,6 +104,7 @@ def generate_hash(source, title, url):
     combined_str = "{}{}{}".format(source, title, url)
     hash_object = hashlib.sha512(combined_str.encode())
     hex_digest = hash_object.hexdigest()
+    
     return hex_digest
 
 #returns an array of image urls
