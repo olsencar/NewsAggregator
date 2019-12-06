@@ -99,6 +99,7 @@ else:
 #     return kw_obj_arr
 
 # Generates the 512 character source, title and url
+
 def generate_hash(source, title, url):
     combined_str = "{}{}{}".format(source, title, url)
     hash_object = hashlib.sha512(combined_str.encode())

@@ -181,6 +181,7 @@ def get_similar_articles(text, similarity_matrix, tf_idf, dictionary, articles, 
                 similarities[i] = similarities[i] - pow((datediff * .05), 3)
 
     simListSorted = sorted(enumerate(similarities), key=lambda item: -item[1])
+    
     for i in range(len(simListSorted)):
         simListSorted[i]  = (articles[simListSorted[i][0]][0], correct_encoding(simListSorted[i][1]))
         
