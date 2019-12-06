@@ -1,35 +1,20 @@
-import gensim
-from gensim.similarities import Similarity
+#!/usr/bin/python3
 from gensim.corpora import Dictionary
-from gensim.models import TfidfModel
 import nltk
-nltk.data.path.append("./nltk_data")
-# nltk.data.path.append("/tmp")
-# nltk.download('stopwords', download_dir="/tmp")
-# nltk.download('punkt', download_dir="/tmp")
-# nltk.download('averaged_perceptron_tagger', download_dir="/tmp")
-# nltk.download('wordnet', download_dir="/tmp")
+# nltk.data.path.append("./nltk_data")
+nltk.data.path.append("/tmp")
+nltk.download('stopwords', download_dir="/tmp")
+nltk.download('punkt', download_dir="/tmp")
+nltk.download('averaged_perceptron_tagger', download_dir="/tmp")
+nltk.download('wordnet', download_dir="/tmp")
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 import urllib.parse
 import json
 from pymongo import MongoClient
 import re
-import tempfile
-from sys import platform 
-import csv
-from datetime import datetime, timedelta
-import logging
+from datetime import datetime
 from numpy import float64, float32, int64, int32
-
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-# If we are running this on AWS, we want to write to /tmp/
-if platform.startswith("linux"):
-    INDEX_FILE_NAME = "/tmp/temp.index"
-else:
-    INDEX_FILE_NAME = "./temp.index"
 
 special_chars = re.compile(r"[^a-z ]+")
 lemmatizer = WordNetLemmatizer()
@@ -214,34 +199,38 @@ def openMongoClient():
         pwd = urllib.parse.quote(config['password'])
         return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
 
-def main():
-    client = openMongoClient()
-    coll = client['NewsAggregator'].news_stories
-    items = []
+# def main():
+    # If we are running this on AWS, we want to write to /tmp/
+    # if platform.startswith("linux"):
+    #     INDEX_FILE_NAME = "/tmp/temp.index"
+    # else:
+    #     INDEX_FILE_NAME = "./temp.index"
+
+    # client = openMongoClient()
+    # coll = client['NewsAggregator'].news_stories
+    # items = []
     
-    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
-        # Add the item to the dictionary
-        items.append((item['_id'], item['description'], item['publish_date']))
+    # for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
+    #     # Add the item to the dictionary
+    #     items.append((item['_id'], item['description'], item['publish_date']))
 
-    docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(text)) if w not in stopword_set]
-                for article_id, text, date in items]
+    # docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(text)) if w not in stopword_set]
+    #             for article_id, text, date in items]
 
-    dictionary = Dictionary(docs)
-    corpus = [dictionary.doc2bow(doc) for doc in docs]
-    tf_idf = gensim.models.TfidfModel(corpus)
-    sims = gensim.similarities.Similarity(INDEX_FILE_NAME,corpus,num_features=len(dictionary))
+    # dictionary = Dictionary(docs)
+    # corpus = [dictionary.doc2bow(doc) for doc in docs]
+    # tf_idf = TfidfModel(corpus)
+    # sims = Similarity(INDEX_FILE_NAME,corpus,num_features=len(dictionary))
 
-    testStr = input("What sentence would you like to test against? ")
-    testStr = pre_process(testStr)
+    # testStr = input("What sentence would you like to test against? ")
+    # testStr = pre_process(testStr)
     
-    results = get_similar_articles(testStr, sims, tf_idf, dictionary, items)
+    # results = get_similar_articles(testStr, sims, tf_idf, dictionary, items)
 
     # print("\nSIMILAR STORIES\n")
     # for i in range(10):
     #     print("ID: {}".format(results[i][2]))
-    #     print("DESC: {}".format(items[results[i][0]][1]))
-    #     print("PUBLISHED: {}".format(items[results[i][0]][2]))
     #     print("SCORE: {}\n".format(results[i][1]))
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

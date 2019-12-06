@@ -1,11 +1,11 @@
+#!/usr/bin/python3
+
 from gevent import monkey
 monkey.patch_all(select=False, thread=False)
 import feedparser
 import json
 import hashlib
 from pymongo import MongoClient, UpdateOne
-from decimal import Decimal
-import re
 import grequests
 from threading import Thread
 import os
@@ -17,13 +17,10 @@ from base64 import b64decode
 import logging
 import urllib
 from dateutil import parser
-from text_processing import pre_process, remove_html, get_wordnet_pos, get_similar_articles, articles_to_docs, create_corpus, create_dictionary
-import gensim
+from text_processing import pre_process, remove_html, get_similar_articles, articles_to_docs, create_corpus, create_dictionary
 from gensim.similarities import Similarity
-from gensim.corpora import Dictionary
 from gensim.models import TfidfModel
 from datetime import datetime, timedelta
-from bson.objectid import ObjectId
 from sys import platform
 
 logger = logging.getLogger()
@@ -200,18 +197,11 @@ def get_article(client, article_id):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    # decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
-    # decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
-    # user = urllib.parse.quote(decrypted_user)
-    # pwd = urllib.parse.quote(decrypted_pw)
-    # return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-    with open("connectionDetails.json", "r") as conn:
-        config = json.load(conn)
-        user = urllib.parse.quote(config['user'])
-        pwd = urllib.parse.quote(config['password'])
-        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-
-
+    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
+    user = urllib.parse.quote(decrypted_user)
+    pwd = urllib.parse.quote(decrypted_pw)
+    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
 
 def main():
     feeds = []
