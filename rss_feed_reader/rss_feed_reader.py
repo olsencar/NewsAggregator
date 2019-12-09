@@ -113,11 +113,16 @@ def getArticleImages(item):
     if (hasattr(item, 'media_content')):
         media_content = item.media_content
         for media in media_content:
-            if ('medium' in media  and media['medium'] == 'image'):
+            if ('medium' in media and (media['medium'].startswith('image'))):
                 images.append(media['url'])
             else: 
                 pass
         return images
+    elif (hasattr(item, 'enclosures') and len(item.enclosures) > 0):
+        image = item.enclosures[0]
+        if ('type' in image and image['type'].startswith("image")):
+            images.append(image['url'])
+            return images
     return []
 
 def get_articles(client, days_back=7):
