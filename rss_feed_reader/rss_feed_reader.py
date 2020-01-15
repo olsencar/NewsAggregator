@@ -125,7 +125,7 @@ def getArticleImages(item):
             return images
     return []
 
-def get_articles(client, days_back=7):
+def get_articles(client, days_back=10):
     """
 
     Gets articles from the past `days_back` to now from MongoDB
@@ -141,7 +141,7 @@ def get_articles(client, days_back=7):
     coll = client['NewsAggregator'].news_stories
     items = []
     
-    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
+    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, "publish_date": 1 }):
         # Add the item to the dictionary
         items.append((item['_id'], item['description'], item['publish_date']))
     
@@ -212,12 +212,6 @@ def openMongoClient():
     user = urllib.parse.quote(decrypted_user)
     pwd = urllib.parse.quote(decrypted_pw)
     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-    # with open("connectionDetails.json", "r") as conn:
-    #     config = json.load(conn)
-    #     user = urllib.parse.quote(config['user'])
-    #     pwd = urllib.parse.quote(config['password'])
-    #     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-
 
 def main():
     feeds = []
