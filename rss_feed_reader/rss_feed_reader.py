@@ -175,7 +175,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'orig_link': item['id'],
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
-                            'article_id': generate_hash(source_name, item['title'], item['link']),
                             'images': getArticleImages(item),
                             'bias': feed_info['bias']
                         }
@@ -195,12 +194,16 @@ def parse_feed(source_name, feed_info, text, results, idx):
     
     results[idx] = stories
 
-def get_article(client, article_id):
+def get_article(client, title, description, source):
     """
 
     Retrieves an article from the DB if it exists.
     """
-    return client['NewsAggregator'].news_stories.find({"_id": article_id}, {"similar_articles": 1}).limit(1)
+    return client['NewsAggregator'].news_stories.find({
+        "title": title,
+        "description": description,
+        "source_name": source
+    }, {"similar_articles": 1}).limit(1)
 
 # Opens the mongoDB client connection
 def openMongoClient():
@@ -209,6 +212,12 @@ def openMongoClient():
     user = urllib.parse.quote(decrypted_user)
     pwd = urllib.parse.quote(decrypted_pw)
     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    # with open("connectionDetails.json", "r") as conn:
+    #     config = json.load(conn)
+    #     user = urllib.parse.quote(config['user'])
+    #     pwd = urllib.parse.quote(config['password'])
+    #     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+
 
 def main():
     feeds = []
@@ -263,7 +272,7 @@ def main():
     insertQty = 0
     for source in results:
         for story in source:
-            resp = get_article(client, story['article_id'])
+            resp = get_article(client, story['title'], story['description'], story['source'])
             item = None
             for i in resp:
                 item = i
@@ -282,7 +291,7 @@ def main():
                     topn=5
                 )
                 ops.append(
-                    UpdateOne({"_id": story['article_id']}, 
+                    UpdateOne({ "title": story['title'], "description": story["description"], "source_name": story["source"] }, 
                         { 
                             "$set": {
                                 'title': story['title'],
