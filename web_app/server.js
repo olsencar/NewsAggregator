@@ -10,11 +10,16 @@ const app = express();
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(`mongodb+srv://${dbConfig.readOnly.user}:${dbConfig.readOnly.password}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority`);
+mongoose.connect(`mongodb+srv://${dbConfig.readOnly.user}:${dbConfig.readOnly.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`);
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error: '));
+db.once('open', () => {
+    console.log('Connection open to MongoDB.');
+});
+
 
 app.use(bodyParser.json());
 
-// Import routes
 // Import routes
 require('./routes/articleRoutes')(app);
 

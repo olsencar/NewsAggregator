@@ -8,18 +8,26 @@ class App extends Component {
     super(props);
     this.state = {
       data: this.props.data,
-      item: {}
+      item: {},
+      articles: []
     };
   }
 
   componentDidMount() {
     this.getArticle();
+    this.getRecentArticles();
   }
 
   async getArticle() {
-    let res = await articleService.getArticle('6b982313fd235207a27d1d03d0c2d49bff331eb1bb92f3f6f498fcd72782c446cdb169808fed90217a2a6aaef58b38f298b06292b74c443b17dbe7aade38a350');
+    let res = await articleService.getArticle('5e1e967d355a502f978f79e3');
     console.log(res);
     this.setState({item: res});
+  }
+
+  async getRecentArticles() {
+    let res = await articleService.getRecentArticles();
+    console.log(res);
+    this.setState({articles: res})
   }
   render() {
     return (
