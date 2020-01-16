@@ -132,3 +132,9 @@ API
 Training
 Blog
 About
+
+#settings.json
+.vscode/*
+
+#config file
+config.json

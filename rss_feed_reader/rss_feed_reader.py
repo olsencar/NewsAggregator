@@ -125,7 +125,7 @@ def getArticleImages(item):
             return images
     return []
 
-def get_articles(client, days_back=7):
+def get_articles(client, days_back=10):
     """
 
     Gets articles from the past `days_back` to now from MongoDB
@@ -141,7 +141,7 @@ def get_articles(client, days_back=7):
     coll = client['NewsAggregator'].news_stories
     items = []
     
-    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
+    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, "publish_date": 1 }):
         # Add the item to the dictionary
         items.append((item['_id'], item['description'], item['publish_date']))
     
@@ -175,7 +175,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'orig_link': item['id'],
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
-                            'article_id': generate_hash(source_name, item['title'], item['link']),
                             'images': getArticleImages(item),
                             'bias': feed_info['bias']
                         }
@@ -195,12 +194,16 @@ def parse_feed(source_name, feed_info, text, results, idx):
     
     results[idx] = stories
 
-def get_article(client, article_id):
+def get_article(client, title, description, source):
     """
 
     Retrieves an article from the DB if it exists.
     """
-    return client['NewsAggregator'].news_stories.find({"_id": article_id}, {"similar_articles": 1}).limit(1)
+    return client['NewsAggregator'].news_stories.find({
+        "title": title,
+        "description": description,
+        "source_name": source
+    }, {"similar_articles": 1}).limit(1)
 
 # Opens the mongoDB client connection
 def openMongoClient():
@@ -263,7 +266,7 @@ def main():
     insertQty = 0
     for source in results:
         for story in source:
-            resp = get_article(client, story['article_id'])
+            resp = get_article(client, story['title'], story['description'], story['source'])
             item = None
             for i in resp:
                 item = i
@@ -282,9 +285,9 @@ def main():
                     topn=5
                 )
                 ops.append(
-                    UpdateOne({"_id": story['article_id']}, 
+                    UpdateOne({ "title": story['title'], "description": story["description"], "source_name": story["source"] }, 
                         { 
-                            "$set": {
+                            "$setOnInsert": {
                                 'title': story['title'],
                                 'description': story['description'],
                                 'source_name': story['source'],
