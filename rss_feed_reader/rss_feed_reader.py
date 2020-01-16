@@ -287,7 +287,7 @@ def main():
                 ops.append(
                     UpdateOne({ "title": story['title'], "description": story["description"], "source_name": story["source"] }, 
                         { 
-                            "$set": {
+                            "$setOnInsert": {
                                 'title': story['title'],
                                 'description': story['description'],
                                 'source_name': story['source'],
