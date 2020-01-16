@@ -184,8 +184,9 @@ def get_similar_articles(text, similarity_matrix, tf_idf, dictionary, articles, 
     
     for i in range(len(simListSorted)):
         simListSorted[i]  = (articles[simListSorted[i][0]][0], correct_encoding(simListSorted[i][1]))
-        
-    return simListSorted[:topn]
+    
+    topSims = list(map(lambda article: { '_id': article[0], 'similarity_score': article[1] }, simListSorted[:topn]))
+    return topSims
 
 # Opens the mongoDB client connection
 def openMongoClient():
