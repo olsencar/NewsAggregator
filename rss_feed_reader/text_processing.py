@@ -103,8 +103,8 @@ def articles_to_docs(articles):
     Returns :
         A list of words for each article.
     """
-    docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(text)) if w not in stopword_set]
-                for article_id, text, date in articles]
+    docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(article['description'])) if w not in stopword_set]
+                for article in articles]
     return docs
 
 def create_dictionary(docs):
@@ -177,15 +177,16 @@ def get_similar_articles(text, similarity_matrix, tf_idf, dictionary, articles, 
     if (prefer_recent_articles):
         for i in range(len(similarities)):
             if (similarities[i] > 0.00):
-                datediff = (datetime.utcnow() - articles[i][2]).days
+                datediff = (datetime.utcnow() - articles[i]['publish_date']).days
                 similarities[i] = similarities[i] - pow((datediff * .05), 3)
 
     simListSorted = sorted(enumerate(similarities), key=lambda item: -item[1])
     
-    for i in range(len(simListSorted)):
-        simListSorted[i]  = (articles[simListSorted[i][0]][0], correct_encoding(simListSorted[i][1]))
-    
-    topSims = list(map(lambda article: { '_id': article[0], 'similarity_score': article[1] }, simListSorted[:topn]))
+    topSims = []
+    for i in range(topn):
+        topSims.append(articles[simListSorted[i][0]])
+        topSims[i]['similarity_score'] = correct_encoding(simListSorted[i][1])
+
     return topSims
 
 # Opens the mongoDB client connection
