@@ -210,16 +210,11 @@ def get_article(client, title, description, source):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    # decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
-    # decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
-    # user = urllib.parse.quote(decrypted_user)
-    # pwd = urllib.parse.quote(decrypted_pw)
-    # return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-    with open("connectionDetails.json", "r") as conn:
-        config = json.load(conn)
-        user = urllib.parse.quote(config['user'])
-        pwd = urllib.parse.quote(config['password'])
-        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
+    user = urllib.parse.quote(decrypted_user)
+    pwd = urllib.parse.quote(decrypted_pw)
+    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
 
 def main():
     feeds = []
