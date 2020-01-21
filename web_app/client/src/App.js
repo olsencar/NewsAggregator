@@ -14,14 +14,19 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getArticle();
-    this.getRecentArticles();
+    this.getArticleById('5e23acaf3894b422aac4baff');
+    this.getArticle("Rod Rosenstein says he made call to release Peter Strzok-Lisa Page texts", null, "CNN")
   }
 
-  async getArticle() {
-    let res = await articleService.getArticle('5e1e967d355a502f978f79e3');
+  async getArticleById(id) {
+    let res = await articleService.getArticleById(id);
     console.log(res);
     this.setState({item: res});
+  }
+
+  async getArticle(title, description, source) {
+    let res = await articleService.getArticle(title, description, source);
+    console.log(res);
   }
 
   async getRecentArticles() {

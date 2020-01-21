@@ -4,7 +4,8 @@ const bodyParser = require ('body-parser');
 const dbConfig = require('./config/config');
 
 // Import the DB Models
-require('./models/Article');
+// Import the DB Models
+require('./models/Article').default;
 
 const app = express();
 
@@ -16,7 +17,6 @@ db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', () => {
     console.log('Connection open to MongoDB.');
 });
-
 
 app.use(bodyParser.json());
 

@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const articleSchema = new Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    _id: Schema.Types.ObjectId,
     title: String,
     description: String,
     source_name: String,
     images: [String],
-    similar_articles: [String],
+    similar_articles: {type: Array, default: []},
     category: String,
     rss_link: String,
     orig_link: String,
@@ -15,4 +15,4 @@ const articleSchema = new Schema({
     bias: Number
 });
 
-mongoose.model('Article', articleSchema, 'news_stories');
+module.exports = mongoose.model('Article', articleSchema, 'news_stories');
