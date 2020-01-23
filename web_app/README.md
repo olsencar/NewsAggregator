@@ -1,5 +1,15 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Getting Started
+
+### How To Run
+
+1. Make sure that you have access to the DB credentials. This will be located in `web_app/config/config.json`.
+2. In the terminal, navigate to the `web_app/client` directory and run `npm install`.
+3. Navigate back to the `web_app` directory and run `npm install` again.
+4. For development purposes, now run `npm run dev` to start the application.
+
+
 ## Available Scripts
 
 In the project directory, you can run:
