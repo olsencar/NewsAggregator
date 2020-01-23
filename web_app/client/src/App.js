@@ -34,6 +34,7 @@ class App extends Component {
     console.log(res);
     this.setState({articles: res})
   }
+
   render() {
     return (
       <div className="App">
