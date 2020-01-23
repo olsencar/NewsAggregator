@@ -141,9 +141,12 @@ def get_articles(client, days_back=10):
     coll = client['NewsAggregator'].news_stories
     items = []
     
-    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, "publish_date": 1 }):
+    for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "similar_articles": 0 }):
         # Add the item to the dictionary
-        items.append((item['_id'], item['description'], item['publish_date']))
+        if ('description' not in item):
+            print(item)
+        else:
+            items.append(item)
     
     return items
 
