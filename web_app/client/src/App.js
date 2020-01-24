@@ -14,8 +14,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getArticleById('5e23acaf3894b422aac4baff');
-    this.getArticle("Rod Rosenstein says he made call to release Peter Strzok-Lisa Page texts", null, "CNN")
+    // this.getArticleById('5e24f01e3894b422aa12bb85');
+    this.getArticleById('5e24fe2e3894b422aa1416b8')
   }
 
   async getArticleById(id) {
@@ -39,8 +39,8 @@ class App extends Component {
       <div className="App">
         <MainNavbar />
         {
-          this.props.data.articles.map((group, index) => {
-            return <ArticleGroup key={index} data={group} />
+          this.props.data.articles.map((article, index) => {
+            return <ArticleGroup key={index} data={article} />
           })
         }
       </div>

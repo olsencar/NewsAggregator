@@ -46,6 +46,17 @@
   margin-bottom: 10px;
 }
 
+.article-grp-img {
+  max-height: 400px;
+  max-width: 600px;
+  margin: auto;
+  margin-bottom: 5px;
+}
+
 .article-img {
   max-height: 400px;
+}
+
+.card-body {
+  margin-top: 10px;
 }
