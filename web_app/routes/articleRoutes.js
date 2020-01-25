@@ -6,7 +6,7 @@ module.exports = (app) => {
         const id = req.params.id;
         try {
             let article = await Article.findById(id);
-
+         
             if (article == null) return res.status(404).send(`No article found for id ${id}`);
             return res.status(200).send(article);
         } catch (error) {
