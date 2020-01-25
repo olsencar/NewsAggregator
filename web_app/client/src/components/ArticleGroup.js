@@ -51,7 +51,7 @@ class ArticleGroup extends Component {
                     <img src={img.src} className="article-grp-img" alt={this.state.leftArticle.title}></img>
                 </div>
                 <div className="row">
-                    <div className="col left-article article-container">
+                    <div className="col left-article article-container border-right">
                         <Article key={0} title={this.state.leftArticle.title} 
                             content={this.state.leftArticle.description}
                             source={this.state.leftArticle.source_name}
