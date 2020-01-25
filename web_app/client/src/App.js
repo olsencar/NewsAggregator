@@ -38,11 +38,19 @@ class App extends Component {
     return (
       <div className="App">
         <MainNavbar />
-        {
-          this.props.data.articles.map((article, index) => {
-            return <ArticleGroup key={index} data={article} />
-          })
-        }
+        <div className="container">
+          <div className="col"></div>
+          <div className="col">
+            {
+              this.props.data.articles.map((article, index) => {
+                return (
+                  <ArticleGroup key={index} data={article} />
+                )
+              })
+            }
+          </div>
+          <div className="col"></div>
+        </div>
       </div>
     )
   }
