@@ -22,9 +22,9 @@
 }
 
 .banner-source {
-  position: absolute;
+  /* position: absolute;
   top: 0px;
-  left: 0px;
+  left: 0px; */
   background-color: black;
   color: white;
   padding-left: 20px;
@@ -39,9 +39,7 @@
   background-color: rgb(189, 23, 11)
 }
 .grouped-articles {
-  background-color: rgba(82, 82, 82, 0.185);
-  border-radius: 4px;
-  padding: 5px;
+  padding: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -49,14 +47,15 @@
 .article-grp-img {
   max-height: 400px;
   max-width: 600px;
-  margin: auto;
-  margin-bottom: 5px;
+  /* margin-left: auto;
+  margin-right: auto; */
+  margin-bottom: 10px;
+  padding-left: 10px;
 }
 
-.article-img {
-  max-height: 400px;
+.article-container {
+  padding-left: 10px !important;
 }
-
-.card-body {
-  margin-top: 10px;
+.article {
+  border: none !important;
 }
