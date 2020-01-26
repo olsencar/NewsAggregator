@@ -20,7 +20,7 @@ class ArticleGroup extends Component {
 
     // This function gets the widest image to display
     // The purpose is to get the highest quality image
-    getImageToDisplay() {
+    async getImageToDisplay() {
         let leftImages = this.state.leftArticle.images;
         let rightImages = this.state.rightArticle.images;
         let maxWidth = 0;
