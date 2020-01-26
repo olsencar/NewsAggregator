@@ -1,34 +1,37 @@
 import React, { Component } from 'react'
-
+import Comment from './Comment'
 class CommentSection extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            comments: []
+            comments: this.props.comments
         };
     }
 
     render() {
         return (
-          <div className="App container bg-light shadow">
-            <header className="App-header">
-              <h1 className="App-title">
-                Comments
-                <span className="px-2" role="img" aria-label="Chat">
-                  💬
-                </span>
-              </h1>
-            </header>
+          <div className="row bootstrap snippets">
+              <div className="col-md-6 col-md-offset-2 col-sm-12">
+                  <div className="comment-wrapper">
+                      <div className="panel panel-info">
+                          <div className="panel-body">
+                              <textarea className="form-control" placeholder="write a comment..." rows="3"></textarea>
+                              <br></br>
+                              <button type="button" className="btn btn-info pull-right">Post</button>
+                              <div className="clearfix"></div>
+                              <hr></hr>
+                              <ul className="media-list">
+                                {
+                                  this.props.comments.map((comment, index) => {
+                                      return <Comment key={index} user={comment.user} time={comment.time} text={comment.text} />
+                                  })
+                                }
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
 
-            <div className="row">
-              <div className="col-4  pt-3 border-right">
-                <h6>Say something</h6>
-                {/* Comment Form Component */}
               </div>
-              <div className="col-8  pt-3 bg-white">
-                {/* Comment List Component */}
-              </div>
-            </div>
           </div>
         );
       }

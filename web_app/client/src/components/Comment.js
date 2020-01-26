@@ -1,23 +1,21 @@
-import React from "react";
+import React, { Component } from 'react'
 
-export default function Comment(props) {
-  const { name, message, time } = props.comment;
-
-  return (
-    <div className="media mb-3">
-      <img
-        className="mr-3 bg-light rounded"
-        width="48"
-        height="48"
-        src={`https://api.adorable.io/avatars/48/${name.toLowerCase()}@adorable.io.png`}
-        alt={name}
-      />
-
-      <div className="media-body p-2 shadow-sm rounded bg-light border">
-        <small className="float-right text-muted">{time}</small>
-        <h6 className="mt-0 mb-1 text-muted">{name}</h6>
-        {message}
-      </div>
-    </div>
-  );
+class Comment extends Component {
+    render() {
+      return (
+        <li className="media">
+            <div className="media-body">
+                <span className="text-muted pull-right">
+                    <small className="text-muted">{this.props.time}</small>
+                </span>
+                <strong className="text-success">{this.props.user}</strong>
+                <p>
+                    {this.props.text}
+                </p>
+            </div>
+        </li> 
+      );
+    }
 }
+
+export default Comment;

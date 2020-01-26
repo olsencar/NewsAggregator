@@ -7,9 +7,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.props.data,
-      item: {},
-      articles: []
+      article_data: this.props.article_data,
+      comment_data: this.props.comment_data,
+      item: {}
     };
   }
 
@@ -40,8 +40,18 @@ class App extends Component {
       <div className="App">
         <MainNavbar />
         {
-          this.props.data.articles.map((group, index) => {
-            return <ArticleGroup key={index} data={group} />
+            this.props.article_data.articles.map((group, index) => {
+              // search for correct comment
+              // iterate over each comment
+              // default comment is null
+              var group_comments = []
+              for (var i = 0; i < this.props.comment_data.comments.length; i++){
+                if ((this.props.comment_data.comments[i].primary_id === group[0]._id) && (this.props.comment_data.comments[i].secondary_id === group[1]._id)){
+                  //set group comments to be the group of comments under this id pairing
+                  group_comments = this.props.comment_data.comments[i].group_comments
+                }
+              }
+              return <ArticleGroup key={index} article_data={group} comment_data={group_comments}/>
           })
         }
       </div>

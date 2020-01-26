@@ -17,7 +17,9 @@
                 },
                 "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/_EIHS3cNdlI/index.html",
                 "source_name": "CNN",
-                "title": "GOP senators downplay developments in impeachment inquiry"
+                "title": "GOP senators downplay developments in impeachment inquiry",
+                "comments": [ "Great point of view!", "A", "B", "C!"
+                ]
             },
             {
                 "_id": "3218de7c8c0b047fc4430b4cb6bb17eaceb45eea8aaba082a5e9251a6d5fce132670a6a7511bfcb0c3f33913472369777f3acdec601f0b363d8492e6d3f4f966",
