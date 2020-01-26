@@ -3,89 +3,109 @@ import './App.css';
 import ArticleGroup from './components/ArticleGroup.js';
 import MainNavbar from './components/MainNavbar'
 import articleService from './services/articleService';
+import ReactPaginate from 'react-paginate';
+
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      currentPage: 1,
-      articlesPerPage: 15
+      articlesPerPage: 15,
+      articlesToDisplay: [],
+      offset: 0
     };
-    this.getRecentArticles();
-
   }
 
   componentDidMount() {
-    // this.getArticleById('5e24f01e3894b422aa12bb85');
-    // this.getArticleById('5e24fe2e3894b422aa1416b8')
-    // this.getRecentArticles();
+    this.getRecentArticles();
   }
 
-  async getArticleById(id) {
+  getArticleById = async (id) => {
     let res = await articleService.getArticleById(id);
-    console.log(res);
     this.setState({item: res});
   }
 
-  async getArticle(title, description, source) {
+  getArticle = async (title, description, source) => {
     let res = await articleService.getArticle(title, description, source);
-    console.log(res);
+    this.setState({item: res});
   }
 
-  async getRecentArticles() {
+  getRecentArticles = async () => {
     let res = await articleService.getRecentArticles();
-    // console.log(res);
-    this.setState({data: res})
-  }
-
-  isDisabled(direction) {
-    const pageChange = this.state.currentPage + direction;
-    const numOfPages = Math.ceil(this.state.data.length / this.state.articlesPerPage);
-    if (pageChange > 0 && pageChange < numOfPages) {
-      return "";
-    } else {
-      return "disabled";
-    }
-  }
-
-  previousPage = () => {
     this.setState({
-      currentPage: this.state.currentPage - 1
-    });
+      data: res,
+      pageCount: Math.ceil(res.length / this.state.articlesPerPage)
+    }, () => this.setArticlesToDisplay());
   }
 
-  nextPage = () => {
+  handlePageClick = (data) => {
+    const selected = data.selected;
     this.setState({
-      currentPage: this.state.currentPage + 1
+      offset: selected * this.state.articlesPerPage
+    }, () => this.setArticlesToDisplay());
+  }
+
+  removeArticleGroup = (id) => {
+    const strId = id.toString();
+
+    const newArticles = this.state.articlesToDisplay.filter(item => {
+      console.log(item.key !== strId);
+      return item.key !== strId;
     });
+
+    console.log(newArticles);
+
+    this.setState({
+      articlesToDisplay: newArticles
+    }, () => {
+      console.log(this.state.articlesToDisplay);
+    });
+
+  }
+
+  setArticlesToDisplay = () => {
+    this.setState({
+      articlesToDisplay: this.state.data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
+        return (
+          <ArticleGroup key={index} id={index} data={article} removeArticleGroup={this.removeArticleGroup} />
+        )
+      })
+    });
+    window.scrollTo(0, 0);
   }
 
   render() {
-    const idxOfLastArticle = this.state.currentPage * this.state.articlesPerPage;
-    const idxOfFirstArticle = idxOfLastArticle - this.state.articlesPerPage;
-    const currentArticles = this.state.data.slice(idxOfFirstArticle, idxOfLastArticle);
-
+    let paginationElement;
+    if (this.state.pageCount > 1) {
+      paginationElement = (
+        <ReactPaginate
+          pageRangeDisplayed={5}
+          marginPagesDisplayed={2}
+          previousLabel={<span aria-hidden="true">&laquo;</span>}
+          nextLabel={<span aria-hidden="true">&raquo;</span>}
+          breakLabel={<span className="gap">...</span>}
+          pageCount={this.state.pageCount}
+          onPageChange={this.handlePageClick}
+          containerClassName="pagination"
+          disabledClassName="disabled"
+          activeClassName="active"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+        />
+      );
+    }
     return (
       <div className="App">
         <MainNavbar />
         <div className="container">
           <div className="col"></div>
           <div className="col">
-            {
-              currentArticles.map((article, index) => {
-                return (
-                  <ArticleGroup key={index} data={article} />
-                )
-              })
-            }
-            <ul className="pagination">
-              <li className={"page-item " + this.isDisabled(-1)}>
-                <button className="page-link" tabIndex="-1" onClick={this.previousPage}>Previous</button>
-              </li>
-              <li className={"page-item " + this.isDisabled(1)}>
-                <button className="page-link" tabIndex="-1" onClick={this.nextPage}>Next</button>
-              </li>
-            </ul>
+            {this.state.articlesToDisplay}
+            {paginationElement}
           </div>
           <div className="col"></div>
         </div>

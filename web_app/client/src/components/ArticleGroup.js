@@ -1,56 +1,85 @@
-import React, { Component } from 'react'
-import Article from './Article'
+import React, { Component } from 'react';
+import Article from './Article';
+import Img from 'react-image';
 
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
-        let similarArticles = this.props.data.similar_articles;
+        const chosenArticle = this.getSimilarArticleToDisplay(props);
+        if (chosenArticle.bias === this.props.data.bias) {
+            this.props.removeArticleGroup(this.props.id);
+        }
+
+        this.state = {
+            leftArticle: this.props.data.bias <= chosenArticle.bias ? this.props.data : chosenArticle,
+            rightArticle: this.props.data.bias > chosenArticle.bias ? this.props.data : chosenArticle,
+            image: null
+        };
+    }
+
+    componentWillReceiveProps(newProps) {
+        const chosenArticle = this.getSimilarArticleToDisplay(newProps);
+
+        if (chosenArticle.bias === newProps.data.bias) {
+            newProps.removeArticleGroup(newProps.id);
+        }
+
+        this.setState({
+            leftArticle: newProps.data.bias <= chosenArticle.bias ? newProps.data : chosenArticle,
+            rightArticle: newProps.data.bias > chosenArticle.bias ? newProps.data : chosenArticle,
+        });
+    }
+
+    getSimilarArticleToDisplay = (props) => {
+        const similarArticles = props.data.similar_articles;
         let chosenArticle = similarArticles[0];
         for (let i = 0; i < similarArticles.length; i++) {
-            if (similarArticles[i].bias !== this.props.data.bias) {
+            if (similarArticles[i].bias !== props.data.bias) {
                 chosenArticle = similarArticles[i];
                 break;
             }
         }
-        this.state = {
-            leftArticle: this.props.data.bias <= chosenArticle.bias ? this.props.data :chosenArticle,
-            rightArticle: this.props.data.bias > chosenArticle.bias ? this.props.data : chosenArticle
-        };
+        return chosenArticle;
     }
-
     // This function gets the widest image to display
     // The purpose is to get the highest quality image
-    async getImageToDisplay() {
+    getImageToDisplay = async () => {
         let leftImages = this.state.leftArticle.images;
         let rightImages = this.state.rightArticle.images;
         let maxWidth = 0;
         let imgToKeep = new Image();
         for (let i = 0; i < leftImages.length; i++) {
             let img = new Image();
-            img.src = leftImages[i];
-            if (img.naturalWidth > maxWidth) {
-                maxWidth = img.naturalWidth;
-                imgToKeep = img;
+            try {
+                img.src = leftImages[i];
+                if (img.naturalWidth > maxWidth) {
+                    maxWidth = img.naturalWidth;
+                    imgToKeep = img;
+                }
+            } catch (error) {
+                console.error(error);
             }
         }
         for (let i = 0; i < rightImages.length; i++) {
             let img = new Image();
-            img.src = rightImages[i];
-            if (img.naturalWidth > maxWidth) {
-                maxWidth = img.naturalWidth;
-                imgToKeep = img;
+            try {
+                img.src = rightImages[i];
+                if (img.naturalWidth > maxWidth) {
+                    maxWidth = img.naturalWidth;
+                    imgToKeep = img;
+                }
+            } catch (error) {
+                console.error(error);
             }
         }
-        console.log(imgToKeep.src);
         return imgToKeep;
     }
 
     render() {
-        let img = this.getImageToDisplay();
         return (
             <div className="container grouped-articles shadow bg-light rounded">
                 <div className="row">
-                    <img src={img.src} className="article-grp-img" alt={this.state.leftArticle.title}></img>
+                    <Img src={this.state.leftArticle.images.concat(this.state.rightArticle.images)} alt={this.state.leftArticle.title} className="article-grp-img" />
                 </div>
                 <div className="row">
                     <div className="card-deck-wrapper">
