@@ -9,11 +9,7 @@ import Button from 'react-bootstrap/Button'
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
-        const chosenArticle = this.getSimilarArticleToDisplay(props);
-        if (chosenArticle.bias === this.props.article_data.bias) {
-            this.props.removeArticleGroup(this.props.id);
-        }
-
+        const chosenArticle = this.props.article_data.most_similar_article;
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
@@ -22,11 +18,7 @@ class ArticleGroup extends Component {
     }
 
     componentWillReceiveProps(newProps) {
-        const chosenArticle = this.getSimilarArticleToDisplay(newProps);
-
-        if (chosenArticle.bias === newProps.article_data.bias) {
-            newProps.removeArticleGroup(newProps.id);
-        }
+        const chosenArticle = newProps.article_data.most_similar_article;
 
         this.setState({
             leftArticle: newProps.article_data.bias <= chosenArticle.bias ? newProps.article_data : chosenArticle,
@@ -34,17 +26,6 @@ class ArticleGroup extends Component {
         });
     }
 
-    getSimilarArticleToDisplay = (props) => {
-        const similarArticles = props.article_data.similar_articles;
-        let chosenArticle = similarArticles[0];
-        for (let i = 0; i < similarArticles.length; i++) {
-            if (similarArticles[i].bias !== props.article_data.bias) {
-                chosenArticle = similarArticles[i];
-                break;
-            }
-        }
-        return chosenArticle;
-    }
     // This function gets the widest image to display
     // The purpose is to get the highest quality image
     getImageToDisplay = async () => {

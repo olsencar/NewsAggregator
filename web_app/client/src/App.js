@@ -17,7 +17,7 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.getRecentArticles();
   }
 
@@ -34,7 +34,7 @@ class App extends Component {
   getRecentArticles = async () => {
     let res = await articleService.getRecentArticles();
     this.setState({
-      data: res,
+      article_data: res,
       pageCount: Math.ceil(res.length / this.state.articlesPerPage)
     }, () => this.setArticlesToDisplay());
   }
@@ -46,27 +46,15 @@ class App extends Component {
     }, () => this.setArticlesToDisplay());
   }
 
-  removeArticleGroup = (id) => {
-    const strId = id.toString();
-
-    const newArticles = this.state.articlesToDisplay.filter(item => {
-      console.log(item.key !== strId);
-      return item.key !== strId;
-    });
-
-    console.log(newArticles);
-
-    this.setState({
-      articlesToDisplay: newArticles
-    }, () => {
-      console.log(this.state.articlesToDisplay);
-    });
-
+  removeArticleGroup = (index) => {
+    this.setState((prevState) => ({
+      articlesToDisplay: prevState.articlesToDisplay.filter((_, i) => i !== index)
+    }));
   }
 
   setArticlesToDisplay = () => {
     this.setState({
-      articlesToDisplay: this.state.data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
+      articlesToDisplay: this.state.article_data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
         // search for correct comment
         // iterate over each comment
         // default comment is null
