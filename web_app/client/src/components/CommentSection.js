@@ -8,9 +8,6 @@ class CommentSection extends Component {
             comments: this.props.comments
         };
     }
-
-
-
     render() {
         return (
           <div className="row bootstrap snippets">

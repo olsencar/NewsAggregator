@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
+import Media from 'react-bootstrap/Media'
 
 class Comment extends Component {
     render() {
       return (
-        <li className="media">
-            <img className="mr-3" src={this.props.profilePic} alt=""></img>
-            <div className="media-body">
+        <Media as="li">
+            <img
+              width={64}
+              height={64}
+              className="mr-3"
+              src={this.props.profilePic}
+              alt="Generic placeholder"
+            />
+            <Media.Body>
                 <span className="text-muted float-right">
                     <small className="text-muted">{this.props.time}</small>
                 </span>
@@ -13,8 +20,8 @@ class Comment extends Component {
                 <p>
                     {this.props.text}
                 </p>
-            </div>
-        </li> 
+            </Media.Body>
+        </Media> 
       );
     }
 }
