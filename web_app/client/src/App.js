@@ -41,7 +41,8 @@ class App extends Component {
       <div className="App">
         <MainNavbar />
         <div className="container">
-          <div className="col"></div>
+          <div className="col">
+            </div>
           <div className="col">
               {
                 this.props.article_data.articles.map((group, index) => {
