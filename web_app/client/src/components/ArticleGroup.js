@@ -56,12 +56,12 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <img src={img.src} className="article-grp-img" alt={this.state.leftArticle.title}></img>
                 </div>
+                <div className="tag">
+                  <p>#impeachment</p>
+                </div>
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
-                            <div className="tag">
-                              <p>#impeachment</p>
-                            </div>
                             <Article key={0} title={this.state.leftArticle.title}
                                 content={this.state.leftArticle.description}
                                 source={this.state.leftArticle.source_name}
