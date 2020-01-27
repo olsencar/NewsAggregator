@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: red;
-  background-image: linear-gradient(to right, blue , red);
+  background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11));
 }
 
 .App-logo {
