@@ -1,82 +1,227 @@
 {
     "articles": [
-        [
-            {
-                "_id": "6a1b4280473a260c09e58864438cab98d44cf4aa54686ec2620c5ed4e05e8cc6b0e19ea3b146f2d043ad9c398c2ebe250c3b8289096a63cc08ebb0bb9a54aa03",
-                "bias": -1,
-                "category": "politics",
-                "description": "Several Republican senators said Monday they had not seen anything \"new\" that changed their stance on the impeachment inquiry into President Donald Trump and there wasn't anything impeachable in the President's behavior, despite dramatic testimony by senior State Department officials and other Trump administration aides over the past few days.    ",
-                "image": {
-                    "url": "https://cdn.cnn.com/cnnnext/dam/assets/190903121338-02-mitch-mcconnell-july-2019-super-169.jpg",
-                    "height": "619",
-                    "width": "1100"
+        {
+            "images": [
+                "https://static01.nyt.com/images/2020/01/19/us/politics/19dc-memo1/19dc-memo1-moth.jpg"
+            ],
+            "similar_articles": [
+                
+                {
+                    "_id": "5e20b1dba503bbde85ddf05c",
+                    "title": "Senate Passes Revised NAFTA, Sending Pact to Trump’s Desk",
+                    "description": "The Senate gave bipartisan approval to the United States-Mexico-Canada-Agreement as House lawmakers prepared to read aloud charges of high crimes and misdemeanors.",
+                    "source_name": "New York Times",
+                    "category": "politics",
+                    "rss_link": "https://www.nytimes.com/2020/01/16/us/politics/senate-usmca-approval-trump.html?emc=rss&partner=rss",
+                    "orig_link": "https://www.nytimes.com/2020/01/16/us/politics/senate-usmca-approval-trump.html",
+                    "publish_date": "2020-01-16T18:07:13.000Z",
+                    "images": [
+                        "https://static01.nyt.com/images/2020/01/16/us/politics/16dc-USMCA/merlin_167225052_b320472e-feda-4371-ac91-80f4ed8ceca0-moth.jpg"
+                    ],
+                    "bias": -1,
+                    "similarity_score": 0.26803457736968994
                 },
-                "orig_link": "https://www.cnn.com/2019/11/18/politics/republican-senators-reaction-impeachment/index.html",
-                "publish_date": {
-                    "$date": "2019-11-19T02:40:02.000+0000"
+                {
+                    "_id": "5e239ea03894b422aac34114",
+                    "description": "\"These articles of impeachment are constitutionally invalid on their face,\" the response to the Senate impeachment summons reads. \"They fail to allege any crime or violation of law whatsoever let alone high crimes and misdemeanors.\"",
+                    "source_name": "Breitbart",
+                    "title": "Trump Legal Team: Impeachment Articles 'Constitutionally Invalid'",
+                    "bias": 2,
+                    "category": "politics",
+                    "images": [
+                        "https://media.breitbart.com/media/2020/01/Sekulow-Cippollini.jpg"
+                    ],
+                    "orig_link": "https://www.breitbart.com/politics/2020/01/18/trump-legal-team-impeachment-articles-constitutionally-invalid/",
+                    "publish_date": "2020-01-18T23:08:50.000Z",
+                    "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/588U-09H7qQ/",
+                    "similarity_score": 0.2677745819091797
                 },
-                "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/_EIHS3cNdlI/index.html",
-                "source_name": "CNN",
-                "title": "GOP senators downplay developments in impeachment inquiry",
-                "comments": [ "Great point of view!", "A", "B", "C!"
-                ]
-            },
-            {
-                "_id": "3218de7c8c0b047fc4430b4cb6bb17eaceb45eea8aaba082a5e9251a6d5fce132670a6a7511bfcb0c3f33913472369777f3acdec601f0b363d8492e6d3f4f966",
-                "bias": 2,
-                "category": "politics",
-                "description": "The viewership of the nationally televised public impeachment hearings dropped more than one million viewers in its second session.",
-                "image": {
-                    "url": "https://media.breitbart.com/media/2019/11/yovanovitch-testimony-teary-eyed-getty.jpg",
-                    "height": "480",
-                    "width": "640"
+                {
+                    "_id": "5e20b1dba503bbde85ddefca",
+                    "title": "Rudy Giuliani says dismissal of impeachment articles should be allowed under Senate trial rules",
+                    "description": "President Trump’s personal lawyer Rudy Giuliani said Wednesday that dismissal of the articles of impeachment against the president should be allowed under the Senate's trial rules because the allegations don’t amount to high crimes and misdemeanors.",
+                    "source_name": "Fox",
+                    "category": "politics",
+                    "rss_link": "http://feeds.foxnews.com/~r/foxnews/politics/~3/CPNDQHt0YkI/rudy-giuliani-says-dismissal-of-impeachment-articles-should-be-allowed-under-impeachment-trial-rules",
+                    "orig_link": "https://www.foxnews.com/politics/rudy-giuliani-says-dismissal-of-impeachment-articles-should-be-allowed-under-impeachment-trial-rules",
+                    "publish_date": "2020-01-16T09:20:13.000Z",
+                    "images": [
+                        "https://static.foxnews.com/foxnews.com/content/uploads/2019/07/Rudy-Giuliani-Getty.jpg",
+                        "http://a57.foxnews.com60/60/Rudy-Giuliani-Getty.jpg"
+                    ],
+                    "bias": 1,
+                    "similarity_score": 0.2393060028553009
                 },
-                "orig_link": "https://www.breitbart.com/politics/2019/11/18/viewership-tanks-for-second-day-of-public-impeachment-hearings/",
-                "publish_date": {
-                    "$date": "2019-11-19T00:43:34.000+0000"
+                {
+                    "_id": "5e2269403894b422aa7d7ba2",
+                    "description": "The independent counsel whose investigation resulted in a Senate trial for President Bill Clinton has joined the team defending President Trump.",
+                    "source_name": "New York Times",
+                    "title": "Ken Starr Returns to the Impeachment Fray, This Time for the Defense",
+                    "bias": -1,
+                    "category": "politics",
+                    "images": [
+                        "https://static01.nyt.com/images/2020/01/17/us/politics/17dc-starr/17dc-starr-moth.jpg"
+                    ],
+                    "orig_link": "https://www.nytimes.com/2020/01/17/us/politics/ken-starr-impeachment-trump-clinton.html",
+                    "publish_date": "2020-01-18T01:25:23.000Z",
+                    "rss_link": "https://www.nytimes.com/2020/01/17/us/politics/ken-starr-impeachment-trump-clinton.html?emc=rss&partner=rss",
+                    "similarity_score": 0.19157099723815918
                 },
-                "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/yU12-_MHTB8/",
-                "source_name": "Breitbart",
-                "title": "Viewership Tanks for Second Round of Public Impeachment Hearings"
-            }
-        ],
-        [
-            {
-                "_id": "5aeb1592c953dd55b1553b698f981932880e2023bc67fb89ac6383fa0fb3bf2f4625b2c9110435207190dd3307ce40aeff5ce850de9eb4a67b3e065fab9dde6a",
-                "bias": 2,
-                "category": "politics",
-                "description": "Sen. Ron Johnson R-WI recalled that President Donald Trump had rejected a quid pro quo out of hand, and said Ukraine felt no pressure.",
-                "image": {
-                    "url": "https://media.breitbart.com/media/2018/01/Ron-Johnson-r-wi-12-17-getty.jpg",
-                    "height": "480",
-                    "width": "640"
+                {
+                    "_id": "5e20b1dba503bbde85ddef80",
+                    "title": "Senate Gave out Commemorative Pens in Clinton Impeachment Trial with Glaring Typo",
+                    "description": "The Republican-controlled Senate gave out commemorative pens during President Bill Clinton's impeachment trial in 1999.",
+                    "source_name": "Breitbart",
+                    "category": "politics",
+                    "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/6sYN6OYYVbI/",
+                    "orig_link": "https://www.breitbart.com/politics/2020/01/15/senate-gave-out-commemorative-pens-in-clinton-impeachment-trial-with-glaring-typo/",
+                    "publish_date": "2020-01-16T01:44:27.000Z",
+                    "images": [
+                        "https://media.breitbart.com/media/2020/01/Clinton-Impeachment-ticket-Getty-1024x768.jpg"
+                    ],
+                    "bias": 2,
+                    "similarity_score": 0.1828254759311676
+                }
+            ],
+            "_id": "5e24f01e3894b422aa12bb85",
+            "description": "Twenty-one years ago, President Bill Clinton was brought up on charges of high crimes and misdemeanors. But there were some big differences from what President Trump now faces.",
+            "source_name": "New York Times",
+            "title": "The Trial That Would Be a Template",
+            "bias": -1,
+            "category": "politics",
+            "orig_link": "https://www.nytimes.com/2020/01/19/us/politics/clinton-impeachment-trial.html",
+            "publish_date": "2020-01-20T00:00:39.000Z",
+            "rss_link": "https://www.nytimes.com/2020/01/19/us/politics/clinton-impeachment-trial.html?emc=rss&partner=rss"
+        },
+        {
+            "images": [
+                "https://static.foxnews.com/foxnews.com/content/uploads/2020/01/Bloomberg-3.jpg",
+                "http://a57.foxnews.com60/60/Bloomberg-3.jpg"
+            ],
+            "similar_articles": [
+                {
+                    "_id": "5e232e203894b422aab710b3",
+                    "description": "As America remembers Martin Luther King Jr. this weekend, it's hard to think about the slain reverend's shrinking number of surviving associates and immediate successors and not feel a distinct sadness.    ",
+                    "source_name": "CNN",
+                    "title": "The pain of losing civil rights icons in the Trump era",
+                    "bias": -1,
+                    "category": "politics",
+                    "images": [
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-super-169.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-large-11.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-vertical-large-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-video-synd-2.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-live-video.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-vertical-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-story-body.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-assign.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-hp-video.jpg"
+                    ],
+                    "orig_link": "https://www.cnn.com/2020/01/18/politics/john-lewis-elijah-cummings-civil-rights-icons-trump-era/index.html",
+                    "publish_date": "2020-01-18T12:51:57.000Z",
+                    "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/SHU5DgjyNKU/index.html",
+                    "similarity_score": 0.19789350032806396
                 },
-                "orig_link": "https://www.breitbart.com/national-security/2019/11/18/ron-johnson-trump-said-no-way-to-tying-ukraine-aid-to-investigations/",
-                "publish_date": {
-                    "$date": "2019-11-19T00:17:11.000+0000"
+                {
+                    "_id": "5e23746f3894b422aabf0a60",
+                    "description": "As America remembers Martin Luther King Jr. this weekend, it's hard to think about the slain reverend's shrinking number of surviving associates and immediate successors and not feel a distinct sadness.    ",
+                    "source_name": "CNN",
+                    "title": "Analysis: The pain of losing civil rights icons in the Trump era",
+                    "bias": -1,
+                    "category": "politics",
+                    "images": [
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-super-169.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-large-11.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-vertical-large-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-video-synd-2.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-live-video.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-vertical-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-story-body.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-assign.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191230083334-john-lewis-barack-obama-selma-2015-hp-video.jpg"
+                    ],
+                    "orig_link": "https://www.cnn.com/2020/01/18/politics/john-lewis-elijah-cummings-civil-rights-icons-trump-era/index.html",
+                    "publish_date": "2020-01-18T12:51:57.000Z",
+                    "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/SHU5DgjyNKU/index.html",
+                    "similarity_score": 0.19789350032806396
                 },
-                "rss_link": "http://feedproxy.google.com/~r/breitbart/~3/tab4THHDlXM/",
-                "source_name": "Breitbart",
-                "title": "Ron Johnson: Trump Said 'No Way' to Tying Ukraine Aid to Investigations"
-            },
-            {
-                "_id": "3f9b347dfc3bebe578a2d601008cdfac2b35274920ed7fca03d438436b2574225ff0804298007f649bfcf0c834ceb05f653dda65e83d42a479f8f3fcb90d5d56",
-                "bias": -1,
-                "category": "politics",
-                "description": "David Holmes, a top aide in the United States Embassy in Ukraine who overheard President Trump talking about the investigations he wanted the country to start, is scheduled to testify on Thursday.",
-                "image": {
-                    "url": "https://static01.nyt.com/images/2019/11/18/us/politics/18DC-IMPEACH/18DC-IMPEACH-jumbo.jpg?quality=90&auto=webp",
-                    "height": "151",
-                    "width": "151"
+                {
+                    "_id": "5e249bbf3894b422aa0a4d7b",
+                    "description": "Democratic presidential candidate Michael Bloomberg on Sunday is expected to release an economic justice plan during a stop in the Tulsa, Oklahoma, neighborhood that was known as \"Black Wall Street\" before it was destroyed in a 1921 riot and massacre.    ",
+                    "source_name": "CNN",
+                    "title": "Bloomberg to unveil economic justice plan at site of 'Black Wall Street' massacre",
+                    "bias": -1,
+                    "category": "politics",
+                    "images": [
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-super-169.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-large-11.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-vertical-large-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-video-synd-2.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-live-video.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-vertical-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-story-body.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-assign.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191206132445-02-michael-bloomberg-1125-hp-video.jpg"
+                    ],
+                    "orig_link": "https://www.cnn.com/2020/01/19/politics/michael-bloomberg-economic-justice-plan-oklahoma/index.html",
+                    "publish_date": "2020-01-19T17:22:11.000Z",
+                    "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/-2ANHV2whkw/index.html",
+                    "similarity_score": 0.21488167345523834
                 },
-                "orig_link": "https://www.nytimes.com/2019/11/18/us/politics/trump-impeachment.html",
-                "publish_date": {
-                    "$date": "2019-11-18T22:24:35.000+0000"
+                {
+                    "_id": "5e215e103894b422aa4c8ac2",
+                    "description": "COLUMBUS, Ohio AP - The Ohio History Center is offering special hours and programs Monday to mark the Martin Luther King Jr. Day holiday. The museum, located in Columbus, will be open from 10 a.m. to 5 p.m. Programming includes a talk by an historian on the slain civil rights ...",
+                    "source_name": "Washington Times",
+                    "title": "Ohio history museum to offer special MLK Jr. Day programs",
+                    "bias": 1,
+                    "category": "politics",
+                    "images": [],
+                    "orig_link": "https://www.washingtontimes.com/news/2020/jan/17/ohio-history-museum-to-offer-special-mlk-jr-day-pr/?utm_source=RSS_Feed&utm_medium=RSS",
+                    "publish_date": "2020-01-17T06:30:07.000Z",
+                    "rss_link": "https://www.washingtontimes.com/news/2020/jan/17/ohio-history-museum-to-offer-special-mlk-jr-day-pr/?utm_source=RSS_Feed&utm_medium=RSS",
+                    "similarity_score": 0.206614151597023
                 },
-                "rss_link": "https://www.nytimes.com/2019/11/18/us/politics/trump-impeachment.html?emc=rss&partner=rss",
-                "source_name": "New York Times",
-                "title": "Impeachment Inquiry Calls Aide Who Overheard Trump Asking for Ukraine Investigations"
-            }
-        ]
+                {
+                    "_id": "5e249bbf3894b422aa0a4d7f",
+                    "description": "Presidential candidate Pete Buttigieg will now attend Martin Luther King Day celebrations in Columbia, South Carolina, on Monday after facing pressure from local Democrats in the state over his initial plans to miss events commemorating the life of the slain civil rights leader there.    ",
+                    "source_name": "CNN",
+                    "title": "Pete Buttigieg now attending South Carolina MLK Day events after criticism from Democrats",
+                    "bias": -1,
+                    "category": "politics",
+                    "images": [
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-super-169.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-large-11.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-vertical-large-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-video-synd-2.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-live-video.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-vertical-gallery.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-story-body.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-t1-main.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-assign.jpg",
+                        "https://cdn.cnn.com/cnnnext/dam/assets/191216143605-15-pete-buttigieg-lead-image-hp-video.jpg"
+                    ],
+                    "orig_link": "https://www.cnn.com/2020/01/19/politics/buttigieg-south-carolina-martin-luther-king-day-democrats/index.html",
+                    "publish_date": "2020-01-19T15:19:32.000Z",
+                    "rss_link": "http://rss.cnn.com/~r/rss/cnn_allpolitics/~3/-LA8u2eC77U/index.html",
+                    "similarity_score": 0.25041747093200684
+                }
+            ],
+            "_id": "5e24fe2e3894b422aa1416b8",
+            "description": "Presidential candidate Michael Bloomberg on Sunday, the day before the national holiday honoring Martin Luther King Jr., spoke out against racial income inequality in America, as the billionaire Democrat outlined an economic proposal aimed at increasing the financial opportunities for black communities across the nation.",
+            "source_name": "Fox",
+            "title": "Bloomberg, in Oklahoma, pushes plan to fight racial income inequality",
+            "bias": 1,
+            "category": "politics",
+            "orig_link": "https://www.foxnews.com/politics/michael-bloomberg-oklahoma-racial-income-inequality",
+            "publish_date": "2020-01-20T01:00:02.000Z",
+            "rss_link": "http://feeds.foxnews.com/~r/foxnews/politics/~3/CPm54VPP8Lg/michael-bloomberg-oklahoma-racial-income-inequality"
+        }
     ]
 }

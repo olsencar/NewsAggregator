@@ -15,8 +15,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getArticleById('5e23acaf3894b422aac4baff');
-    this.getArticle("Rod Rosenstein says he made call to release Peter Strzok-Lisa Page texts", null, "CNN")
+    // this.getArticleById('5e24f01e3894b422aa12bb85');
+    this.getArticleById('5e24fe2e3894b422aa1416b8')
   }
 
   async getArticleById(id) {
@@ -40,24 +40,32 @@ class App extends Component {
     return (
       <div className="App">
         <MainNavbar />
-        {
-            this.props.article_data.articles.map((group, index) => {
-              // search for correct comment
-              // iterate over each comment
-              // default comment is null
-              var group_comments = []
-              for (var i = 0; i < this.props.comment_data.comments.length; i++){
-                if (
-                  (this.props.comment_data.comments[i].primary_id === group[0]._id) && (this.props.comment_data.comments[i].secondary_id === group[1]._id) ||
-                  (this.props.comment_data.comments[i].primary_id === group[1]._id) && (this.props.comment_data.comments[i].secondary_id === group[0]._id)
-                  ){
-                  //set group comments to be the group of comments under this id pairing
-                  group_comments = this.props.comment_data.comments[i].group_comments
+        <div className="container">
+          <div className="col"></div>
+          <div className="col">
+              {
+                this.props.data.articles.map((article, index) => {
+                // search for correct comment
+                // iterate over each comment
+                // default comment is null
+                var group_comments = []
+                for (var i = 0; i < this.props.comment_data.comments.length; i++){
+                  if (
+                    (this.props.comment_data.comments[i].primary_id === group[0]._id) && (this.props.comment_data.comments[i].secondary_id === group[1]._id) ||
+                    (this.props.comment_data.comments[i].primary_id === group[1]._id) && (this.props.comment_data.comments[i].secondary_id === group[0]._id)
+                    ){
+                    //set group comments to be the group of comments under this id pairing
+                    group_comments = this.props.comment_data.comments[i].group_comments
+                  }
                 }
-              }
-             return <ArticleGroup key={index} article_data={group} comment_data={group_comments}/>
-          })
-        }
+                return (
+                  <ArticleGroup key={index} article_data={group} comment_data={group_comments}/>
+                )
+              })
+            }
+          </div>
+          <div className="col"></div>
+        </div>
       </div>
     )
   }
