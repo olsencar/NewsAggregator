@@ -17,6 +17,9 @@ class Article extends Component {
                 <div className="card-body">
                     <h5 className="card-title">{this.props.title}</h5>
                     <p className="card-text">{this.props.content}</p>
+                    <div className="tag">
+                      <p>#impeachment</p>
+                    </div>
                 </div>
                 <div className="card-footer text-muted">
                     <span className={"card-link banner-source banner-source-" + this.getPartyColor(this.props.bias)}>{this.props.source}</span>
@@ -26,7 +29,7 @@ class Article extends Component {
                 {/* <button type="button" className="btn btn-primary">Upvote</button>
                 <button type="button" className="btn btn-danger">Downvote</button> */}
             </div>
-            
+
         )
     }
 }

@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: red;
+  background-image: linear-gradient(to right, blue , red);
 }
 
 .App-logo {
@@ -74,4 +76,11 @@ body{margin-top:20px;}
 
 .article {
   border: none !important;
+}
+
+.tag {
+  font-family: sans-serif;
+  font-style: italic;
+  background-color: #E64141;
+  width: 35%;
 }
