@@ -59,7 +59,10 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
-                            <Article key={0} title={this.state.leftArticle.title} 
+                            <div className="tag">
+                              <p>#impeachment</p>
+                            </div>
+                            <Article key={0} title={this.state.leftArticle.title}
                                 content={this.state.leftArticle.description}
                                 source={this.state.leftArticle.source_name}
                                 bias={this.state.leftArticle.bias}

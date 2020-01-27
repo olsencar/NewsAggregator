@@ -81,6 +81,8 @@ body{margin-top:20px;}
 .tag {
   font-family: sans-serif;
   font-style: italic;
-  background-color: #E64141;
-  width: 35%;
+  background-color: #A9A9A9;
+  width: 120px;
+  height: 20px;
+  margin-left: 20px;
 }
