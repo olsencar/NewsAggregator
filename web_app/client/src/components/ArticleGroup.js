@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
 import Article from './Article';
 import Img from 'react-image';
+import CommentSection from './CommentSection'
+import Accordion from 'react-bootstrap/Accordion'
+import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
 
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
         const chosenArticle = this.getSimilarArticleToDisplay(props);
-        if (chosenArticle.bias === this.props.data.bias) {
+        if (chosenArticle.bias === this.props.article_data.bias) {
             this.props.removeArticleGroup(this.props.id);
         }
 
         this.state = {
-            leftArticle: this.props.data.bias <= chosenArticle.bias ? this.props.data : chosenArticle,
-            rightArticle: this.props.data.bias > chosenArticle.bias ? this.props.data : chosenArticle,
+            leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
+            rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
             image: null
         };
     }
@@ -20,21 +24,21 @@ class ArticleGroup extends Component {
     componentWillReceiveProps(newProps) {
         const chosenArticle = this.getSimilarArticleToDisplay(newProps);
 
-        if (chosenArticle.bias === newProps.data.bias) {
+        if (chosenArticle.bias === newProps.article_data.bias) {
             newProps.removeArticleGroup(newProps.id);
         }
 
         this.setState({
-            leftArticle: newProps.data.bias <= chosenArticle.bias ? newProps.data : chosenArticle,
-            rightArticle: newProps.data.bias > chosenArticle.bias ? newProps.data : chosenArticle,
+            leftArticle: newProps.article_data.bias <= chosenArticle.bias ? newProps.article_data : chosenArticle,
+            rightArticle: newProps.article_data.bias > chosenArticle.bias ? newProps.article_data : chosenArticle,
         });
     }
 
     getSimilarArticleToDisplay = (props) => {
-        const similarArticles = props.data.similar_articles;
+        const similarArticles = props.article_data.similar_articles;
         let chosenArticle = similarArticles[0];
         for (let i = 0; i < similarArticles.length; i++) {
-            if (similarArticles[i].bias !== props.data.bias) {
+            if (similarArticles[i].bias !== props.article_data.bias) {
                 chosenArticle = similarArticles[i];
                 break;
             }
@@ -99,11 +103,23 @@ class ArticleGroup extends Component {
                         </div>
                     </div>
                 </div>
-
+                <div className="container bg-white">
+                    <Accordion>
+                      <Card>
+                        <Card.Header>
+                          <Accordion.Toggle as={Button} variant="Secondary" eventKey="0">
+                            Discussion
+                          </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <CommentSection comments={this.props.comment_data}/>
+                        </Accordion.Collapse>
+                      </Card>
+                    </Accordion>
+                </div>
             </div>
         )
     }
-        
 }
 
 export default ArticleGroup;
