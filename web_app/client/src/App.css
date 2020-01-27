@@ -48,6 +48,26 @@
   margin-bottom: 10px;
 }
 
+/*comment section*/
+body{margin-top:20px;}
+
+.comment-wrapper .panel-body {
+    max-height:650px;
+    overflow:auto;
+}
+
+.comment-wrapper .media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+.comment-wrapper .media-list .media {
+    border-bottom:1px dashed #efefef;
+    margin-bottom:25px;
+}
+/*end comment section*/
+
 .article-container {
   padding-left: 10px !important;
 }
