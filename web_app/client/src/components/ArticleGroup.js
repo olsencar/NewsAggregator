@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import Article from './Article'
 import CommentSection from './CommentSection'
+import Accordion from 'react-bootstrap/Accordion'
+import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -34,7 +37,18 @@ class ArticleGroup extends Component {
                     </div>
                 </div>
                 <div className="container bg-white">
-                    <CommentSection comments={this.props.comment_data}/>
+                    <Accordion>
+                      <Card>
+                        <Card.Header>
+                          <Accordion.Toggle as={Button} variant="Secondary" eventKey="0">
+                            Discussion
+                          </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <CommentSection comments={this.props.comment_data}/>
+                        </Accordion.Collapse>
+                      </Card>
+                    </Accordion>
                 </div>
             </div>
         )

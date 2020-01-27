@@ -3,6 +3,7 @@ import './App.css';
 import ArticleGroup from './components/ArticleGroup.js';
 import MainNavbar from './components/MainNavbar'
 import articleService from './services/articleService';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -46,12 +47,15 @@ class App extends Component {
               // default comment is null
               var group_comments = []
               for (var i = 0; i < this.props.comment_data.comments.length; i++){
-                if ((this.props.comment_data.comments[i].primary_id === group[0]._id) && (this.props.comment_data.comments[i].secondary_id === group[1]._id)){
+                if (
+                  (this.props.comment_data.comments[i].primary_id === group[0]._id) && (this.props.comment_data.comments[i].secondary_id === group[1]._id) ||
+                  (this.props.comment_data.comments[i].primary_id === group[1]._id) && (this.props.comment_data.comments[i].secondary_id === group[0]._id)
+                  ){
                   //set group comments to be the group of comments under this id pairing
                   group_comments = this.props.comment_data.comments[i].group_comments
                 }
               }
-              return <ArticleGroup key={index} article_data={group} comment_data={group_comments}/>
+             return <ArticleGroup key={index} article_data={group} comment_data={group_comments}/>
           })
         }
       </div>

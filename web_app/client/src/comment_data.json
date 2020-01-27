@@ -7,13 +7,15 @@
             "group_comments": [
                 {
                     "user": "Aalok1998",
-                    "date": "1/21/2020",
-                    "text": "Hello, this is my comment."
+                    "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                    "time": "1/21/2020",
+                    "text": "Hello, this is my comment. magna arcu rutrum diam, a imperdiet sapien nisl et lectus. Phasellus tristique elit volutpat, congue velit nec, consequat lectus."
                 },
                 {
                     "user": "Carter3456",
-                    "date": "1/25/2020",
-                    "text": "Hello, this is a comment made by Carter."
+                    "profilePic": "https://bootdey.com/img/Content/user_3.jpg",
+                    "time": "1/25/2020",
+                    "text": "Hello, this is a comment made by Carter.  Aenean ut diam mauris. Mauris in pulvinar justo!"
                 }
             ]
         },
@@ -23,13 +25,15 @@
             "group_comments": [
                 {
                     "user": "MeganL45",
-                    "date": "2/15/2020",
-                    "text": "Hello, this is Megan here."
+                    "profilePic": "https://bootdey.com/img/Content/user_2.jpg",
+                    "time": "2/15/2020",
+                    "text": "Hello, this is Megan here. Aliquam erat volutpat. Phasellus ut ligula libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut tellus est, mattis at mauris et, euismod feugiat est."
                 },
                 {
                     "user": "RaceM934",
-                    "date": "1/09/2020",
-                    "text": "Hello, this is Race."
+                    "profilePic": "https://bootdey.com/img/Content/user_3.jpg",
+                    "time": "1/09/2020",
+                    "text": "Hello, this is Race. Proin nec diam erat. Quisque nec commodo neque. Donec auctor mi id eleifend tincidunt. Integer nec sollicitudin tellus, sollicitudin condimentum neque. Donec nec dolor fringilla, condimentum urna pellentesque, mattis elit."
                 }
             ]
         }
