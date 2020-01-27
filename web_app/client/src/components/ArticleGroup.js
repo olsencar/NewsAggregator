@@ -8,17 +8,17 @@ import Button from 'react-bootstrap/Button'
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
-        let similarArticles = this.props.data.similar_articles;
+        let similarArticles = this.props.article_data.similar_articles;
         let chosenArticle = similarArticles[0];
         for (let i = 0; i < similarArticles.length; i++) {
-            if (similarArticles[i].bias !== this.props.data.bias) {
+            if (similarArticles[i].bias !== this.props.article_data.bias) {
                 chosenArticle = similarArticles[i];
                 break;
             }
         }
         this.state = {
-            leftArticle: this.props.data.bias <= chosenArticle.bias ? this.props.data :chosenArticle,
-            rightArticle: this.props.data.bias > chosenArticle.bias ? this.props.data : chosenArticle
+            leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data :chosenArticle,
+            rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle
         };
     }
 

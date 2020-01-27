@@ -12,7 +12,7 @@ class Comment extends Component {
               src={this.props.profilePic}
               alt="Generic placeholder"
             />
-            <Media.Body>
+            <div className="text-left">
                 <span className="text-muted float-right">
                     <small className="text-muted">{this.props.time}</small>
                 </span>
@@ -20,7 +20,7 @@ class Comment extends Component {
                 <p>
                     {this.props.text}
                 </p>
-            </Media.Body>
+            </div>
         </Media> 
       );
     }
