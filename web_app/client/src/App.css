@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: red;
+  background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11));
 }
 
 .App-logo {
@@ -46,7 +48,28 @@
   /* margin-left: auto;
   margin-right: auto; */
   margin-bottom: 10px;
+  margin-left: 300px;
 }
+
+/*comment section*/
+body{margin-top:20px;}
+
+.comment-wrapper .panel-body {
+    max-height:650px;
+    overflow:auto;
+}
+
+.comment-wrapper .media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+.comment-wrapper .media-list .media {
+    border-bottom:1px dashed #efefef;
+    margin-bottom:25px;
+}
+/*end comment section*/
 
 .article-container {
   padding-left: 10px !important;
@@ -54,4 +77,12 @@
 
 .article {
   border: none !important;
+}
+
+.tag {
+  font-family: sans-serif;
+  font-style: italic;
+  background-color: #A9A9A9;
+  width: 120px;
+  height: 20px;
 }

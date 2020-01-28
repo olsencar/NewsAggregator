@@ -1,20 +1,24 @@
 import React, { Component } from 'react'
 import Article from './Article'
+import CommentSection from './CommentSection'
+import Accordion from 'react-bootstrap/Accordion'
+import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
 
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
-        let similarArticles = this.props.data.similar_articles;
+        let similarArticles = this.props.article_data.similar_articles;
         let chosenArticle = similarArticles[0];
         for (let i = 0; i < similarArticles.length; i++) {
-            if (similarArticles[i].bias !== this.props.data.bias) {
+            if (similarArticles[i].bias !== this.props.article_data.bias) {
                 chosenArticle = similarArticles[i];
                 break;
             }
         }
         this.state = {
-            leftArticle: this.props.data.bias <= chosenArticle.bias ? this.props.data :chosenArticle,
-            rightArticle: this.props.data.bias > chosenArticle.bias ? this.props.data : chosenArticle
+            leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data :chosenArticle,
+            rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle
         };
     }
 
@@ -52,10 +56,11 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <img src={img.src} className="article-grp-img" alt={this.state.leftArticle.title}></img>
                 </div>
+                <span className="badge badge-secondary">#impeachment</span>
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
-                            <Article key={0} title={this.state.leftArticle.title} 
+                            <Article key={0} title={this.state.leftArticle.title}
                                 content={this.state.leftArticle.description}
                                 source={this.state.leftArticle.source_name}
                                 bias={this.state.leftArticle.bias}
@@ -70,11 +75,23 @@ class ArticleGroup extends Component {
                         </div>
                     </div>
                 </div>
-
+                <div className="container bg-white">
+                    <Accordion>
+                      <Card>
+                        <Card.Header>
+                          <Accordion.Toggle as={Button} variant="Secondary" eventKey="0">
+                            Discussion
+                          </Accordion.Toggle>
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <CommentSection comments={this.props.comment_data}/>
+                        </Accordion.Collapse>
+                      </Card>
+                    </Accordion>
+                </div>
             </div>
         )
     }
-        
 }
 
 export default ArticleGroup;

@@ -26,7 +26,7 @@ class Article extends Component {
                 {/* <button type="button" className="btn btn-primary">Upvote</button>
                 <button type="button" className="btn btn-danger">Downvote</button> */}
             </div>
-            
+
         )
     }
 }
