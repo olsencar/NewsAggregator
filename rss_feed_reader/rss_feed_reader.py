@@ -11,15 +11,13 @@ from threading import Thread
 import os
 import boto3
 from base64 import b64decode
-# from sklearn.feature_extraction.text import CountVectorizer
-# from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-# from sklearn.feature_extraction.text import TfidfTransformer
 import logging
 import urllib
 from dateutil import parser
 from text_processing import pre_process, remove_html, get_similar_articles, articles_to_docs, create_corpus, create_dictionary
 from gensim.similarities import Similarity
 from gensim.models import TfidfModel
+from gensim.summarization import keywords
 from datetime import datetime, timedelta
 from sys import platform
 
@@ -36,76 +34,10 @@ else:
 #****************************************************
 # EXTRACTION OF KEYWORDS
 #****************************************************
-# ** Credit to https://www.freecodecamp.org/news/how-to-extract-keywords-from-text-with-tf-idf-and-pythons-scikit-learn-b2a0f3d7e667/
-# ** for the code and explanation of how to implement this
 
-# generate the tf_idf for all of the documents
-# returns the transformer, feature names and the count vectorizer
-# def generate_tf_idf(docs):
-#     cv = CountVectorizer(max_df=0.85, stop_words=ENGLISH_STOP_WORDS, max_features=10000)
-#     word_count_vector = cv.fit_transform(docs)
-#     transformer = TfidfTransformer(smooth_idf=True, use_idf=True)
-#     transformer.fit(word_count_vector)
-#     feature_names = cv.get_feature_names()
-
-#     return (transformer, feature_names, cv)
-
-# Sorts a coo matrix based on the score it received    
-# def sort_coo(coo_matrix):
-#     tuples = zip(coo_matrix.col, coo_matrix.data)
-#     return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
-
-# # Extracts the top (n) keywords from a list of keywords
-# def extract_topn_from_vector(feature_names, sorted_items, topn=10):
-#     sorted_items = sorted_items[:topn]
-
-#     scores = []
-#     feature_vals = []
-
-#     for idx, score in sorted_items:
-#         # Keep track of feature name and its corresponding score
-#         scores.append(round(score, 3))
-#         feature_vals.append(feature_names[idx])
-
-#     #create a tuples of feature,score
-#     #results = zip(feature_vals,score_vals)
-#     results= {}
-#     for idx in range(len(feature_vals)):
-#         results[feature_vals[idx]]=scores[idx]
-    
-#     return results
-
-# # Returns a list of keywords for a specific document
-# def get_keywords(cv, transformer, feature_names, text):
-#     # generate tf_idf for the text
-#     tf_idf_vector = transformer.transform(cv.transform([text]))
-
-#     # sort the tf_idf vectors by desc order of scores
-#     sorted_items = sort_coo(tf_idf_vector.tocoo())
-
-#     # extract only the top 10
-#     keywords = extract_topn_from_vector(feature_names, sorted_items, 15)
-
-#     # Convert keywords array into something useful in DynamoDB
-#     kw_obj_arr = []
-#     for k in keywords:
-#         kw_obj_arr.append(
-#             {
-#                 'keyword': k,
-#                 'score': Decimal(keywords[k]).__round__(3)
-#             }
-#         )
-
-#     return kw_obj_arr
-
-# Generates the 512 character source, title and url
-
-def generate_hash(source, title, url):
-    combined_str = "{}{}{}".format(source, title, url)
-    hash_object = hashlib.sha512(combined_str.encode())
-    hex_digest = hash_object.hexdigest()
-    
-    return hex_digest
+# Returns a list of keywords for a specific document
+def get_keywords(text):
+    return keywords(text, split=True, words=5)
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -160,13 +92,27 @@ def parse_feed(source_name, feed_info, text, results, idx):
         for item in feed['entries']:
             # only parse if the item has a publish date
             if ('published' in item):
-                # pre process the description to remove unnecessary characters
-                # desc_for_kw_processing = pre_process(item['description'])
-
                 # remove the html tags from the description
                 # this description is used in the UI, so keep case and special characters in it.
-                desc = remove_html(item['description'])
+                desc = remove_html(item['description'])                    
+                tags = []
+                if (feed_info['hasTags']):
+                    politics = False
+                    for tag in item.get('tags', []):
+                        if (tag.term.lower() == 'politics'):
+                            politics = True
+                        tags.append(tag.term)
 
+                    # If we did not find a politics tag, then this article
+                    # is not about politics and we should not process it.
+                    if (not politics):
+                        continue
+                else:
+                     # pre process the description to remove unnecessary characters
+                    desc_for_kw_processing = pre_process(item['description'], True)
+                    tags = get_keywords(desc_for_kw_processing)
+
+                print(tags)
                 # only add if we have a news story with a description
                 if (len(desc) > 10):
                     stories.append(
@@ -179,18 +125,12 @@ def parse_feed(source_name, feed_info, text, results, idx):
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
                             'images': getArticleImages(item),
+                            'tags': tags,
                             'bias': feed_info['bias']
                         }
                     )
                     
-                    # docs.append(desc_for_kw_processing)
-        
-        # (transformer, feature_names, cv) = generate_tf_idf(docs)
-        # for story in stories:
-        #     story['keywords_w_scores'] = get_keywords(cv, transformer, feature_names, story['description'])
-        #     for kw in story['keywords_w_scores']:
-        #         story['keywords'].append(kw['keyword'])
-
+                    docs.append(desc_for_kw_processing)
     except Exception as error:
         logger.error(error.with_traceback())
         results[idx] = []
@@ -300,6 +240,7 @@ def main():
                                 'publish_date': story['publish_date'],
                                 'similar_articles': similar_articles,
                                 'images': story['images'],
+                                'tags': story['tags'],
                                 'bias': story['bias']
                             } 
                         }, 

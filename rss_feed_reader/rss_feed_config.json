@@ -6,11 +6,13 @@
                 {
                     "category": "politics",
                     "url": "http://feeds.foxnews.com/foxnews/politics",
-                    "bias": 1
+                    "bias": 1,
+                    "hasTags": true
                 },
                 {
                     "category": "latest",
-                    "url": "http://feeds.foxnews.com/foxnews/latest"
+                    "url": "http://feeds.foxnews.com/foxnews/latest",
+                    "hasTags": true
                 }
             ]
         },
@@ -20,11 +22,13 @@
                 {
                     "category": "politics",
                     "url": "http://rss.cnn.com/rss/cnn_allpolitics.rss",
-                    "bias": -1
+                    "bias": -1,
+                    "hasTags": false
                 },
                 {
                     "category": "latest",
-                    "url": "http://rss.cnn.com/rss/cnn_latest.rss"
+                    "url": "http://rss.cnn.com/rss/cnn_latest.rss",
+                    "hasTags": false
                 }
             ]
         },
@@ -34,7 +38,8 @@
                 {
                     "category": "politics",
                     "url": "https://www.huffingtonpost.com/section/politics/feed",
-                    "bias": -2
+                    "bias": -2,
+                    "hasTags": false
                 }
             ]
         },
@@ -44,7 +49,8 @@
                 {
                     "category": "politics",
                     "url": "http://feeds.feedburner.com/breitbart",
-                    "bias": 2
+                    "bias": 2,
+                    "hasTags": true
                 }
             ]
         },
@@ -54,7 +60,8 @@
                 {
                     "category": "politics",
                     "url": "https://www.washingtontimes.com/rss/headlines/news/politics/",
-                    "bias": 1
+                    "bias": 1,
+                    "hasTags": false
                 }
             ]
         },
@@ -64,7 +71,8 @@
                 {
                     "category": "politics",
                     "url": "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
-                    "bias": -1
+                    "bias": -1,
+                    "hasTags": true
                 }
             ]
         },
@@ -74,7 +82,8 @@
                 {
                     "category": "politics",
                     "url": "https://www.dailymail.co.uk/news/us-politics/index.rss",
-                    "bias": 2
+                    "bias": 2,
+                    "hasTags": false
                 }
             ]
         },
@@ -84,7 +93,8 @@
                 {
                     "category": "politics",
                     "url": "https://slate.com/feeds/news-and-politics.rss",
-                    "bias": -2
+                    "bias": -2,
+                    "hasTags": false
                 }
             ]
         }
