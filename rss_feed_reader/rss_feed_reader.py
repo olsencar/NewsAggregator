@@ -37,7 +37,7 @@ else:
 
 # Returns a list of keywords for a specific document
 def get_keywords(text):
-    return keywords(text, split=True, words=5)
+    return keywords(text, split=True)
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -112,7 +112,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
                     desc_for_kw_processing = pre_process(item['description'], True)
                     tags = get_keywords(desc_for_kw_processing)
 
-                print(tags)
                 # only add if we have a news story with a description
                 if (len(desc) > 10):
                     stories.append(
