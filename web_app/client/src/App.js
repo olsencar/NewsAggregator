@@ -17,7 +17,7 @@ class App extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getRecentArticles();
   }
 
@@ -104,7 +104,6 @@ class App extends Component {
       <div className="App">
         <MainNavbar />
         <div className="container">
-          <div className="col"></div>
           <div className="col">
             {this.state.articlesToDisplay}
             {paginationElement}
