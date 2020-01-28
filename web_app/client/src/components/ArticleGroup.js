@@ -56,9 +56,7 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <img src={img.src} className="article-grp-img" alt={this.state.leftArticle.title}></img>
                 </div>
-                <div className="tag">
-                  <p>#impeachment</p>
-                </div>
+                <span className="badge badge-secondary">#impeachment</span>
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
