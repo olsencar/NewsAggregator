@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.insert(1, "../")
 import rss_feed_reader as rss
 
 class TestRssReader(unittest.TestCase):
