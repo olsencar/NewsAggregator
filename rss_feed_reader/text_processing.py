@@ -79,6 +79,7 @@ def pre_process(text, html=False):
     :return:
         Returns the pre-processed text.
     """
+    
     # remove html tags
     if (html):
         text = remove_html(text)
