@@ -37,7 +37,9 @@ else:
 
 # Returns a list of keywords for a specific document
 def get_keywords(text):
-    return keywords(text, split=True)
+    # In the meantime, we need to set the ratio to a higher value.
+    # We can later switch this to use the `words` parameter once a bug is fixed in GenSim Keywords
+    return keywords(text, ratio=.4, split=True)
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -88,7 +90,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
         feed = feedparser.parse(text)
         stories = []
 
-        docs = []
         for item in feed['entries']:
             # only parse if the item has a publish date
             if ('published' in item):
@@ -109,7 +110,7 @@ def parse_feed(source_name, feed_info, text, results, idx):
                         continue
                 else:
                      # pre process the description to remove unnecessary characters
-                    desc_for_kw_processing = pre_process(item['description'], True)
+                    desc_for_kw_processing = pre_process(desc, False)
                     tags = get_keywords(desc_for_kw_processing)
 
                 # only add if we have a news story with a description
@@ -129,7 +130,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
                         }
                     )
                     
-                    docs.append(desc_for_kw_processing)
     except Exception as error:
         logger.error(error.with_traceback())
         results[idx] = []
@@ -154,7 +154,7 @@ def openMongoClient():
     user = urllib.parse.quote(decrypted_user)
     pwd = urllib.parse.quote(decrypted_pw)
     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-
+  
 def main():
     feeds = []
     with open("./rss_feed_config.json", "r") as rss_feeds:
