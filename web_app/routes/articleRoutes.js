@@ -1,6 +1,18 @@
 const mongoose = require('mongoose'); 
 const Article = mongoose.model('Article');
 
+getMostSimilarArticle = (article) => {
+    const similarArticles = article.similar_articles;
+    let chosenArticle = similarArticles[0];
+    for (let i = 0; i < similarArticles.length; i++) {
+        if (similarArticles[i].bias !== article.bias) {
+            chosenArticle = similarArticles[i];
+            break;
+        }
+    }
+    return chosenArticle;
+}
+
 module.exports = (app) => {
     app.get('/api/articles/byId/:id', async (req, res) => {
         const id = req.params.id;
@@ -21,7 +33,13 @@ module.exports = (app) => {
         try {
             let articles = await Article.find({
                 publish_date: {$gt: beginDate}
+            }).lean();
+
+            articles.forEach((article) => {
+                article.most_similar_article = getMostSimilarArticle(article);
             });
+            articles = articles.filter((doc) => (doc.most_similar_article.bias !== doc.bias && doc.most_similar_article.similarity_score > .20));
+
             return res.status(200).send(articles);
         } catch (error) {
             console.error(error);
