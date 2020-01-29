@@ -90,7 +90,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
         feed = feedparser.parse(text)
         stories = []
 
-        docs = []
         for item in feed['entries']:
             # only parse if the item has a publish date
             if ('published' in item):
@@ -131,7 +130,6 @@ def parse_feed(source_name, feed_info, text, results, idx):
                         }
                     )
                     
-                    docs.append(desc_for_kw_processing)
     except Exception as error:
         logger.error(error.with_traceback())
         results[idx] = []
