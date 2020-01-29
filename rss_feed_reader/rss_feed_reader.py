@@ -216,7 +216,7 @@ def main():
             # If the item does not exist in the DB or its similar articles list has 2 or less items
             #   then update/insert the item in the DB
             
-            if ( item is None or "similar_articles" not in item or item["similar_articles"][0]["similarity_score"] < 0.2):
+            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < 0.2)):
                 similar_articles = get_similar_articles(
                     pre_process(story['description']),
                     similarity_matrix,
