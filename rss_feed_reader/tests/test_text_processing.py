@@ -1,6 +1,6 @@
 import unittest
 import sys
-sys.path.append('../')
+sys.path.insert(1, '../')
 import text_processing
 from numpy import float64, float32, int64, int32
 
