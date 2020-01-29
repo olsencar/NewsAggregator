@@ -65,7 +65,7 @@ def remove_html(text):
     tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
     return tmp
 
-def pre_process(text, remove_html=False):
+def pre_process(text, html=False):
     """
 
     Pre-processes a piece of text by removing all characters except for a-z and the space character.
@@ -73,20 +73,20 @@ def pre_process(text, remove_html=False):
     :param text: 
         The piece of `text` to pre-process.
     
-    :param remove_html:
+    :param html:
         True if `text` contains HTML. False by default.
     
     :return:
         Returns the pre-processed text.
     """
     # remove html tags
-    if (remove_html):
+    if (html):
         text = remove_html(text)
     #remove special characters
     text = text.lower()
     text = special_chars.sub("", text)
     text = re.sub(r"\s{2,}", " ", text)
-    text = text.rstrip()
+    text = text.strip()
 
     return text
 
