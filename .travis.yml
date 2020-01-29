@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.7"
+cache: pip
+install:
+  - pip install -r ./rss_feed_reader/requirements.txt
+script:
+  - python -m unittest ./rss_feed_reader/tests/test_rss_feed_reader.py ./rss_feed_reader/tests/test_text_processing.py
