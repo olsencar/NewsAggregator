@@ -73,7 +73,7 @@ def pre_process(text, html=False):
     :param text: 
         The piece of `text` to pre-process.
     
-    :param remove_html:
+    :param html:
         True if `text` contains HTML. False by default.
     
     :return:
@@ -86,7 +86,7 @@ def pre_process(text, html=False):
     text = text.lower()
     text = special_chars.sub("", text)
     text = re.sub(r"\s{2,}", " ", text)
-    text = text.rstrip()
+    text = text.strip()
 
     return text
 
