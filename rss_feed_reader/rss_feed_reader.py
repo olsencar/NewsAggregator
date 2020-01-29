@@ -226,7 +226,7 @@ def main():
                     publish_date=story["publish_date"],
                     topn=5
                 )
-                if ("similar_articles" in item):
+                if (item is not None and "similar_articles" in item):
                     similar_articles.extend(item["similar_articles"])
                     similar_articles = sorted(similar_articles, key=lambda article: article["similarity_score"], reverse=True)[:5]
 
