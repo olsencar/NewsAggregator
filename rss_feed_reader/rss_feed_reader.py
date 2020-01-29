@@ -216,7 +216,7 @@ def main():
             # If the item does not exist in the DB or its similar articles list has 2 or less items
             #   then update/insert the item in the DB
             
-            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) < 3)):
+            if ( item is None or "similar_articles" not in item or item["similar_articles"][0]["similarity_score"] < 0.2)):
                 similar_articles = get_similar_articles(
                     pre_process(story['description']),
                     similarity_matrix,
@@ -226,10 +226,14 @@ def main():
                     publish_date=story["publish_date"],
                     topn=5
                 )
+                if ("similar_articles" in item):
+                    similar_articles.extend(item["similar_articles"])
+                    similar_articles = sorted(similar_articles, key=lambda article: article["similarity_score"], reverse=True)[:5]
+
                 ops.append(
                     UpdateOne({ "title": story['title'], "description": story["description"], "source_name": story["source"] }, 
                         { 
-                            "$setOnInsert": {
+                            "$set": {
                                 'title': story['title'],
                                 'description': story['description'],
                                 'source_name': story['source'],
