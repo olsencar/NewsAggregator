@@ -5,6 +5,7 @@ import CommentSection from './CommentSection'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
+import commentService from './../services/commentService';
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -13,7 +14,8 @@ class ArticleGroup extends Component {
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
-            image: null
+            image: null,
+            comments: [] //cache -> set upon accordion click
         };
     }
 
@@ -60,6 +62,19 @@ class ArticleGroup extends Component {
         return imgToKeep;
     }
 
+    handleAccordion = async () => {
+        //check if we've already checked for comments before (in cache/state):
+        let pid = this.props.article_data._id;
+        let sid = this.props.article_data.similar_articles[0]._id;
+        if(!this.comments.length){//empty -> not filled with comments from previous API call
+            let article_group_comments = await commentService.getComments(pid, sid);
+            console.log(article_group_comments);
+            this.setState({
+                //use service worker to get comments on mongodb lookup
+                comments: article_group_comments.group_comments
+            });
+        }
+    }
     render() {
         return (
             <div className="container grouped-articles shadow bg-light rounded">
@@ -89,12 +104,12 @@ class ArticleGroup extends Component {
                     <Accordion>
                       <Card>
                         <Card.Header>
-                          <Accordion.Toggle as={Button} variant="Secondary" eventKey="0">
+                          <Accordion.Toggle as={Button} onClick="handleAccordion" variant="Secondary" eventKey="0">
                             Discussion
                           </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey="0">
-                            <CommentSection comments={this.props.comment_data}/>
+                            <CommentSection comments={[this.state.comments]} pid={this.props.article_data} sid= {this.props.article_data.similar_articles._id}/>
                         </Accordion.Collapse>
                       </Card>
                     </Accordion>

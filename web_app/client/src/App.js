@@ -13,7 +13,6 @@ class App extends Component {
       articlesToDisplay: [],
       offset: 0,
       article_data: [],
-      comment_data: this.props.comment_data,
     };
   }
 
@@ -55,21 +54,8 @@ class App extends Component {
   setArticlesToDisplay = () => {
     this.setState({
       articlesToDisplay: this.state.article_data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
-        // search for correct comment
-        // iterate over each comment
-        // default comment is null
-        var group_comments = []
-        for (var i = 0; i < this.props.comment_data.comments.length; i++){
-          if (
-            (this.props.comment_data.comments[i].primary_id === article._id) && (this.props.comment_data.comments[i].secondary_id === article.similar_articles[0]._id) ||
-            (this.props.comment_data.comments[i].primary_id === article.similar_articles[0]._id) && (this.props.comment_data.comments[i].secondary_id === article._id)
-            ){
-            //set group comments to be the group of comments under this id pairing
-            group_comments = this.props.comment_data.comments[i].group_comments
-          }
-        }
         return (
-          <ArticleGroup key={index} id={index} article_data={article} comment_data={group_comments} removeArticleGroup={this.removeArticleGroup} />
+          <ArticleGroup key={index} id={index} article_data={article} removeArticleGroup={this.removeArticleGroup} />
         )
       })
     });

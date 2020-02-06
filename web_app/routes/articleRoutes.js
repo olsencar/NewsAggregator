@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'); 
 const Article = mongoose.model('Article');
+const Comment = mongoose.model('Comment');
 
 getMostSimilarArticle = (article) => {
     const similarArticles = article.similar_articles;
@@ -26,7 +27,32 @@ module.exports = (app) => {
             return res.status(500).send();
         }
     });
+    //finding comments for an article group
+    app.get('/api/comments/byId/:pid-:sid', async (req, res) => {
+        let primary_id = req.params.pid;
+        let secondary_id = req.params.sid;
+        try {
+            let comments = await Comment.find.or([{ primary_id: primary_id, secondary_id: secondary_id}, { primary_id: secondary_id, secondary_id: primary_id}]);         
+            if (comments == null) return res.status(404).send(`No article found for article group`);
+            return res.status(200).send(comments);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).send();
+        }
+    });
+    //add comment to db
+    app.get('/api/comments/add/:pid-:sid', async (req, res) => {
+        let primary_id = req.params.pid;
+        let secondary_id = req.params.sid;
+        let comments = await Comment.findOne({ $or:[{ primary_id: primary_id, secondary_id: secondary_id}, { primary_id: secondary_id, secondary_id: primary_id}]}, function(err, comment_group){  
+            if (err) { //create new doc and add this comment
 
+            }
+            comment_group.group_comments.push();
+            comment_group.save(function(err) {
+                if (err) { return next(err); }
+            });
+        });
     app.get('/api/articles/recent', async (req, res) => {
         let beginDate = new Date();
         beginDate.setDate(beginDate.getDate() - 7);
