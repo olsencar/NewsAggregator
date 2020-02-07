@@ -6,6 +6,23 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import commentService from './../services/commentService';
+import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
+
+function CustomToggle({ children, eventKey }) {
+    const decoratedOnClick = useAccordionToggle(eventKey, () =>
+        handleAccordion(),
+    );
+  
+    return (
+      <button
+        type="button"
+        className="btn btn-link collapsed"
+        onClick={decoratedOnClick}
+      >
+        {children}
+      </button>
+    );
+  }
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -104,9 +121,9 @@ class ArticleGroup extends Component {
                     <Accordion>
                       <Card>
                         <Card.Header>
-                          <Accordion.Toggle as={Button} onClick="handleAccordion" variant="Secondary" eventKey="0">
+                          <CustomToggle as={Button} variant="Secondary" eventKey="0">
                             Discussion
-                          </Accordion.Toggle>
+                          </CustomToggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey="0">
                             <CommentSection comments={[this.state.comments]} pid={this.props.article_data} sid= {this.props.article_data.similar_articles._id}/>
