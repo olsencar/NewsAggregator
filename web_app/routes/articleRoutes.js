@@ -33,7 +33,7 @@ module.exports = (app) => {
         let secondary_id = req.params.sid;
         try {
             let comments = await Comment.find.or([{ primary_id: primary_id, secondary_id: secondary_id}, { primary_id: secondary_id, secondary_id: primary_id}]);         
-            if (comments == null) return res.status(404).send(`No article found for article group`);
+            if (comments == null) return res.status(404).send(`No comment found given id`);
             return res.status(200).send(comments);
         } catch (error) {
             console.error(error);
@@ -41,18 +41,24 @@ module.exports = (app) => {
         }
     });
     //add comment to db
-    app.get('/api/comments/add/:pid-:sid', async (req, res) => {
-        let primary_id = req.params.pid;
-        let secondary_id = req.params.sid;
-        let comments = await Comment.findOne({ $or:[{ primary_id: primary_id, secondary_id: secondary_id}, { primary_id: secondary_id, secondary_id: primary_id}]}, function(err, comment_group){  
-            if (err) { //create new doc and add this comment
-
+    app.post('/api/comments/add', async (comment_data, res) => {
+        let s_primary_id = comment_data.body.primary_id;
+        let s_secondary_id = comment_data.body.secondary_id;
+        await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}, function(err, comment){  
+            if (err) { //comment not found -> create new doc and add this comment
+                Comment.create(comment_data.body, function (err) {
+                    console.log("Failed to create new comment_group document for first comment in article group");
+                  });
+                return;
             }
-            comment_group.group_comments.push();
-            comment_group.save(function(err) {
+            //update and save the comment_group document with the newest comment appended to its array
+            comment.group_comments.push(comment_data.body.group_comments[0]); //note: the comment data is passed in in the
+                                                                              //form of a mongo comment document to make this and 'create' code easier
+            comment.save(function(err) {
                 if (err) { return next(err); }
             });
         });
+    });
     app.get('/api/articles/recent', async (req, res) => {
         let beginDate = new Date();
         beginDate.setDate(beginDate.getDate() - 7);

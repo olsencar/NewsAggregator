@@ -19,12 +19,16 @@ class CommentSection extends Component {
         let comment_data = {
             "primary_id": this.props.pid,
             "secondary_id": this.props.sid,
-            "user": "anonymous",
-            "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
-            "time": time_data,
-            "text": this.commentText //textbox ref'd in the component above
+            "group_comments": [
+                {
+                "user": "anonymous",
+                "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                "time": time_data,
+                "text": this.commentText //textbox ref'd in the component above
+                }
+            ]
         };
-        let article_group_comments = await commentService.addComment(comment_data);
+        await commentService.addComment(comment_data);
     }
     render() {
         return (

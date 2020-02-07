@@ -7,6 +7,7 @@ export default {
         return res.data || {};
     },
     addComment: async (comment_data) => {
-        
+        let res = await axios.post(`/api/comments/add`, comment_data);
+        console.log(res);
     }
 }

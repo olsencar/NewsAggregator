@@ -10,7 +10,6 @@ class Comment extends Component {
               height={64}
               className="mr-3"
               src={this.props.profilePic}
-              alt="Generic placeholder"
             />
             <div className="text-left">
                 <span className="text-muted float-right">

@@ -96,7 +96,7 @@ class ArticleGroup extends Component {
                                 source={this.state.rightArticle.source_name}
                                 bias={this.state.rightArticle.bias}
                                 link={this.state.rightArticle.orig_link}
-                                    published={this.state.rightArticle.publish_date} />
+                                published={this.state.rightArticle.publish_date} />
                         </div>
                     </div>
                 </div>
@@ -114,6 +114,10 @@ class ArticleGroup extends Component {
                       </Card>
                     </Accordion>
                 </div>
+
+
+
+                
             </div>
         )
     }
