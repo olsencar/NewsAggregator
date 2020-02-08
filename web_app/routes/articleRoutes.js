@@ -29,16 +29,20 @@ module.exports = (app) => {
     });
     //finding comments for an article group
     app.get('/api/comments/byId/:pid-:sid', async (req, res) => {
-        let primary_id = req.params.pid;
-        let secondary_id = req.params.sid;
-        try {
-            let comments = await Comment.find.or([{ primary_id: primary_id, secondary_id: secondary_id}, { primary_id: secondary_id, secondary_id: primary_id}]);         
-            if (comments == null) return res.status(404).send(`No comment found given id`);
-            return res.status(200).send(comments);
-        } catch (error) {
-            console.error(error);
-            return res.status(500).send();
-        }
+        let s_primary_id = req.params.pid;
+        let s_secondary_id = req.params.sid;
+        await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}, function(err, comment){  
+            if (err) { //comment not found
+                console.log("Error locating document");
+            }
+            if(comment){
+                //success
+                console.log("success");
+                console.log(comment);
+                return res.status(200).send(comment);
+            }
+            return res.status(200).send(null);
+        });
     });
     //add comment to db
     app.post('/api/comments/add', async (comment_data, res) => {

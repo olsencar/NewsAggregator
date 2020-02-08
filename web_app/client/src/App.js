@@ -55,7 +55,7 @@ class App extends Component {
     this.setState({
       articlesToDisplay: this.state.article_data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
         return (
-          <ArticleGroup key={index} id={index} article_data={article} removeArticleGroup={this.removeArticleGroup} />
+          <ArticleGroup key={index} key_id={index} id={index} article_data={article} removeArticleGroup={this.removeArticleGroup} />
         )
       })
     });

@@ -8,4 +8,4 @@ const commentSchema = new Schema({
     group_comments: {type: Array, default: []}
 });
 
-module.exports = mongoose.model('Comment', commentSchema, 'news_stories');
+module.exports = mongoose.model('Comment', commentSchema, 'comments');

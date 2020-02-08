@@ -7,22 +7,22 @@ import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import commentService from './../services/commentService';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
+import {Helmet} from "react-helmet";
 
-function CustomToggle({ children, eventKey }) {
-    const decoratedOnClick = useAccordionToggle(eventKey, () =>
-        handleAccordion(),
-    );
-  
-    return (
-      <button
-        type="button"
-        className="btn btn-link collapsed"
-        onClick={decoratedOnClick}
-      >
-        {children}
-      </button>
-    );
-  }
+// function CustomToggle({ children, eventKey }) {
+//     const decoratedOnClick = useAccordionToggle(eventKey, () =>
+//         handleAccordion(),
+//     );
+//     return (
+//       <button
+//         type="button"
+//         className="btn btn-link collapsed"
+//         onClick={decoratedOnClick}
+//       >
+//         {children}
+//       </button>
+//     );
+//   }
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -83,13 +83,14 @@ class ArticleGroup extends Component {
         //check if we've already checked for comments before (in cache/state):
         let pid = this.props.article_data._id;
         let sid = this.props.article_data.similar_articles[0]._id;
-        if(!this.comments.length){//empty -> not filled with comments from previous API call
+        if(this.state.comments.length == 0){//empty -> not filled with comments from previous API call
             let article_group_comments = await commentService.getComments(pid, sid);
-            console.log(article_group_comments);
-            this.setState({
-                //use service worker to get comments on mongodb lookup
-                comments: article_group_comments.group_comments
-            });
+            if(article_group_comments){
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    comments: article_group_comments.group_comments
+                });
+            }
         }
     }
     render() {
@@ -117,24 +118,29 @@ class ArticleGroup extends Component {
                         </div>
                     </div>
                 </div>
+                <Helmet>
+                    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500|Open+Sans" rel="stylesheet"></link>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
+                    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                </Helmet>
                 <div className="container bg-white">
-                    <Accordion>
-                      <Card>
-                        <Card.Header>
-                          <CustomToggle as={Button} variant="Secondary" eventKey="0">
-                            Discussion
-                          </CustomToggle>
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="0">
-                            <CommentSection comments={[this.state.comments]} pid={this.props.article_data} sid= {this.props.article_data.similar_articles._id}/>
-                        </Accordion.Collapse>
-                      </Card>
-                    </Accordion>
+                    <div className="accordion" id="accordionExample">
+                        <div className="card">
+                            <div className="card-header" id="headingOne">
+                                <h2 className="mb-0">
+                                    <button type="button" className="btn btn-link" onClick={this.handleAccordion} data-toggle="collapse" data-target={"#collapse-"+this.props.key_id} >Discussion</button>									
+                                </h2>
+                            </div>
+                            <div id={"collapse-"+this.props.key_id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div className="card-body">
+                                    <CommentSection comments={this.state.comments} pid={this.props.article_data} sid={this.props.article_data.similar_articles._id}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
-
-                
             </div>
         )
     }
