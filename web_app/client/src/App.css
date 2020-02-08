@@ -68,6 +68,12 @@
   width: 100% !important;
 }
 
+.pagination {
+  margin-bottom: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .article-grp-img {
   max-height: 400px;
   max-width: 600px;

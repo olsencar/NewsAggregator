@@ -106,7 +106,9 @@ class App extends Component {
         <div className="container">
           <div className="col">
             {this.state.articlesToDisplay}
-            {paginationElement}
+            <div className="pagination">
+              {paginationElement}
+            </div>
           </div>
           <div className="col"></div>
         </div>
