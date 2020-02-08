@@ -49,18 +49,26 @@ module.exports = (app) => {
         let s_primary_id = comment_data.body.primary_id;
         let s_secondary_id = comment_data.body.secondary_id;
         await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}, function(err, comment){  
-            if (err) { //comment not found -> create new doc and add this comment
-                Comment.create(comment_data.body, function (err) {
-                    console.log("Failed to create new comment_group document for first comment in article group");
-                  });
-                return;
+            if (!comment) { //comment not found -> create new doc with this comment
+                console.log(comment_data.body);
+                Comment.create(comment_data.body, function (err, doc) {
+                    if(err){
+                        console.log("Failed to create new comment_group document for first comment in article group");
+                        return;
+                    }
+                    else{
+                        console.log("successfully added comment");
+                    }
+                });
             }
-            //update and save the comment_group document with the newest comment appended to its array
-            comment.group_comments.push(comment_data.body.group_comments[0]); //note: the comment data is passed in in the
-                                                                              //form of a mongo comment document to make this and 'create' code easier
-            comment.save(function(err) {
-                if (err) { return next(err); }
-            });
+            else{
+                //update and save the comment_group document with the newest comment appended to its array
+                comment.group_comments.push(comment_data.body.group_comments[0]); //note: the comment data is passed in in the
+                                                                                //form of a mongo comment document to make this and 'create' code easier
+                comment.save(function(err) {
+                    if (err) { return next(err); }
+                });
+            }
         });
     });
     app.get('/api/articles/recent', async (req, res) => {

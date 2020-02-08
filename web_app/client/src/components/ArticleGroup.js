@@ -9,21 +9,6 @@ import commentService from './../services/commentService';
 import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
 import {Helmet} from "react-helmet";
 
-// function CustomToggle({ children, eventKey }) {
-//     const decoratedOnClick = useAccordionToggle(eventKey, () =>
-//         handleAccordion(),
-//     );
-//     return (
-//       <button
-//         type="button"
-//         className="btn btn-link collapsed"
-//         onClick={decoratedOnClick}
-//       >
-//         {children}
-//       </button>
-//     );
-//   }
-
 class ArticleGroup extends Component {
     constructor(props) {
         super(props);
@@ -135,7 +120,7 @@ class ArticleGroup extends Component {
                             </div>
                             <div id={"collapse-"+this.props.key_id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
-                                    <CommentSection comments={this.state.comments} pid={this.props.article_data} sid={this.props.article_data.similar_articles._id}/>
+                                    <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id}/>
                                 </div>
                             </div>
                         </div>

@@ -16,19 +16,25 @@ class CommentSection extends Component {
         //do a look up on pid-sid, then append its array (update) with the comment data in this json
         var d = new Date();
         var time_data = d.getDate();
-        let comment_data = {
+        var comment_data = {
             "primary_id": this.props.pid,
             "secondary_id": this.props.sid,
             "group_comments": [
                 {
                 "user": "anonymous",
                 "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
-                "time": time_data,
-                "text": this.commentText //textbox ref'd in the component above
+                "time": String(time_data),
+                // "text": this.commentText.value //textbox ref'd in the component above
+                "text": "TESTING"
                 }
             ]
         };
         await commentService.addComment(comment_data);
+        //clear input field
+        //then append to this.state.comments so the change gets reflected
+        this.setState({
+            comments: this.state.comments.concat([comment_data])
+        });
     }
     render() {
         return (
