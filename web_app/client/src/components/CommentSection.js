@@ -15,7 +15,7 @@ class CommentSection extends Component {
         //so we'll send all this data then the service worker will extract pid sid, and the comment data
         //do a look up on pid-sid, then append its array (update) with the comment data in this json
         var d = new Date();
-        var time_data = d.getDate();
+        var time_data = String(d.getMonth())+"/"+String(d.getDate())+"/"+String(d.getFullYear());
         var comment_data = {
             "primary_id": this.props.pid,
             "secondary_id": this.props.sid,
@@ -23,9 +23,8 @@ class CommentSection extends Component {
                 {
                 "user": "anonymous",
                 "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
-                "time": String(time_data),
-                // "text": this.commentText.value //textbox ref'd in the component above
-                "text": "TESTING"
+                "time": time_data,
+                "text": this.commentText.current.value
                 }
             ]
         };
@@ -33,7 +32,7 @@ class CommentSection extends Component {
         //clear input field
         //then append to this.state.comments so the change gets reflected
         this.setState({
-            comments: this.state.comments.concat([comment_data])
+            comments: this.state.comments.concat([comment_data.group_comments[0]])
         });
     }
     render() {
@@ -50,7 +49,7 @@ class CommentSection extends Component {
                               <hr></hr>
                               <ul className="media-list">
                                 {
-                                  this.props.comments.map((comment, index) => {
+                                  this.state.comments.map((comment, index) => {
                                       return <Comment key={index} user={comment.user} time={comment.time} text={comment.text} profilePic={comment.profilePic} />
                                   })
                                 }

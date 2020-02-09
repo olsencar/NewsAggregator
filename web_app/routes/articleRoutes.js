@@ -48,29 +48,33 @@ module.exports = (app) => {
     app.post('/api/comments/add', async (comment_data, res) => {
         let s_primary_id = comment_data.body.primary_id;
         let s_secondary_id = comment_data.body.secondary_id;
-        await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}, function(err, comment){  
-            if (!comment) { //comment not found -> create new doc with this comment
-                console.log(comment_data.body);
-                Comment.create(comment_data.body, function (err, doc) {
-                    if(err){
-                        console.log("Failed to create new comment_group document for first comment in article group");
-                        return;
-                    }
-                    else{
-                        console.log("successfully added comment");
-                    }
-                });
-            }
-            else{
-                //update and save the comment_group document with the newest comment appended to its array
-                comment.group_comments.push(comment_data.body.group_comments[0]); //note: the comment data is passed in in the
-                                                                                //form of a mongo comment document to make this and 'create' code easier
-                comment.save(function(err) {
-                    if (err) { return next(err); }
-                });
-            }
-        });
+        const comment_group = await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}); 
+        console.log(comment_group);
+        if (!comment_group) { //comment not found -> create new doc with this comment
+            console.log("creating entirely new comment group document");
+            console.log(comment_data.body);
+            //creating new document
+            var singelton = new Comment(comment_data.body);
+            await singelton.save(function(err) {
+                if (err) { return res.status(500).send(); }
+                next();
+            });
+        }
+        else{
+            //update and save the comment_group document with the newest comment appended to its array
+            comment_group.group_comments.push(comment_data.body.group_comments[0]); //note: the comment data is passed in in the
+                                                                            //form of a mongo comment document to make this and 'create' code easier                                      
+            await comment_group.save(function(err) {
+                if (err) { return res.status(500).send(); }
+                next();
+            });
+            //success
+            console.log("1. Succesfully inserted comment");
+            return res.status(200).send();
+        }
     });
+
+    
     app.get('/api/articles/recent', async (req, res) => {
         let beginDate = new Date();
         beginDate.setDate(beginDate.getDate() - 7);

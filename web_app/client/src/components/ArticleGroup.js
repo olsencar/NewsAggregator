@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import Article from './Article';
 import Img from 'react-image';
 import CommentSection from './CommentSection'
-import Accordion from 'react-bootstrap/Accordion'
-import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
 import commentService from './../services/commentService';
-import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
-import {Helmet} from "react-helmet";
+import {Helmet} from "react-helmet"; //needed to add scripts for the accordion drop down comment section
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -68,7 +64,7 @@ class ArticleGroup extends Component {
         //check if we've already checked for comments before (in cache/state):
         let pid = this.props.article_data._id;
         let sid = this.props.article_data.similar_articles[0]._id;
-        if(this.state.comments.length == 0){//empty -> not filled with comments from previous API call
+        if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
             let article_group_comments = await commentService.getComments(pid, sid);
             if(article_group_comments){
                 this.setState({

@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(`mongodb+srv://${dbConfig.readOnly.user}:${dbConfig.readOnly.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`);
+mongoose.connect(`mongodb+srv://${dbConfig.readWrite.user}:${dbConfig.readWrite.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`, {useNewUrlParser: true,  useUnifiedTopology: true});
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', () => {
