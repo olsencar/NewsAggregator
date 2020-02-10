@@ -72,6 +72,7 @@ class ArticleGroup extends Component {
         let sid = this.props.article_data.similar_articles[0]._id;
         if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
             let article_group_comments = await commentService.getComments(pid, sid);
+            console.log(article_group_comments);
             if(article_group_comments){
                 console.log('about to set comments');   
                 this.setState({
@@ -80,6 +81,32 @@ class ArticleGroup extends Component {
                 });
             }       
         }
+    }
+
+    postComment = (pid, sid, comment) => {
+        //we want to just add this comment to the specific document with the below pid and sid
+        //so we'll send all this data then the service worker will extract pid sid, and the comment data
+        //do a look up on pid-sid, then append its array (update) with the comment data in this json
+        var d = new Date();
+        var time_data = String(d.getMonth())+"/"+String(d.getDate())+"/"+String(d.getFullYear());
+        var comment_data = {
+            "primary_id": pid,
+            "secondary_id": sid,
+            "group_comments": [
+                {
+                "user": "anonymous",
+                "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                "time": time_data,
+                "text": comment
+                }
+            ]
+        };
+        commentService.addComment(comment_data);
+        //clear input field
+        //then append to this.state.comments so the change gets reflected
+        this.setState({
+            comments: this.state.comments.concat([comment_data.group_comments[0]])
+        });
     }
     render() {
         console.log("rendering article group");
@@ -125,7 +152,7 @@ class ArticleGroup extends Component {
                             </div>
                             <div id={"collapse-"+this.props.key_id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div className="card-body">
-                                    <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id}/>
+                                    <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id} postComment={this.postComment} />
                                 </div>
                             </div>
                         </div>
