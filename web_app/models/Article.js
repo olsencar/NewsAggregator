@@ -12,7 +12,8 @@ const articleSchema = new Schema({
     rss_link: String,
     orig_link: String,
     publish_date: { type: Date },
-    bias: Number
+    bias: Number,
+    tags: {type: Array, default: []}
 });
 
 module.exports = mongoose.model('Article', articleSchema, 'news_stories');

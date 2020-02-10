@@ -61,8 +61,8 @@ class App extends Component {
         var group_comments = []
         for (var i = 0; i < this.props.comment_data.comments.length; i++){
           if (
-            (this.props.comment_data.comments[i].primary_id === article._id) && (this.props.comment_data.comments[i].secondary_id === article.similar_articles[0]._id) ||
-            (this.props.comment_data.comments[i].primary_id === article.similar_articles[0]._id) && (this.props.comment_data.comments[i].secondary_id === article._id)
+            (this.props.comment_data.comments[i].primary_id === article._id && this.props.comment_data.comments[i].secondary_id === article.similar_articles[0]._id) ||
+            (this.props.comment_data.comments[i].primary_id === article.similar_articles[0]._id && this.props.comment_data.comments[i].secondary_id === article._id)
             ){
             //set group comments to be the group of comments under this id pairing
             group_comments = this.props.comment_data.comments[i].group_comments
@@ -106,7 +106,9 @@ class App extends Component {
         <div className="container">
           <div className="col">
             {this.state.articlesToDisplay}
-            {paginationElement}
+            <div className="pagination">
+              {paginationElement}
+            </div>
           </div>
           <div className="col"></div>
         </div>

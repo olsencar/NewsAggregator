@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Article from './Article';
-import Img from 'react-image';
 import CommentSection from './CommentSection'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
+import Carousel  from 'react-bootstrap/Carousel'
+import DefaultImage from '../onErrorFallback.png'
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -13,7 +14,8 @@ class ArticleGroup extends Component {
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
-            image: null
+            tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
+            images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
     }
 
@@ -23,50 +25,83 @@ class ArticleGroup extends Component {
         this.setState({
             leftArticle: newProps.article_data.bias <= chosenArticle.bias ? newProps.article_data : chosenArticle,
             rightArticle: newProps.article_data.bias > chosenArticle.bias ? newProps.article_data : chosenArticle,
+            tags: this.getTagsToDisplay(newProps.article_data.tags, chosenArticle.tags),
+            images: this.getImagesToDisplay(newProps.article_data.images, chosenArticle.images, newProps.article_data.source_name, chosenArticle.source_name)
         });
     }
 
-    // This function gets the widest image to display
-    // The purpose is to get the highest quality image
-    getImageToDisplay = async () => {
-        let leftImages = this.state.leftArticle.images;
-        let rightImages = this.state.rightArticle.images;
-        let maxWidth = 0;
-        let imgToKeep = new Image();
-        for (let i = 0; i < leftImages.length; i++) {
-            let img = new Image();
-            try {
-                img.src = leftImages[i];
-                if (img.naturalWidth > maxWidth) {
-                    maxWidth = img.naturalWidth;
-                    imgToKeep = img;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        for (let i = 0; i < rightImages.length; i++) {
-            let img = new Image();
-            try {
-                img.src = rightImages[i];
-                if (img.naturalWidth > maxWidth) {
-                    maxWidth = img.naturalWidth;
-                    imgToKeep = img;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        return imgToKeep;
+    getTagsToDisplay(tags1, tags2) {
+        const doNotDisplayTags = new Set([
+            'cnn', 'fox', 'breitbart', 'huffington-post', 
+            'washington-post', 'washington-times',
+            'this', 'that', 'he', 'she', 'politics', 'false', 'true'
+        ]);
+        let arr = tags1.concat(tags2);
+        arr = arr.filter(item => {
+            return !doNotDisplayTags.has(item);
+        }).sort();
+        // only show a max of 5 tags
+        let len = arr.length;
+        len = len > 5 ? 5 : len;
+
+        return arr.slice(0, len);
+    }
+
+    getImagesToDisplay(images1, images2, source1, source2) {
+        let images = [];
+        images = images1.map((item, idx) => {
+            return (
+                <Carousel.Item key={idx}>
+                    <img 
+                        onError={this.addDefaultImg}
+                        src={item}
+                        alt={source1}
+                    />
+                    <Carousel.Caption>
+                        <p>{source1}</p>
+                    </Carousel.Caption>
+                </Carousel.Item>
+            )
+        });
+        const curIdx = images.length + 1;
+
+        images = images.concat(
+            images2.map((item, idx) => {
+                return (
+                    <Carousel.Item key={idx + curIdx} >
+                        <img 
+                            onError={this.addDefaultImg}
+                            className="img-fluid"
+                            src={item}
+                            alt={source2}
+                        />
+                        <Carousel.Caption>
+                            <p>{source2}</p>
+                        </Carousel.Caption>
+                    </Carousel.Item>
+                )
+            })
+        );
+        return images;
+    }
+
+    addDefaultImg = (event) => {
+        event.target.src = DefaultImage;
     }
 
     render() {
         return (
             <div className="container grouped-articles shadow bg-light rounded">
-                <div className="row">
-                    <Img src={this.state.leftArticle.images.concat(this.state.rightArticle.images)} alt={this.state.leftArticle.title} className="article-grp-img" />
+                <div className="row justify-content-center">
+                    <Carousel interval={null} slide={false} >
+                        {this.state.images.map((img) => img)}
+                    </Carousel>
                 </div>
-                <span className="badge badge-secondary">#impeachment</span>
+                {this.state.tags.map((t, idx) => {
+                    return (
+                        <span key={idx} className="badge badge-secondary">#{t}</span>
+                    )
+                })}
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
@@ -81,7 +116,7 @@ class ArticleGroup extends Component {
                                 source={this.state.rightArticle.source_name}
                                 bias={this.state.rightArticle.bias}
                                 link={this.state.rightArticle.orig_link}
-                                    published={this.state.rightArticle.publish_date} />
+                                published={this.state.rightArticle.publish_date} />
                         </div>
                     </div>
                 </div>
