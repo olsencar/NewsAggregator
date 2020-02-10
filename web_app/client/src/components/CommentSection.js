@@ -15,8 +15,6 @@ class CommentSection extends Component {
     }
     
     render() {
-        console.log("rendering comment section");
-        console.log(this.props.comments);
         return (
           <div className="row bootstrap snippets">
               <div className="col-md-11">

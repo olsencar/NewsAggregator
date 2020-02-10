@@ -42,6 +42,38 @@
   margin-bottom: 20px;
 }
 
+/* @media (max-width: 900px) {
+  .carousel {
+    width: auto !important;
+    height: auto !important;
+  }
+} */
+
+.carousel-item {
+  background-color: black;
+  height: 480px;
+}
+
+.carousel-item > img {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* object-fit: cover; */
+}
+
+.carousel {
+  width: 100% !important;
+}
+
+.pagination {
+  margin-bottom: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .article-grp-img {
   max-height: 400px;
   max-width: 600px;

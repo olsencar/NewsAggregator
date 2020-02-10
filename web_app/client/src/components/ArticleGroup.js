@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import Article from './Article';
-import Img from 'react-image';
 import CommentSection from './CommentSection'
 import commentService from './../services/commentService';
 import {Helmet} from "react-helmet"; //needed to add scripts for the accordion drop down comment section
-// import Accordion from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion'
+import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
+import Carousel  from 'react-bootstrap/Carousel'
+import DefaultImage from '../onErrorFallback.png'
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -13,8 +16,9 @@ class ArticleGroup extends Component {
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
-            image: null,
-            comments: [] //cache -> set upon accordion click
+            comments: [], //cache -> set upon accordion click
+            tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
+            images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
     }
 
@@ -24,58 +28,76 @@ class ArticleGroup extends Component {
         this.setState({
             leftArticle: newProps.article_data.bias <= chosenArticle.bias ? newProps.article_data : chosenArticle,
             rightArticle: newProps.article_data.bias > chosenArticle.bias ? newProps.article_data : chosenArticle,
+            tags: this.getTagsToDisplay(newProps.article_data.tags, chosenArticle.tags),
+            images: this.getImagesToDisplay(newProps.article_data.images, chosenArticle.images, newProps.article_data.source_name, chosenArticle.source_name)
         });
     }
 
-    // This function gets the widest image to display
-    // The purpose is to get the highest quality image
-    getImageToDisplay = async () => {
-        let leftImages = this.state.leftArticle.images;
-        let rightImages = this.state.rightArticle.images;
-        let maxWidth = 0;
-        let imgToKeep = new Image();
-        for (let i = 0; i < leftImages.length; i++) {
-            let img = new Image();
-            try {
-                img.src = leftImages[i];
-                if (img.naturalWidth > maxWidth) {
-                    maxWidth = img.naturalWidth;
-                    imgToKeep = img;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        for (let i = 0; i < rightImages.length; i++) {
-            let img = new Image();
-            try {
-                img.src = rightImages[i];
-                if (img.naturalWidth > maxWidth) {
-                    maxWidth = img.naturalWidth;
-                    imgToKeep = img;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        return imgToKeep;
+    getTagsToDisplay(tags1, tags2) {
+        const doNotDisplayTags = new Set([
+            'cnn', 'fox', 'breitbart', 'huffington-post', 
+            'washington-post', 'washington-times',
+            'this', 'that', 'he', 'she', 'politics', 'false', 'true'
+        ]);
+        let arr = tags1.concat(tags2);
+        arr = arr.filter(item => {
+            return !doNotDisplayTags.has(item);
+        }).sort();
+        // only show a max of 5 tags
+        let len = arr.length;
+        len = len > 5 ? 5 : len;
+
+        return arr.slice(0, len);
     }
-    //READ THIS:
-    //This is the function that is triggered when you click the accordion button, it is what sets the state.comments for the <CommentSection ...> to then load from
-    //This does the API call to fetch the comment data (using promises with the 'await' I think? so the rest of the code waits?) then once done it Sets State.
-    //This set state will then trigger re-render for this component and its children (<CommentSection> -> <Comment> etc.)
-    //Issue: Clicking the accordion, which dynamically fetches and stores data (handleAccordion), sets the state correctly (verified with console.log's), but then
-    //the re-rendered comment section gets [] as the comments instead of the new state.comments ..??? its not like its rendering BEFORE the set state occurs since the 
-    //set state is what triggers the re-render in the first place? Very confused rn, anyways im starving so im gonna go get some food.
+
+    getImagesToDisplay(images1, images2, source1, source2) {
+        let images = [];
+        images = images1.map((item, idx) => {
+            return (
+                <Carousel.Item key={idx}>
+                    <img 
+                        onError={this.addDefaultImg}
+                        src={item}
+                        alt={source1}
+                    />
+                    <Carousel.Caption>
+                        <p>{source1}</p>
+                    </Carousel.Caption>
+                </Carousel.Item>
+            )
+        });
+        const curIdx = images.length + 1;
+
+        images = images.concat(
+            images2.map((item, idx) => {
+                return (
+                    <Carousel.Item key={idx + curIdx} >
+                        <img 
+                            onError={this.addDefaultImg}
+                            className="img-fluid"
+                            src={item}
+                            alt={source2}
+                        />
+                        <Carousel.Caption>
+                            <p>{source2}</p>
+                        </Carousel.Caption>
+                    </Carousel.Item>
+                )
+            })
+        );
+        return images;
+    }
+
+    addDefaultImg = (event) => {
+        event.target.src = DefaultImage;
+    }
     handleAccordion = async () => {
         //check if we've already checked for comments before (in cache/state):
         let pid = this.props.article_data._id;
         let sid = this.props.article_data.similar_articles[0]._id;
         if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
             let article_group_comments = await commentService.getComments(pid, sid);
-            console.log(article_group_comments);
             if(article_group_comments){
-                console.log('about to set comments');   
                 this.setState({
                     //use service worker to get comments on mongodb lookup
                     comments: article_group_comments.group_comments
@@ -109,14 +131,18 @@ class ArticleGroup extends Component {
         });
     }
     render() {
-        console.log("rendering article group");
-        console.log(this.state.comments);
         return (
             <div className="container grouped-articles shadow bg-light rounded">
-                <div className="row">
-                    <Img src={this.state.leftArticle.images.concat(this.state.rightArticle.images)} alt={this.state.leftArticle.title} className="article-grp-img" />
+                <div className="row justify-content-center">
+                    <Carousel interval={null} slide={false} >
+                        {this.state.images.map((img) => img)}
+                    </Carousel>
                 </div>
-                <span className="badge badge-secondary">#impeachment</span>
+                {this.state.tags.map((t, idx) => {
+                    return (
+                        <span key={idx} className="badge badge-secondary">#{t}</span>
+                    )
+                })}
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">

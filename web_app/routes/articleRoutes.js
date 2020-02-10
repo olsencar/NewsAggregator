@@ -37,8 +37,6 @@ module.exports = (app) => {
             }
             if(comment){
                 //success
-                console.log("success");
-                console.log(comment);
                 return res.status(200).send(comment);
             }
             return res.status(200).send(null);

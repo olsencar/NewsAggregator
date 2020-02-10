@@ -7,7 +7,7 @@ export default {
     },
     addComment: async (comment_data) => {
         await axios.post(`/api/comments/add`, comment_data).then(function (response) {
-            console.log('2. Just added the comment');
+            console.log('Comment Added.');
         })
         .catch(function (error) {
             console.log(error);
