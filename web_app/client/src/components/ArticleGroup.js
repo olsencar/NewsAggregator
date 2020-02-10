@@ -4,6 +4,7 @@ import Img from 'react-image';
 import CommentSection from './CommentSection'
 import commentService from './../services/commentService';
 import {Helmet} from "react-helmet"; //needed to add scripts for the accordion drop down comment section
+// import Accordion from 'react-bootstrap/Button';
 
 class ArticleGroup extends Component {
     constructor(props) {
@@ -82,7 +83,7 @@ class ArticleGroup extends Component {
             }       
         }
     }
-
+    //get called within CommentSection
     postComment = (pid, sid, comment) => {
         //we want to just add this comment to the specific document with the below pid and sid
         //so we'll send all this data then the service worker will extract pid sid, and the comment data
@@ -94,7 +95,7 @@ class ArticleGroup extends Component {
             "secondary_id": sid,
             "group_comments": [
                 {
-                "user": "anonymous",
+                "user": "Anonymous",
                 "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
                 "time": time_data,
                 "text": comment
@@ -102,7 +103,6 @@ class ArticleGroup extends Component {
             ]
         };
         commentService.addComment(comment_data);
-        //clear input field
         //then append to this.state.comments so the change gets reflected
         this.setState({
             comments: this.state.comments.concat([comment_data.group_comments[0]])

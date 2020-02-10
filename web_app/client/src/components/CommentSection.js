@@ -10,6 +10,8 @@ class CommentSection extends Component {
 
     postComment = () => {
         this.props.postComment(this.props.pid, this.props.sid, this.commentText.current.value);
+        //clear input field
+        this.commentText.current.value = "";
     }
     
     render() {
