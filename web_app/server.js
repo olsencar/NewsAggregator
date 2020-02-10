@@ -4,14 +4,18 @@ const bodyParser = require ('body-parser');
 const dbConfig = require('./config/config');
 
 // Import the DB Models
-// Import the DB Models
 require('./models/Article').default;
+require('./models/Comment').default;
+
 
 const app = express();
+//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(`mongodb+srv://${dbConfig.readOnly.user}:${dbConfig.readOnly.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`);
+mongoose.connect(`mongodb+srv://${dbConfig.readWrite.user}:${dbConfig.readWrite.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`, {useNewUrlParser: true,  useUnifiedTopology: true});
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', () => {

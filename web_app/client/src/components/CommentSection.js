@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
 import Comment from './Comment'
+import commentService from './../services/commentService';
 
 class CommentSection extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            comments: this.props.comments
-        };
+        this.commentText = React.createRef();
     }
+
+    postComment = () => {
+        this.props.postComment(this.props.pid, this.props.sid, this.commentText.current.value);
+        //clear input field
+        this.commentText.current.value = "";
+    }
+    
     render() {
         return (
           <div className="row bootstrap snippets">
@@ -15,9 +21,9 @@ class CommentSection extends Component {
                   <div className="comment-wrapper">
                       <div className="panel panel-info">
                           <div className="panel-body">
-                              <textarea className="form-control" placeholder="write a comment..." rows="3"></textarea>
+                              <textarea className="form-control" ref={this.commentText} placeholder="write a comment..." rows="3"></textarea>
                               <br></br>
-                              <button type="button" className="btn btn-info float-right">Post</button>
+                              <button type="button" className="btn btn-info float-right" onClick={this.postComment}>Post</button>
                               <div className="clearfix"></div>
                               <hr></hr>
                               <ul className="media-list">

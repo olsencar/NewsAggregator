@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Article from './Article';
 import CommentSection from './CommentSection'
+import commentService from './../services/commentService';
+import {Helmet} from "react-helmet"; //needed to add scripts for the accordion drop down comment section
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
@@ -14,6 +16,7 @@ class ArticleGroup extends Component {
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
+            comments: [], //cache -> set upon accordion click
             tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
             images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
@@ -88,7 +91,45 @@ class ArticleGroup extends Component {
     addDefaultImg = (event) => {
         event.target.src = DefaultImage;
     }
-
+    handleAccordion = async () => {
+        //check if we've already checked for comments before (in cache/state):
+        let pid = this.props.article_data._id;
+        let sid = this.props.article_data.similar_articles[0]._id;
+        if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
+            let article_group_comments = await commentService.getComments(pid, sid);
+            if(article_group_comments){
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    comments: article_group_comments.group_comments
+                });
+            }       
+        }
+    }
+    //get called within CommentSection
+    postComment = (pid, sid, comment) => {
+        //we want to just add this comment to the specific document with the below pid and sid
+        //so we'll send all this data then the service worker will extract pid sid, and the comment data
+        //do a look up on pid-sid, then append its array (update) with the comment data in this json
+        var d = new Date();
+        var time_data = String(d.getMonth())+"/"+String(d.getDate())+"/"+String(d.getFullYear());
+        var comment_data = {
+            "primary_id": pid,
+            "secondary_id": sid,
+            "group_comments": [
+                {
+                "user": "Anonymous",
+                "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                "time": time_data,
+                "text": comment
+                }
+            ]
+        };
+        commentService.addComment(comment_data);
+        //then append to this.state.comments so the change gets reflected
+        this.setState({
+            comments: this.state.comments.concat([comment_data.group_comments[0]])
+        });
+    }
     render() {
         return (
             <div className="container grouped-articles shadow bg-light rounded">
@@ -120,19 +161,28 @@ class ArticleGroup extends Component {
                         </div>
                     </div>
                 </div>
+                <Helmet>
+                    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500|Open+Sans" rel="stylesheet"></link>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
+                    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                </Helmet>
                 <div className="container bg-white">
-                    <Accordion>
-                      <Card>
-                        <Card.Header>
-                          <Accordion.Toggle as={Button} variant="Secondary" eventKey="0">
-                            Discussion
-                          </Accordion.Toggle>
-                        </Card.Header>
-                        <Accordion.Collapse eventKey="0">
-                            <CommentSection comments={this.props.comment_data}/>
-                        </Accordion.Collapse>
-                      </Card>
-                    </Accordion>
+                    <div className="accordion" id="accordionExample">
+                        <div className="card">
+                            <div className="card-header" id="headingOne">
+                                <h2 className="mb-0">
+                                    <button type="button" className="btn btn-link" onClick={this.handleAccordion} data-toggle="collapse" data-target={"#collapse-"+this.props.key_id} >Discussion</button>									
+                                </h2>
+                            </div>
+                            <div id={"collapse-"+this.props.key_id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div className="card-body">
+                                    <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id} postComment={this.postComment} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
