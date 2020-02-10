@@ -59,7 +59,13 @@ class ArticleGroup extends Component {
         }
         return imgToKeep;
     }
-
+    //READ THIS:
+    //This is the function that is triggered when you click the accordion button, it is what sets the state.comments for the <CommentSection ...> to then load from
+    //This does the API call to fetch the comment data (using promises with the 'await' I think? so the rest of the code waits?) then once done it Sets State.
+    //This set state will then trigger re-render for this component and its children (<CommentSection> -> <Comment> etc.)
+    //Issue: Clicking the accordion, which dynamically fetches and stores data (handleAccordion), sets the state correctly (verified with console.log's), but then
+    //the re-rendered comment section gets [] as the comments instead of the new state.comments ..??? its not like its rendering BEFORE the set state occurs since the 
+    //set state is what triggers the re-render in the first place? Very confused rn, anyways im starving so im gonna go get some food.
     handleAccordion = async () => {
         //check if we've already checked for comments before (in cache/state):
         let pid = this.props.article_data._id;
@@ -67,14 +73,17 @@ class ArticleGroup extends Component {
         if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
             let article_group_comments = await commentService.getComments(pid, sid);
             if(article_group_comments){
+                console.log('about to set comments');   
                 this.setState({
                     //use service worker to get comments on mongodb lookup
                     comments: article_group_comments.group_comments
                 });
-            }
+            }       
         }
     }
     render() {
+        console.log("rendering article group");
+        console.log(this.state.comments);
         return (
             <div className="container grouped-articles shadow bg-light rounded">
                 <div className="row">
