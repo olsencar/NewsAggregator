@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Article from './Article';
 import CommentSection from './CommentSection'
 import commentService from './../services/commentService';
-import {Helmet} from "react-helmet"; //needed to add scripts for the accordion drop down comment section
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
@@ -160,30 +159,24 @@ class ArticleGroup extends Component {
                                 published={this.state.rightArticle.publish_date} />
                         </div>
                     </div>
-                </div>
-                <Helmet>
-                    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500|Open+Sans" rel="stylesheet"></link>
-                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
-                    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-                </Helmet>
-                <div className="container bg-white">
-                    <div className="accordion" id="accordionExample">
-                        <div className="card">
-                            <div className="card-header" id="headingOne">
-                                <h2 className="mb-0">
-                                    <button type="button" className="btn btn-link" onClick={this.handleAccordion} data-toggle="collapse" data-target={"#collapse-"+this.props.key_id} >Discussion</button>									
-                                </h2>
-                            </div>
-                            <div id={"collapse-"+this.props.key_id} className="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                                <div className="card-body">
-                                    <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id} postComment={this.postComment} />
-                                </div>
-                            </div>
-                        </div>
+                    <div className="container bg-white">
+                        <Accordion>
+                            <Card>
+                                <Card.Header>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={this.handleAccordion}>
+                                        Discussion
+                                    </Accordion.Toggle>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="0">
+                                    <Card.Body>
+                                        <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id} postComment={this.postComment} />
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
+                        </Accordion>
                     </div>
                 </div>
+                
             </div>
         )
     }
