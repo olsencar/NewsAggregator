@@ -42,12 +42,13 @@
   margin-bottom: 20px;
 }
 
-/* @media (max-width: 900px) {
-  .carousel {
-    width: auto !important;
-    height: auto !important;
-  }
-} */
+.card-title-a:link {
+  color: black;
+}
+
+.card-title-a:visited {
+  color: black;
+}
 
 .carousel-item {
   background-color: black;

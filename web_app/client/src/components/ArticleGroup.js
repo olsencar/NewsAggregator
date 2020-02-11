@@ -15,7 +15,8 @@ class ArticleGroup extends Component {
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
-            comments: [], //cache -> set upon accordion click
+            comments: [], //cache -> set upon accordion click,
+            accordionShowing: false,
             tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
             images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
@@ -90,19 +91,28 @@ class ArticleGroup extends Component {
     addDefaultImg = (event) => {
         event.target.src = DefaultImage;
     }
+
     handleAccordion = async () => {
-        //check if we've already checked for comments before (in cache/state):
-        let pid = this.props.article_data._id;
-        let sid = this.props.article_data.similar_articles[0]._id;
-        if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
-            let article_group_comments = await commentService.getComments(pid, sid);
-            if(article_group_comments){
-                this.setState({
-                    //use service worker to get comments on mongodb lookup
-                    comments: article_group_comments.group_comments
-                });
-            }       
+
+        // Only fetch comments when user opens the accordion
+        if (!this.state.accordionShowing) {
+            //check if we've already checked for comments before (in cache/state):
+            let pid = this.props.article_data._id;
+            let sid = this.props.article_data.similar_articles[0]._id;
+            if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
+                let article_group_comments = await commentService.getComments(pid, sid);
+                if(article_group_comments){
+                    this.setState({
+                        //use service worker to get comments on mongodb lookup
+                        comments: article_group_comments.group_comments
+                    });
+                }       
+            }
         }
+        // keep track of if the accordion is showing or not
+        this.setState({
+            accordionShowing: !this.state.accordionShowing
+        });
     }
     //get called within CommentSection
     postComment = (pid, sid, comment) => {
