@@ -8,3 +8,4 @@ install:
 script:
   - cd ./rss_feed_reader/tests
   - python -m unittest test_rss_feed_reader.py test_text_processing.py
+  
