@@ -55,6 +55,10 @@
   background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11));
 }
 
+.custom-searchbar {
+  width: 25rem !important;
+}
+
 .carousel-item {
   background-color: black;
   height: 480px;
@@ -123,4 +127,47 @@ body{margin-top:20px;}
   background-color: #A9A9A9;
   width: 120px;
   height: 20px;
+}
+
+body{
+  background: #f2f2f2;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.search-container {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.searchTerm {
+  width: 100%;
+  border-right: none;
+  padding: 5px;
+  height: 20px;
+  border-radius: 10px 0 0 10px;
+  outline: none;
+}
+
+.searchTerm:focus{
+  color: #00B4CC;
+}
+
+.searchButton {
+  border: 1px solid rgb(47, 45, 45);
+  background: rgb(47, 45, 45);
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/*Resize the wrap to see the search bar change!*/
+.wrap{
+  width: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
