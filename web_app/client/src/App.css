@@ -1,7 +1,7 @@
 .App {
   text-align: center;
-  background-color: red;
-  background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11));
+  /* background-color: black; */
+  /* background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11)); */
 }
 
 .App-logo {
@@ -48,6 +48,11 @@
 
 .card-title-a:visited {
   color: black;
+}
+
+.bg-red-blue-gradient {
+  background-color: red;
+  background-image: linear-gradient(to right, rgb(9, 91, 192) , rgb(189, 23, 11));
 }
 
 .carousel-item {
