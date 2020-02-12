@@ -104,7 +104,7 @@ def articles_to_docs(articles):
     Returns :
         A list of words for each article.
     """
-    docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(article['description'])) if w not in stopword_set]
+    docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(article['title'] + ' ' + article['description'])) if w not in stopword_set]
                 for article in articles]
     return docs
 
@@ -202,39 +202,3 @@ def openMongoClient():
         user = urllib.parse.quote(config['user'])
         pwd = urllib.parse.quote(config['password'])
         return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-
-# def main():
-    # If we are running this on AWS, we want to write to /tmp/
-    # if platform.startswith("linux"):
-    #     INDEX_FILE_NAME = "/tmp/temp.index"
-    # else:
-    #     INDEX_FILE_NAME = "./temp.index"
-
-    # client = openMongoClient()
-    # coll = client['NewsAggregator'].news_stories
-    # items = []
-    
-    # for item in coll.find({ "publish_date": { "$gte": datetime.utcnow() - timedelta(days=10) } }, { "description": 1, "publish_date": 1 }):
-    #     # Add the item to the dictionary
-    #     items.append((item['_id'], item['description'], item['publish_date']))
-
-    # docs = [[lemmatizer.lemmatize(w, get_wordnet_pos(w)) for w in nltk.word_tokenize(pre_process(text)) if w not in stopword_set]
-    #             for article_id, text, date in items]
-
-    # dictionary = Dictionary(docs)
-    # corpus = [dictionary.doc2bow(doc) for doc in docs]
-    # tf_idf = TfidfModel(corpus)
-    # sims = Similarity(INDEX_FILE_NAME,corpus,num_features=len(dictionary))
-
-    # testStr = input("What sentence would you like to test against? ")
-    # testStr = pre_process(testStr)
-    
-    # results = get_similar_articles(testStr, sims, tf_idf, dictionary, items)
-
-    # print("\nSIMILAR STORIES\n")
-    # for i in range(10):
-    #     print("ID: {}".format(results[i][2]))
-    #     print("SCORE: {}\n".format(results[i][1]))
-    
-# if __name__ == "__main__":
-#     main()
