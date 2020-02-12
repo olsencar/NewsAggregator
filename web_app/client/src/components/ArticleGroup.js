@@ -17,6 +17,7 @@ class ArticleGroup extends Component {
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
             comments: [], //cache -> set upon accordion click,
             accordionShowing: false,
+            similarity_score: chosenArticle.similarity_score,
             tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
             images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
@@ -53,36 +54,40 @@ class ArticleGroup extends Component {
     getImagesToDisplay(images1, images2, source1, source2) {
         let images = [];
         images = images1.map((item, idx) => {
-            return (
-                <Carousel.Item key={idx}>
-                    <img 
-                        onError={this.addDefaultImg}
-                        src={item}
-                        alt={source1}
-                    />
-                    <Carousel.Caption>
-                        <p>{source1}</p>
-                    </Carousel.Caption>
-                </Carousel.Item>
-            )
+            if (idx < 3) {
+                return (
+                    <Carousel.Item key={idx}>
+                        <img 
+                            onError={this.addDefaultImg}
+                            src={item}
+                            alt={source1}
+                        />
+                        <Carousel.Caption>
+                            <p>{source1}</p>
+                        </Carousel.Caption>
+                    </Carousel.Item>
+                )
+            }
         });
         const curIdx = images.length + 1;
 
         images = images.concat(
             images2.map((item, idx) => {
-                return (
-                    <Carousel.Item key={idx + curIdx} >
-                        <img 
-                            onError={this.addDefaultImg}
-                            className="img-fluid"
-                            src={item}
-                            alt={source2}
-                        />
-                        <Carousel.Caption>
-                            <p>{source2}</p>
-                        </Carousel.Caption>
-                    </Carousel.Item>
-                )
+                if (idx < 3) {
+                    return (
+                        <Carousel.Item key={idx + curIdx} >
+                            <img 
+                                onError={this.addDefaultImg}
+                                className="img-fluid"
+                                src={item}
+                                alt={source2}
+                            />
+                            <Carousel.Caption>
+                                <p>{source2}</p>
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                    )
+                }
             })
         );
         return images;
@@ -93,7 +98,7 @@ class ArticleGroup extends Component {
     }
 
     handleAccordion = async () => {
-
+        // console.log(this.state.similarity_score);
         // Only fetch comments when user opens the accordion
         if (!this.state.accordionShowing) {
             //check if we've already checked for comments before (in cache/state):
