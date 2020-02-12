@@ -9,7 +9,7 @@ class MainNavbar extends Component {
     // </Nav>
     render() {
         return (
-            <Navbar collapseOnSelect expand="sm" bg="red-blue-gradient" variant="dark">
+            <Navbar collapseOnSelect sticky="top" expand="sm" bg="red-blue-gradient" variant="dark">
                 <Navbar.Brand href="/">PURPLE</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-center">
