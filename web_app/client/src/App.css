@@ -164,11 +164,15 @@ body{
   width: 60px;
 }
 
-/*Resize the wrap to see the search bar change!*/
-.wrap{
-  width: 50%;
+.search-bar-wrapper {
+  width: 45%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+
+#feed-container {
+  margin-top: 50px;
 }
