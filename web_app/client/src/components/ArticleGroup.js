@@ -6,7 +6,7 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Carousel  from 'react-bootstrap/Carousel'
-import DefaultImage from '../onErrorFallback.png'
+import DefaultImage from '../assets/onErrorFallback.png'
 
 class ArticleGroup extends Component {
     constructor(props) {

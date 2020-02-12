@@ -4,9 +4,6 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class MainNavbar extends Component {
-    // <Nav className="mr-auto">
-    //     <Nav.Link href="#about">About</Nav.Link>
-    // </Nav>
     render() {
         return (
             <Navbar collapseOnSelect sticky="top" expand="sm" bg="red-blue-gradient" variant="dark">
