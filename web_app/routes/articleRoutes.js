@@ -64,7 +64,7 @@ module.exports = (app) => {
         try {
             let articles = await Article.find({
                 publish_date: {$gt: beginDate}
-            }).lean();
+            }).sort({'publish_date': -1}).lean();
 
             articles.forEach((article) => {
                 article.most_similar_article = getMostSimilarArticle(article);

@@ -89,7 +89,7 @@ class App extends Component {
     return (
       <div className="App">
         <MainNavbar />
-        <div className="container">
+        <div className="container" id="feed-container">
           <div className="col">
             {this.state.articlesToDisplay}
             <div className="pagination">
