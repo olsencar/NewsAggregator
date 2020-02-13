@@ -1,15 +1,16 @@
 import re
+import os, sys
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = '1'
 import tensorflow as tf
 tf.get_logger().setLevel('ERROR')
 import tensorflow_hub as hub
 import numpy as np
-import os, sys
 from sklearn.metrics.pairwise import cosine_similarity
 import json
 import urllib
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-tf.compat.v1.enable_eager_execution()
+# tf.compat.v1.enable_eager_execution()
 
 #performs the cosine similarity between two vectors
 def cos_sim(vectors):
