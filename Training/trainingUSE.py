@@ -63,13 +63,13 @@ def get_articles(client, days_back=10):
     items = []
 
     for item in coll.find(
-        {"publish_date": {"$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, 'publish_date': 1 }
+        {"publish_date": {"$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, 'title': 1, 'publish_date': 1 }
         ).sort('publish_date', -1):
         # Add the item to the dictionary
         if ('description' not in item):
             print(item)
         else:
-            items.append(item['description'])
+            items.append(item['title'] + ' ' + item['description'])
     return items
 
 def main():        
@@ -80,13 +80,18 @@ def main():
     sentences_embeddings = embed(docs)
 
     sim_matrix = cos_sim(np.array(sentences_embeddings))
-    sentence = docs[0]
-    print("SENTENCE: " + sentence)
-    most_sim = get_most_sim(sentence, docs, sim_matrix)
-    print("MOST SIMILAR")
-    
-    for x in range(len(most_sim)):
-        print(most_sim[x])
+    for i in range(50): 
+        sentence = docs[i]
+        print("======================================================")
+        print()
+        print("SENTENCE: " + sentence)
+        most_sim = get_most_sim(sentence, docs, sim_matrix)
+        print("MOST SIMILAR")
+        
+        for x in range(len(most_sim)):
+            print(most_sim[x]['description'])
+            print("SCORE: " + str(most_sim[x]['similarity_score']))
+            print()
 
 if __name__ == "__main__":
     main()
