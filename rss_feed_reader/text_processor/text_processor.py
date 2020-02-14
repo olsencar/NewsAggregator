@@ -30,7 +30,7 @@ class TextProcessor:
         self.similarity_matrix = cosine_similarity(np.array(self.sentence_embeddings))
     
 
-    def get_article_texts(articles):
+    def get_article_texts(self, articles):
         """
         
         Retrieves only the title and description from each article
@@ -78,7 +78,7 @@ class TextProcessor:
         return tmp
 
 
-    def pre_process(text, html=False):
+    def pre_process(self, text, html=False):
         """
 
         Pre-processes a piece of text by removing all characters except for a-z and the space character.
@@ -104,7 +104,7 @@ class TextProcessor:
         return text
 
 
-    def get_similar_articles(article, articles, topn=5, publish_date=datetime.utcnow(), prefer_recent_articles=True):
+    def get_similar_articles(self, article, articles, topn=5, publish_date=datetime.utcnow(), prefer_recent_articles=True):
         """
 
         Gets the `topn` similar articles to a piece of text.
