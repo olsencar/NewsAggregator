@@ -20,7 +20,8 @@ import itertools
 
 logger = logging.getLogger("rss_feed_reader")
 logger.setLevel(logging.INFO)
-CATEGORIES = ["politics"]       
+CATEGORIES = ["politics"] 
+REJECT_SIMILARITY = 0.68      
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -235,7 +236,7 @@ def main():
             # If the item does not exist in the DB or its similar articles list has 2 or less items
             #   then update/insert the item in the DB
             
-            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < 0.5)):
+            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < REJECT_SIMILARITY)):
                 similar_articles = tp.get_similar_articles(story, new_articles, publish_date=story['publish_date'])
                 if (item is not None and "similar_articles" in item):
                     similar_articles.extend(item["similar_articles"])
