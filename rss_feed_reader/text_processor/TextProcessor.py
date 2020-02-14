@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+import logging
+logger = logging.getLogger("TextProcessor")
+logger.setLevel(logging.WARNING)
 import re
 from datetime import datetime
 from numpy import float64, float32, int64, int32
@@ -7,11 +10,13 @@ import tensorflow_hub as tf_hub
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
+
+special_chars = re.compile(r"[\(\[].*?[\)\]]")
+
 class TextProcessor:
-    def __init__(self, USEUrl):
-        self.module_url = USEUrl
-        self.embed = tf_hub.load(USEUrl)
-        self.special_chars = re.compile(r"[\(\[].*?[\)\]]")
+    def __init__(self, articles):
+        self.module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+        self.create_sentence_embeddings(articles)
 
 
     def create_sentence_embeddings(self, articles):
@@ -26,10 +31,11 @@ class TextProcessor:
             A list of words for each article.
         """
         self.article_texts = self.get_article_texts(articles)
-        self.sentence_embeddings = self.embed(articles)
+        embed = tf_hub.load(self.module_url)
+        self.sentence_embeddings = embed(articles)
         self.similarity_matrix = cosine_similarity(np.array(self.sentence_embeddings))
     
-
+    @classmethod
     def get_article_texts(self, articles):
         """
         
@@ -37,9 +43,9 @@ class TextProcessor:
 
         Returns : list of article title + article descriptions
         """
-        return map(lambda article: self.pre_process(article['title'] + ' ' + article['description'], False), articles)
+        return list(map(lambda article: self.pre_process(article['title'] + ' ' + article['description'], False), articles))
 
-    
+    @staticmethod
     def correct_encoding(value):
         """
         
@@ -60,7 +66,7 @@ class TextProcessor:
 
         return newValue
 
-
+    @staticmethod
     def remove_html(text):
         """
 
@@ -77,7 +83,7 @@ class TextProcessor:
         tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
         return tmp
 
-
+    @classmethod
     def pre_process(self, text, html=False):
         """
 
@@ -95,9 +101,9 @@ class TextProcessor:
         
         # remove html tags
         if (html):
-            text = remove_html(text)
+            text = self.remove_html(text)
         #remove special characters
-        text = self.special_chars.sub("", text)
+        text = special_chars.sub("", text)
         text = re.sub(r"\s{2,}", " ", text)
         text = text.strip()
 

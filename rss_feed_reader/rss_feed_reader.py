@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 from gevent import monkey
 monkey.patch_all(select=False, thread=False)
 import feedparser
@@ -14,33 +13,14 @@ from base64 import b64decode
 import logging
 import urllib
 from dateutil import parser
-from text_processing import pre_process, remove_html, get_similar_articles, articles_to_docs, create_corpus, create_dictionary
-from gensim.similarities import Similarity
-from gensim.models import TfidfModel
-from gensim.summarization import keywords
+from text_processor.TextProcessor import TextProcessor
 from datetime import datetime, timedelta
 from sys import platform
 import itertools
 
-logger = logging.getLogger()
+logger = logging.getLogger("rss_feed_reader")
 logger.setLevel(logging.INFO)
-CATEGORIES = ["politics"]
-
-# If we are running this on AWS, we want to write to /tmp/
-if platform.startswith("linux"):
-    INDEX_FILE_NAME = "/tmp/temp.index" 
-else:
-    INDEX_FILE_NAME = "./temp.index"        
-
-#****************************************************
-# EXTRACTION OF KEYWORDS
-#****************************************************
-
-# Returns a list of keywords for a specific document
-def get_keywords(text):
-    # In the meantime, we need to set the ratio to a higher value.
-    # We can later switch this to use the `words` parameter once a bug is fixed in GenSim Keywords
-    return keywords(text, ratio=.4, split=True)
+CATEGORIES = ["politics"]       
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -97,7 +77,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
             if ('published' in item):
                 # remove the html tags from the description
                 # this description is used in the UI, so keep case and special characters in it.
-                desc = remove_html(item['description'])                    
+                desc = TextProcessor.remove_html(item['description'])                    
                 tags = []
                 if (feed_info['hasTags']):
                     politics = False
@@ -167,8 +147,20 @@ def openMongoClient():
     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
     
 
+# combines the new and old articles together for text processing
+def combine_old_and_new_articles(old_articles, new_articles):
+    new_articles = list(itertools.chain.from_iterable(new_articles))
+    old_article_descs = set(map(lambda a: a['description'], old_articles))
+    return_articles = old_articles
+    # If new article does not exist in old articles, then add it
+    for art in new_articles:
+        if art['description'] not in old_article_descs:
+            return_articles.append(art)
+
+    return return_articles
 def main():
     feeds = []
+
     with open("./rss_feed_config.json", "r") as rss_feeds:
         data = json.load(rss_feeds)
         # for each source in the data sources
@@ -215,13 +207,11 @@ def main():
     
     db = client['NewsAggregator']
     
-    # Generate the similarity matrix index
     articles = get_articles(client)
-    docs = articles_to_docs(articles)
-    dictionary = create_dictionary(docs)
-    corpus = create_corpus(dictionary, docs)
-    tf_idf = TfidfModel(corpus)
-    similarity_matrix = Similarity(INDEX_FILE_NAME, corpus, num_features=len(dictionary))
+    new_articles = combine_old_and_new_articles(articles, results)
+
+    #instantiate our text processor class
+    tp = TextProcessor(new_articles)
 
     # Loop through the results, and upload each story
     ops = []
@@ -240,16 +230,8 @@ def main():
             # If the item does not exist in the DB or its similar articles list has 2 or less items
             #   then update/insert the item in the DB
             
-            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < 0.2)):
-                similar_articles = get_similar_articles(
-                    pre_process(story['title'] + ' ' + story['description']),
-                    similarity_matrix,
-                    tf_idf,
-                    dictionary,
-                    articles, 
-                    publish_date=story["publish_date"],
-                    topn=5
-                )
+            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < 0.5)):
+                similar_articles = tp.get_similar_articles(story, new_articles, publish_date=story['publish_date'])
                 if (item is not None and "similar_articles" in item):
                     similar_articles.extend(item["similar_articles"])
                     similar_articles = sorted(similar_articles, key=lambda article: article["similarity_score"], reverse=True)[:5]
