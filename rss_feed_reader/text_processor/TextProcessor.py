@@ -136,13 +136,24 @@ class TextProcessor:
         article_text = self.pre_process(article['title'] + ' ' + article['description'])
         index = self.article_texts.index(article_text)
         sim_row = np.array(self.similarity_matrix[index, :])
+
+
+        if (prefer_recent_articles):
+            for i in range(len(sim_row)):
+                if (sim_row[i] > 0.00):
+                    datediff = (publish_date - articles[i]['publish_date']).days
+                    sim_row[i] = sim_row[i] - pow((datediff * .05), 3)
+
         indices = sim_row.argsort()[-topn:][::-1][1:]
 
         top_sims = []
         cnt = 0
+        print("SENTENCE: " + article['title'])
         for i in indices:
             top_sims.append(articles[i])
             top_sims[cnt]['similarity_score'] = self.correct_encoding(sim_row[i])
+            print("\t" + top_sims[cnt]['title'])
+            print("\t" + str(top_sims[cnt]['similarity_score']))
             cnt += 1
 
         return top_sims
