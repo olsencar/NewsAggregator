@@ -31,8 +31,9 @@ class TestTextProcessing(unittest.TestCase):
 
     
     def test_pre_process(self):
-        self.assertEqual(TextProcessor.pre_process("23 ABCDEF this is !a test"), "abcdef this is a test")
-        self.assertEqual(TextProcessor.pre_process("<>"), "")
+        self.assertEqual(TextProcessor.pre_process("This is a test (testing)?"), "This is a test ?")
+        self.assertEqual(TextProcessor.pre_process("[This is a test testing]?"), "?")
+        self.assertEqual(TextProcessor.pre_process("<>", True), "")
 
 if __name__ == "__main__":
     unittest.main()
