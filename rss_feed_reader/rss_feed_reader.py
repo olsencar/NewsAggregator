@@ -20,7 +20,8 @@ import itertools
 
 logger = logging.getLogger("rss_feed_reader")
 logger.setLevel(logging.INFO)
-CATEGORIES = ["politics"]       
+CATEGORIES = ["politics"] 
+REJECT_SIMILARITY = 0.68      
 
 #returns an array of image urls
 def getArticleImages(item):
@@ -140,12 +141,17 @@ def getArticleTags(hasTags, title, description, tags):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
-    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
-    user = urllib.parse.quote(decrypted_user)
-    pwd = urllib.parse.quote(decrypted_pw)
-    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-    
+    # decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
+    # decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
+    # user = urllib.parse.quote(decrypted_user)
+    # pwd = urllib.parse.quote(decrypted_pw)
+    # return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    with open("connectionDetails.json", "r") as conn:
+        config = json.load(conn)
+        user = urllib.parse.quote(config['user'])
+        pwd = urllib.parse.quote(config['password'])
+        return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+
 
 # combines the new and old articles together for text processing
 def combine_old_and_new_articles(old_articles, new_articles):
@@ -230,7 +236,7 @@ def main():
             # If the item does not exist in the DB or its similar articles list has 2 or less items
             #   then update/insert the item in the DB
             
-            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < 0.5)):
+            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < REJECT_SIMILARITY)):
                 similar_articles = tp.get_similar_articles(story, new_articles, publish_date=story['publish_date'])
                 if (item is not None and "similar_articles" in item):
                     similar_articles.extend(item["similar_articles"])
@@ -266,7 +272,7 @@ def main():
         sourceIdx += 1
     if (len(ops) > 0):
         try:
-            response = db.news_stories.bulk_write(ops, ordered=False)
+            # response = db.news_stories.bulk_write(ops, ordered=False)
             insertQty += response.upserted_count
         except Exception as e:
             logger.error(e)

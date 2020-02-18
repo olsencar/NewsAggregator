@@ -32,7 +32,7 @@ class TextProcessor:
         """
         self.article_texts = self.get_article_texts(articles)
         embed = tf_hub.load(self.module_url)
-        self.sentence_embeddings = embed(articles)
+        self.sentence_embeddings = embed(self.article_texts)
         self.similarity_matrix = cosine_similarity(np.array(self.sentence_embeddings))
     
     @classmethod
@@ -83,8 +83,8 @@ class TextProcessor:
         tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
         return tmp
 
-    @classmethod
-    def pre_process(self, text, html=False):
+    @staticmethod
+    def pre_process(text, html=False):
         """
 
         Pre-processes a piece of text by removing all characters except for a-z and the space character.
@@ -101,7 +101,7 @@ class TextProcessor:
         
         # remove html tags
         if (html):
-            text = self.remove_html(text)
+            text = TextProcessor.remove_html(text)
         #remove special characters
         text = special_chars.sub("", text)
         text = re.sub(r"\s{2,}", " ", text)
@@ -136,11 +136,21 @@ class TextProcessor:
         article_text = self.pre_process(article['title'] + ' ' + article['description'])
         index = self.article_texts.index(article_text)
         sim_row = np.array(self.similarity_matrix[index, :])
+
+
+        if (prefer_recent_articles):
+            for i in range(len(sim_row)):
+                if (sim_row[i] > 0.00):
+                    datediff = (publish_date.date() - articles[i]['publish_date'].date()).days
+                    sim_row[i] = sim_row[i] - pow((datediff * .05), 3)
+
         indices = sim_row.argsort()[-topn:][::-1][1:]
 
         top_sims = []
+        cnt = 0
         for i in indices:
             top_sims.append(articles[i])
-            top_sims[i]['similarity_score'] = self.correct_encoding(sim_row[i])
-        
+            top_sims[cnt]['similarity_score'] = self.correct_encoding(sim_row[i])
+            cnt += 1
+
         return top_sims
