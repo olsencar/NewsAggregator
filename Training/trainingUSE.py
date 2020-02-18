@@ -10,7 +10,6 @@ import json
 import urllib
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-# tf.compat.v1.enable_eager_execution()
 
 #performs the cosine similarity between two vectors
 def cos_sim(vectors):
@@ -19,10 +18,7 @@ def cos_sim(vectors):
 def get_most_sim(sentence, compare_sentences, sim_matrix, topN=6):
     index = compare_sentences.index(sentence)
     sim_row = np.array(sim_matrix[index, :])
-    # print(sim_row)
     indices = sim_row.argsort()[-topN:][::-1][1:]
-    # print(sim_row.argsort())
-    # print(sim_row.argsort()[-topN:][::-1][1:])
    
     return [{'description': compare_sentences[i], 'similarity_score': sim_row[i]} for i in indices]
 
