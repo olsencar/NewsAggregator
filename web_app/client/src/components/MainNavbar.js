@@ -1,20 +1,27 @@
 import React, { Component } from 'react'
-import { Nav, Navbar, Form, FormControl, Button }  from 'react-bootstrap'
+import { Navbar, FormControl, InputGroup }  from 'react-bootstrap'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class MainNavbar extends Component {
     render() {
         return (
-            <Navbar collapseOnSelect expand="sm" bg="dark" variant="dark">
-                <Navbar.Brand href="/">News Aggregator</Navbar.Brand>
+            <Navbar collapseOnSelect sticky="top" expand="sm" bg="red-blue-gradient" variant="dark">
+                <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="#about">About</Nav.Link>
-                    </Nav>
-                    <Form inline>
-                        <FormControl type="text" placeholder="Search" className="mr-auto" />
-                        <Button variant="outline-info">Search</Button>
-                    </Form>
+                <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-center">
+                    <div className="search-bar-wrapper">
+                        <div className="search-container">
+                            <InputGroup>
+                                <FormControl type="text" className="searchTerm" placeholder="Search..." />
+                                <InputGroup.Append>
+                                    <button type="submit" className="searchButton">
+                                        <FontAwesomeIcon icon={faSearch} />
+                                    </button>
+                                </InputGroup.Append>
+                            </InputGroup>
+                        </div>
+                    </div>
                 </Navbar.Collapse>
 
             </Navbar>

@@ -1,5 +1,6 @@
-#!/usr/bin/python3
 from gensim.corpora import Dictionary
+from gensim.similarities import Similarity
+from gensim.models import TfidfModel
 import nltk
 # nltk.data.path.append("./nltk_data")
 nltk.data.path.append("/tmp")
@@ -9,61 +10,22 @@ nltk.download('averaged_perceptron_tagger', download_dir="/tmp")
 nltk.download('wordnet', download_dir="/tmp")
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
-import urllib.parse
+from datetime import datetime, timedelta
+import re
+import urllib
 import json
 from pymongo import MongoClient
-import re
-from datetime import datetime
 from numpy import float64, float32, int64, int32
+from sys import platform
 
 special_chars = re.compile(r"[^a-z ]+")
 lemmatizer = WordNetLemmatizer()
 stopword_set = set(stopwords.words('english'))
 
-# Determines if the word is an adjective, noun, verb or adverb
-def get_wordnet_pos(word):
-    # Map POS tag to first character lemmatize() accepts
-    tag = nltk.pos_tag([word])[0][1][0].upper()
-    tag_dict = {"J": wordnet.ADJ,
-                "N": wordnet.NOUN,
-                "V": wordnet.VERB,
-                "R": wordnet.ADV}
-
-    return tag_dict.get(tag, wordnet.NOUN)
-
-def correct_encoding(value):
-    """Correct the encoding of python values so they can be encoded to mongodb
-    inputs
-    -------
-    dictionary : dictionary instance to add as document
-    output
-    -------
-    Returns : new value with (hopefully) corrected encodings"""
-
-
-    if isinstance(value, int64) or isinstance(value, int32):
-        newValue = int(value)
-
-    if isinstance(value, float64) or isinstance(value, float32):
-        newValue = float(value)
-
-    return newValue
-
-def remove_html(text):
-    """
-
-    Removes HTML tags and strings in between the tags from the `text` parameter.
-
-    :param text: 
-        The text to remove HTML tags from.
-
-    :return:
-        Returns the `text` with the HTML removed from it.
-    """
-
-    tmp = re.sub("<[^>]*>", "", text)
-    tmp = re.sub(r"[\(\n)+\(\t)+]+", "", tmp)
-    return tmp
+if platform.startswith("linux"):
+    INDEX_FILE_NAME = "/tmp/temp.index" 
+else:
+    INDEX_FILE_NAME = "./temp.index" 
 
 def pre_process(text, html=False):
     """
@@ -80,9 +42,6 @@ def pre_process(text, html=False):
         Returns the pre-processed text.
     """
     
-    # remove html tags
-    if (html):
-        text = remove_html(text)
     #remove special characters
     text = text.lower()
     text = special_chars.sub("", text)
@@ -90,6 +49,18 @@ def pre_process(text, html=False):
     text = text.strip()
 
     return text
+
+# Determines if the word is an adjective, noun, verb or adverb
+def get_wordnet_pos(word):
+    # Map POS tag to first character lemmatize() accepts
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+
+    return tag_dict.get(tag, wordnet.NOUN)
+
 
 def articles_to_docs(articles):
     """
@@ -137,6 +108,24 @@ def create_corpus(dictionary, docs):
         A list of bag-of-words for each article.
     """
     return [dictionary.doc2bow(doc) for doc in docs]
+
+def correct_encoding(value):
+    """Correct the encoding of python values so they can be encoded to mongodb
+    inputs
+    -------
+    dictionary : dictionary instance to add as document
+    output
+    -------
+    Returns : new value with (hopefully) corrected encodings"""
+
+
+    if isinstance(value, int64) or isinstance(value, int32):
+        newValue = int(value)
+
+    if isinstance(value, float64) or isinstance(value, float32):
+        newValue = float(value)
+
+    return newValue
 
 def get_similar_articles(text, similarity_matrix, tf_idf, dictionary, articles, topn=10, publish_date=datetime.utcnow(), prefer_recent_articles=True):
     """
@@ -202,3 +191,56 @@ def openMongoClient():
         user = urllib.parse.quote(config['user'])
         pwd = urllib.parse.quote(config['password'])
         return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+
+def get_articles(client, days_back=10):
+    """
+
+    Gets articles from the past `days_back` to now from MongoDB
+
+    `client` : A `MongoClient` object that has been instantiated.
+
+    `days_back` :
+        This parameter defines how many days back to search in the DB. This is 7 by default.
+
+    Returns:
+        A List of articles as triplets (_id, description, publish_date)
+    """
+    coll = client['NewsAggregator'].news_stories
+    items = []
+
+    for item in coll.find(
+        {"publish_date": {"$gte": datetime.utcnow() - timedelta(days=days_back) } }, { "description": 1, "title": 1, "publish_date": 1 }).sort('publish_date', -1):
+        # Add the item to the dictionary
+        if ('description' not in item):
+            print(item)
+        else:
+            items.append(item)
+    return items
+
+client = openMongoClient()
+articles = get_articles(client)
+docs = articles_to_docs(articles)
+dictionary = create_dictionary(docs)
+corpus = create_corpus(dictionary, docs)
+tf_idf = TfidfModel(corpus)
+similarity_matrix = Similarity(INDEX_FILE_NAME, corpus, num_features=len(dictionary))
+
+for i in range(50): 
+    sentence = articles[i]['title'] + ' ' + articles[i]['description']
+    print("======================================================")
+    print()
+    print("SENTENCE: " + sentence)
+    similar_articles = get_similar_articles(
+                        pre_process(sentence),
+                        similarity_matrix,
+                        tf_idf,
+                        dictionary,
+                        articles, 
+                        prefer_recent_articles=False,
+                        topn=5
+                    )
+    print("MOST SIMILAR")
+    for x in range(len(similar_articles)):
+        print(similar_articles[x]['description'])
+        print("SCORE: " + str(similar_articles[x]['similarity_score']))
+        print()
