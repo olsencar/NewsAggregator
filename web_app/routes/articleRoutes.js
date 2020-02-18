@@ -8,7 +8,7 @@ biasIsOppositeSign = (bias1, bias2) => {
 
 getMostSimilarArticle = (article) => {
     const similarArticles = article.similar_articles;
-    let chosenArticle = similarArticles[0];
+    let chosenArticle = null;
     for (let i = 0; i < similarArticles.length; i++) {
         if (biasIsOppositeSign(similarArticles[i].bias, article.bias)) {
             chosenArticle = similarArticles[i];
@@ -73,7 +73,7 @@ module.exports = (app) => {
             articles.forEach((article) => {
                 article.most_similar_article = getMostSimilarArticle(article);
             });
-            articles = articles.filter((doc) => (doc.most_similar_article.bias !== doc.bias && doc.most_similar_article.similarity_score > .28));
+            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > .28));
 
             return res.status(200).send(articles);
         } catch (error) {
