@@ -272,7 +272,7 @@ def main():
         sourceIdx += 1
     if (len(ops) > 0):
         try:
-            # response = db.news_stories.bulk_write(ops, ordered=False)
+            response = db.news_stories.bulk_write(ops, ordered=False)
             insertQty += response.upserted_count
         except Exception as e:
             logger.error(e)
