@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from gevent import monkey
-monkey.patch_all(select=False, thread=False)
+from gevent import monkey as curious_george
+curious_george.patch_all(thread=False, select=False)
 import feedparser
 import json
 import hashlib
@@ -8,8 +8,6 @@ from pymongo import MongoClient, UpdateOne
 import grequests
 from threading import Thread
 import os
-import boto3
-from base64 import b64decode
 import logging
 import urllib
 from dateutil import parser
@@ -19,6 +17,10 @@ from sys import platform
 import itertools
 
 logger = logging.getLogger("rss_feed_reader")
+hdlr = logging.FileHandler('rss_reader.log')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s : %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
 logger.setLevel(logging.INFO)
 CATEGORIES = ["politics"] 
 REJECT_SIMILARITY = 0.68      
@@ -141,16 +143,15 @@ def getArticleTags(hasTags, title, description, tags):
 
 # Opens the mongoDB client connection
 def openMongoClient():
-    decrypted_user = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['user']))['Plaintext']
-    decrypted_pw = boto3.client('kms').decrypt(CiphertextBlob=b64decode(os.environ['password']))['Plaintext']
-    user = urllib.parse.quote(decrypted_user)
-    pwd = urllib.parse.quote(decrypted_pw)
-    return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
-    # with open("connectionDetails.json", "r") as conn:
-    #     config = json.load(conn)
-    #     user = urllib.parse.quote(config['user'])
-    #     pwd = urllib.parse.quote(config['password'])
-    #     return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+    with open("config.json", "r") as conn:
+        config = json.load(conn)
+        try:
+            user = urllib.parse.quote(config['readWrite']['user'])
+            pwd = urllib.parse.quote(config['readWrite']['password'])
+            return MongoClient("mongodb+srv://{}:{}@newsaggregator-0ys1l.mongodb.net/test?retryWrites=true&w=majority".format(user, pwd))
+        except Exception as e:
+            logger.exception("MongoDB Connection")
+            exit()
 
 
 # combines the new and old articles together for text processing

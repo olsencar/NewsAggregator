@@ -1,12 +1,16 @@
 #!/usr/bin/python3
+try:
+    import unzip_requirements
+except ImportError:
+    pass
 import logging
 logger = logging.getLogger("TextProcessor")
 logger.setLevel(logging.WARNING)
 import re
 from datetime import datetime
 from numpy import float64, float32, int64, int32
-import tensorflow as tf
 import tensorflow_hub as tf_hub
+import tensorflow as tf
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
