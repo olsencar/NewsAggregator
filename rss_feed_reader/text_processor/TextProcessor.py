@@ -145,7 +145,7 @@ class TextProcessor:
         if (prefer_recent_articles):
             for i in range(len(sim_row)):
                 if (sim_row[i] > 0.00):
-                    datediff = (publish_date.date() - articles[i]['publish_date'].date()).days
+                    datediff = abs((publish_date.date() - articles[i]['publish_date'].date()).days)
                     sim_row[i] = sim_row[i] - pow((datediff * .05), 3)
 
         indices = sim_row.argsort()[-topn:][::-1][1:]
