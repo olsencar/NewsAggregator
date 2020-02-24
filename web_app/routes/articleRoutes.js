@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'); 
 const Article = mongoose.model('Article');
+const SIMILARITY_SCORE_MIN = 0.68;
 
 biasIsOppositeSign = (bias1, bias2) => {
     return ((bias1 ^ bias2) < 0);
@@ -30,7 +31,7 @@ module.exports = (app) => {
             return res.status(500).send();
         }
     });
-    
+
     app.get('/api/articles/recent', async (req, res) => {
         let beginDate = new Date();
         beginDate.setDate(beginDate.getDate() - 7);
@@ -42,7 +43,7 @@ module.exports = (app) => {
             articles.forEach((article) => {
                 article.most_similar_article = getMostSimilarArticle(article);
             });
-            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > .28));
+            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
 
             return res.status(200).send(articles);
         } catch (error) {
