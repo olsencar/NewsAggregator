@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'); 
 const Article = mongoose.model('Article');
-const Comment = mongoose.model('Comment');
+const SIMILARITY_SCORE_MIN = 0.68;
 
 biasIsOppositeSign = (bias1, bias2) => {
     return ((bias1 ^ bias2) < 0);
@@ -31,36 +31,6 @@ module.exports = (app) => {
             return res.status(500).send();
         }
     });
-    //finding comments for an article group
-    app.get('/api/comments/byId/:pid-:sid', async (req, res) => {
-        let s_primary_id = req.params.pid;
-        let s_secondary_id = req.params.sid;
-        await Comment.findOne({ $or:[{ primary_id: s_primary_id, secondary_id: s_secondary_id}, { primary_id: s_secondary_id, secondary_id: s_primary_id}]}, function(err, comment){  
-            if (err) { //comment not found
-                console.log("Error locating document");
-            }
-            if(comment){
-                //success
-                return res.status(200).send(comment);
-            }
-            return res.status(200).send(null);
-        });
-    });
-    //add comment to db
-    app.post('/api/comments/add', async (comment_data, res) => {
-        //search_primary_key and search_secondary_key
-        let s_primary_id = comment_data.body.primary_id;
-        let s_secondary_id = comment_data.body.secondary_id;
-        let new_comment = comment_data.body.group_comments[0]
-        const filter = {primary_id: s_primary_id, secondary_id: s_secondary_id};
-        const update = { $push: { group_comments: new_comment } };
-        let doc = await Comment.findOneAndUpdate(filter, update, {
-            new: true,
-            upsert: true, // Make this update into an upsert
-            useFindAndModify: false
-        });
-        return res.status(200).send(doc);
-    });
 
     app.get('/api/articles/recent', async (req, res) => {
         let beginDate = new Date();
@@ -73,7 +43,7 @@ module.exports = (app) => {
             articles.forEach((article) => {
                 article.most_similar_article = getMostSimilarArticle(article);
             });
-            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > .28));
+            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
 
             return res.status(200).send(articles);
         } catch (error) {

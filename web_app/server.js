@@ -26,6 +26,7 @@ app.use(bodyParser.json());
 
 // Import routes
 require('./routes/articleRoutes')(app);
+require('./routes/commentRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
