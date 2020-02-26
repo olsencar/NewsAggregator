@@ -6,7 +6,7 @@ const dbConfig = require('./config/config');
 // Import the DB Models
 require('./models/Article').default;
 require('./models/Comment').default;
-
+require('./models/Votes').default;
 
 const app = express();
 //Here we are configuring express to use body-parser as middle-ware.
@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 // Import routes
 require('./routes/articleRoutes')(app);
 require('./routes/commentRoutes')(app);
+require('./routes/votesRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Article from './Article';
 import CommentSection from './CommentSection'
 import commentService from './../services/commentService';
+import votesService from './../services/votesService';
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
@@ -12,15 +13,87 @@ class ArticleGroup extends Component {
     constructor(props) {
         super(props);
         const chosenArticle = this.props.article_data.most_similar_article;
+        //for comment section to use when inserting a new comment (taking with it the most udpated vote vals)
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
             rightArticle: this.props.article_data.bias > chosenArticle.bias ? this.props.article_data : chosenArticle,
+            leftVotes: 0,
+            rightVotes: 0,
+            leftVotesPressed: false,
+            rightVotesPressed: false,
             comments: [], //cache -> set upon accordion click,
             accordionShowing: false,
             similarity_score: chosenArticle.similarity_score,
             tags: this.getTagsToDisplay(this.props.article_data.tags, chosenArticle.tags),
             images: this.getImagesToDisplay(this.props.article_data.images, chosenArticle.images, this.props.article_data.source_name, chosenArticle.source_name)
         };
+    }
+    //on component render
+    loadVotes = async () => {
+        let pid = this.props.article_data._id;
+        let sid = this.props.article_data.similar_articles[0]._id;
+        let vote_group = await votesService.getVotes(pid, sid);
+        if(vote_group){
+            this.setState({
+                //use service worker to get comments on mongodb lookup
+                leftVotes: vote_group.left_votes,
+                rightVotes: vote_group.right_votes
+            });
+        }
+    }
+
+    //on upvote press
+    handleUpvotes = async (side) => {
+        let pid = this.props.article_data._id;
+        let sid = this.props.article_data.similar_articles[0]._id;
+        if(side === "left"){
+            if(!this.state.leftVotesPressed){
+                //update local state
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    leftVotes: +this.state.leftVotes+1,
+                    leftVotesPressed: true,
+                },        //state is updated asynchronously, so add updated value
+                () => votesService.addVotes(pid, sid, +this.state.leftVotes, +this.state.rightVotes)
+                );
+            } else{//if is pressed -> undo upvote
+                //update local state
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    leftVotes: +this.state.leftVotes-1,
+                    leftVotesPressed: false,
+                },        //state is updated asynchronously, so add updated value
+                () => votesService.removeVotes(pid, sid, +this.state.leftVotes, +this.state.rightVotes)
+                );
+            }
+        }
+        else if(side === "right"){
+            if(!this.state.rightVotesPressed){
+                //update local state
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    rightVotes: +this.state.rightVotes+1,
+                    rightVotesPressed: true,
+                },        //state is updated asynchronously, so add updated value
+                () => votesService.addVotes(pid, sid, +this.state.rightVotes, +this.state.rightVotes)
+                );
+            } else{//if is pressed -> undo upvote
+                //update local state
+                this.setState({
+                    //use service worker to get comments on mongodb lookup
+                    rightVotes: +this.state.rightVotes-1,
+                    rightVotesPressed: false,
+                },        //state is updated asynchronously, so add updated value
+                () => votesService.removeVotes(pid, sid, +this.state.rightVotes, +this.state.rightVotes)
+                );
+            }
+        }
+
+    }
+
+    //loaded upon component load
+    componentDidMount() {
+        this.loadVotes();
     }
 
     componentWillReceiveProps(newProps) {
@@ -97,8 +170,8 @@ class ArticleGroup extends Component {
         event.target.src = DefaultImage;
     }
 
+    //run on accordion expansion
     handleAccordion = async () => {
-        // console.log(this.state.similarity_score);
         // Only fetch comments when user opens the accordion
         if (!this.state.accordionShowing) {
             //check if we've already checked for comments before (in cache/state):
@@ -120,7 +193,7 @@ class ArticleGroup extends Component {
         });
     }
     //get called within CommentSection
-    postComment = (pid, sid, comment) => {
+    postComment = (pid, sid, left_votes, right_votes, comment) => {
         //we want to just add this comment to the specific document with the below pid and sid
         //so we'll send all this data then the service worker will extract pid sid, and the comment data
         //do a look up on pid-sid, then append its array (update) with the comment data in this json
@@ -145,6 +218,22 @@ class ArticleGroup extends Component {
         });
     }
     render() {
+        let leftUpvoteButton;
+        let rightUpvoteButton;
+        //change/rerender upvote button if its already been pressed
+        if(this.state.leftVotesPressed){
+            leftUpvoteButton = <button type="button" className="btn btn-outline-primary" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+        }
+        else{//not pressed
+            leftUpvoteButton = <button type="button" className="btn btn-primary" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+        }
+        //change/rerender upvote button if its already been pressed
+        if(this.state.rightVotesPressed){
+            rightUpvoteButton = <button type="button" className="btn btn-outline-primary" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+        }
+        else{//not pressed
+            rightUpvoteButton = <button type="button" className="btn btn-primary" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+        }
         return (
             <div className="container grouped-articles shadow bg-light rounded">
                 <div className="row justify-content-center">
@@ -160,18 +249,25 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
+
+                            {leftUpvoteButton}
+                            <div className="p-3 mb-2 bg-info text-white votes" >{this.state.leftVotes}</div>
                             <Article key={0} title={this.state.leftArticle.title}
                                 content={this.state.leftArticle.description}
                                 source={this.state.leftArticle.source_name}
                                 bias={this.state.leftArticle.bias}
                                 link={this.state.leftArticle.orig_link}
                                 published={this.state.leftArticle.publish_date} />
+
                             <Article key={1} title={this.state.rightArticle.title}
                                 content={this.state.rightArticle.description}
                                 source={this.state.rightArticle.source_name}
                                 bias={this.state.rightArticle.bias}
                                 link={this.state.rightArticle.orig_link}
                                 published={this.state.rightArticle.publish_date} />
+                            <div className="p-3 mb-2 bg-info text-white votes" >{this.state.rightVotes}</div>
+                            {rightUpvoteButton}
+
                         </div>
                     </div>
                     <div className="container bg-white">
