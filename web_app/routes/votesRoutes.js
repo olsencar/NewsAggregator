@@ -14,7 +14,6 @@ module.exports = (app) => {
                 //success
                 return res.status(200).send(votes);
             }
-            console.log("No votes found");
             return res.status(200).send(null);
         });
     });

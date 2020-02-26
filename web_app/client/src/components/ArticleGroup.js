@@ -222,17 +222,17 @@ class ArticleGroup extends Component {
         let rightUpvoteButton;
         //change/rerender upvote button if its already been pressed
         if(this.state.leftVotesPressed){
-            leftUpvoteButton = <button type="button" className="btn btn-outline-primary" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+            leftUpvoteButton = <button type="button" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("left")}>Upvote</button>
         }
         else{//not pressed
-            leftUpvoteButton = <button type="button" className="btn btn-primary" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+            leftUpvoteButton = <button type="button" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("left")}>Upvote</button>
         }
         //change/rerender upvote button if its already been pressed
         if(this.state.rightVotesPressed){
-            rightUpvoteButton = <button type="button" className="btn btn-outline-primary" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+            rightUpvoteButton = <button type="button" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("right")}>Upvote</button>
         }
         else{//not pressed
-            rightUpvoteButton = <button type="button" className="btn btn-primary" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+            rightUpvoteButton = <button type="button" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("right")}>Upvote</button>
         }
         return (
             <div className="container grouped-articles shadow bg-light rounded">
@@ -249,9 +249,10 @@ class ArticleGroup extends Component {
                 <div className="row">
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
-
-                            {leftUpvoteButton}
-                            <div className="p-3 mb-2 bg-info text-white votes" >{this.state.leftVotes}</div>
+                            <div>
+                                <div className="p-3 mb-2 bg-info text-white votes" >{this.state.leftVotes}</div>
+                                {leftUpvoteButton}
+                            </div>
                             <Article key={0} title={this.state.leftArticle.title}
                                 content={this.state.leftArticle.description}
                                 source={this.state.leftArticle.source_name}
@@ -265,9 +266,10 @@ class ArticleGroup extends Component {
                                 bias={this.state.rightArticle.bias}
                                 link={this.state.rightArticle.orig_link}
                                 published={this.state.rightArticle.publish_date} />
-                            <div className="p-3 mb-2 bg-info text-white votes" >{this.state.rightVotes}</div>
-                            {rightUpvoteButton}
-
+                            <div>
+                                <div className="p-3 mb-2 bg-info text-white votes" >{this.state.rightVotes}</div>
+                                {rightUpvoteButton}
+                            </div>
                         </div>
                     </div>
                     <div className="container bg-white">
