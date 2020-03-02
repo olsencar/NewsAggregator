@@ -45,7 +45,14 @@
 .card-title-a:link {
   color: black;
 }
-
+.card-deck {
+  margin-left: 15px !important;
+  margin-right: 15px !important;
+}
+#number {
+  background-color: grey !important;
+  border-radius: 5px;
+}
 .card-title-a:visited {
   color: black;
 }
@@ -171,7 +178,16 @@ body{
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
+#leftupvote {
+  background-color: rgb(20,90,188);
+  font-size: 30px;
+  border-color: rgb(20,90,188) !important;
+}
+#rightupvote {
+  background-color: rgb(188,23,12);
+  font-size: 30px;
+  border-color: rgb(188,23,12) !important;
+}
 #feed-container {
   margin-top: 50px;
 }
