@@ -13,6 +13,7 @@ class ArticleGroup extends Component {
     constructor(props) {
         super(props);
         const chosenArticle = this.props.article_data.most_similar_article;
+
         //for comment section to use when inserting a new comment (taking with it the most udpated vote vals)
         this.state = {
             leftArticle: this.props.article_data.bias <= chosenArticle.bias ? this.props.article_data : chosenArticle,
@@ -31,7 +32,7 @@ class ArticleGroup extends Component {
     //on component render
     loadVotes = async () => {
         let pid = this.props.article_data._id;
-        let sid = this.props.article_data.similar_articles[0]._id;
+        let sid = this.props.article_data.most_similar_article._id;
         let vote_group = await votesService.getVotes(pid, sid);
         if(vote_group){
             this.setState({
@@ -45,7 +46,7 @@ class ArticleGroup extends Component {
     //on upvote press
     handleUpvotes = async (side) => {
         let pid = this.props.article_data._id;
-        let sid = this.props.article_data.similar_articles[0]._id;
+        let sid = this.props.article_data.most_similar_article._id;
         if(side === "left"){
             if(!this.state.leftVotesPressed){
                 //update local state
@@ -180,7 +181,7 @@ class ArticleGroup extends Component {
         if (!this.state.accordionShowing) {
             //check if we've already checked for comments before (in cache/state):
             let pid = this.props.article_data._id;
-            let sid = this.props.article_data.similar_articles[0]._id;
+            let sid = this.props.article_data.most_similar_article._id;
             if(this.state.comments.length === 0){//empty -> not filled with comments from previous API call
                 let article_group_comments = await commentService.getComments(pid, sid);
                 if(article_group_comments){
@@ -286,7 +287,7 @@ class ArticleGroup extends Component {
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="0">
                                     <Card.Body>
-                                        <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.similar_articles[0]._id} postComment={this.postComment} />
+                                        <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.most_similar_article._id} postComment={this.postComment} />
                                     </Card.Body>
                                 </Accordion.Collapse>
                             </Card>

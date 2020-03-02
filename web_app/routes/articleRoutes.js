@@ -7,15 +7,18 @@ biasIsOppositeSign = (bias1, bias2) => {
 }
 
 getMostSimilarArticle = (article) => {
-    const similarArticles = article.similar_articles;
-    let chosenArticle = null;
-    for (let i = 0; i < similarArticles.length; i++) {
-        if (biasIsOppositeSign(similarArticles[i].bias, article.bias)) {
-            chosenArticle = similarArticles[i];
-            break;
+    if (article.hasOwnProperty('similar_articles')) {
+        const similarArticles = article.similar_articles;
+        let chosenArticle = null;
+        for (let i = 0; i < similarArticles.length; i++) {
+            if (biasIsOppositeSign(similarArticles[i].bias, article.bias)) {
+                chosenArticle = similarArticles[i];
+                break;
+            }
         }
+        return chosenArticle;
     }
-    return chosenArticle;
+    return null;
 }
 
 module.exports = (app) => {
