@@ -226,17 +226,17 @@ class ArticleGroup extends Component {
         let rightUpvoteButton;
         //change/rerender upvote button if its already been pressed
         if(this.state.leftVotesPressed){
-            leftUpvoteButton = <button type="button" id="leftupvote" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
+            leftUpvoteButton = <button type="button" className="btn btn-secondary leftupvote-clicked triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
         }
         else{//not pressed
-            leftUpvoteButton = <button type="button" id="leftupvote" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
+            leftUpvoteButton = <button type="button" className="btn btn-primary leftupvote-unclicked triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
         }
         //change/rerender upvote button if its already been pressed
         if(this.state.rightVotesPressed){
-            rightUpvoteButton = <button type="button" id="rightupvote" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
+            rightUpvoteButton = <button type="button" className="btn btn-secondary rightupvote-clicked triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
         }
         else{//not pressed
-            rightUpvoteButton = <button type="button" id="rightupvote" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
+            rightUpvoteButton = <button type="button" className="btn btn-primary rightupvote-unclicked triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
         }
         return (
             <div className="container grouped-articles shadow bg-light rounded">
