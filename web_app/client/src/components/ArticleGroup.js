@@ -113,15 +113,19 @@ class ArticleGroup extends Component {
             'washington-post', 'washington-times',
             'this', 'that', 'he', 'she', 'politics', 'false', 'true'
         ]);
-        let arr = tags1.concat(tags2);
-        arr = arr.filter(item => {
-            return !doNotDisplayTags.has(item);
-        }).sort();
-        // only show a max of 5 tags
-        let len = arr.length;
-        len = len > 5 ? 5 : len;
 
-        return arr.slice(0, len);
+        let tags = new Set(tags1.concat(tags2));
+        
+        let arr = [];
+
+        for (const tag of tags.values()) {
+            if (!doNotDisplayTags.has(tag.toLowerCase())) {
+                arr.push(tag);
+            }
+        }
+        arr.sort();
+
+        return arr.slice(0, 5);
     }
 
     getImagesToDisplay(images1, images2, source1, source2) {
