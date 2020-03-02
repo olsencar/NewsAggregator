@@ -97,6 +97,50 @@
                     "hasTags": false
                 }
             ]
+        },
+        {
+            "source": "Newsmax",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "https://www.newsmax.com/rss/Politics/1/",
+                    "bias": 2,
+                    "hasTags": false
+                }
+            ]
+        },
+        {
+            "source": "The Nation",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "https://www.thenation.com/feed/?post_type=article&subject=political-figures",
+                    "bias": -2,
+                    "hasTags": false
+                }
+            ]
+        },
+        {
+            "source": "Buzzfeed",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "https://www.buzzfeed.com/politics.xml",
+                    "bias": -1,
+                    "hasTags": false
+                }
+            ]
+        },
+        {
+            "source": "Washington Examiner",
+            "feeds": [
+                {
+                    "category": "politics",
+                    "url": "http://feeds.feedburner.com/dcexaminer/Politics",
+                    "bias": 1,
+                    "hasTags": false
+                }
+            ]
         }
     ]
 }
