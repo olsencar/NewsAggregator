@@ -51,7 +51,7 @@ class ArticleGroup extends Component {
                 //update local state
                 this.setState({
                     //use service worker to get comments on mongodb lookup
-                    leftVotes: +this.state.leftVotes+1,
+                    leftVotes: this.state.leftVotes+1,
                     leftVotesPressed: true,
                 },        //state is updated asynchronously, so add updated value
                 () => votesService.addVotes(pid, sid, +this.state.leftVotes, +this.state.rightVotes)
