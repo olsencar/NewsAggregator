@@ -98,7 +98,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                 if (len(desc) > 10):
                     stories.append(
                         {
-                            'source': source_name, 
+                            'source_name': source_name, 
                             'title': item['title'], 
                             'description': desc,
                             'link': item['link'], 
@@ -226,7 +226,7 @@ def main():
     sourceIdx = 0
     for source in results:
         for story in source:
-            resp = get_article(client, story['title'], story['description'], story['source'])
+            resp = get_article(client, story['title'], story['description'], story['source_name'])
             item = None
             for i in resp:
                 item = i
@@ -249,7 +249,7 @@ def main():
                             "$set": {
                                 'title': story['title'],
                                 'description': story['description'],
-                                'source_name': story['source'],
+                                'source_name': story['source_name'],
                                 'category': story['category'],
                                 'rss_link': story['link'],
                                 'orig_link': story['orig_link'],
