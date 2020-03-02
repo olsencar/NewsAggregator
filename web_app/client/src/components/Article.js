@@ -3,12 +3,17 @@ import React, { Component } from 'react'
 // uses bootstraps card content box to format article
 class Article extends Component {
     getPartyColor(bias) {
-        if (bias < 0) {
-            return "left";
-        } else if (bias > 0) {
-            return "right";
-        } else {
-            return "mid";
+        switch (bias) {
+            case -2:
+                return "far-left";
+            case -1:
+                return "left";
+            case 1:
+                return "right";
+            case 2:
+                return "far-right";
+            default:
+                return "mid";
         }
     }
     render() {
@@ -22,13 +27,10 @@ class Article extends Component {
                     <span className={"card-link banner-source banner-source-" + this.getPartyColor(this.props.bias)}>{this.props.source}</span>
                     <span className="card-link">{this.props.published.substr(0,10)}</span>
                 </div>
-                {/* <button type="button" className="btn btn-primary">Upvote</button>
-                <button type="button" className="btn btn-danger">Downvote</button> */}
             </div>
 
         )
     }
 }
-
 
 export default Article;

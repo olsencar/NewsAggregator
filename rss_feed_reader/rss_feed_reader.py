@@ -102,7 +102,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                             'title': item['title'], 
                             'description': desc,
                             'rss_link': item['link'], 
-                            'orig_link': item['id'],
+                            'orig_link': item['id'] if 'id' in item else None,
                             'category': feed_info['category'],
                             'publish_date': parser.parse(item['published']),
                             'images': getArticleImages(item),
@@ -112,7 +112,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                     )
                     
     except Exception as error:
-        logger.error(error.with_traceback())
+        logger.exception('Exception while parsing feeds')
         results[idx] = []
     
     results[idx] = stories
@@ -157,11 +157,11 @@ def openMongoClient():
 # combines the new and old articles together for text processing
 def combine_old_and_new_articles(old_articles, new_articles):
     new_articles = list(itertools.chain.from_iterable(new_articles))
-    old_article_descs = set(map(lambda a: a['description'], old_articles))
+    old_article_descs = set(map(lambda a: a['title'] + ' ' + a['description'], old_articles))
     return_articles = old_articles
     # If new article does not exist in old articles, then add it
     for art in new_articles:
-        if art['description'] not in old_article_descs:
+        if art['title'] + ' ' + art['description'] not in old_article_descs:
             return_articles.append(art)
 
     return return_articles
@@ -213,10 +213,35 @@ def main():
     client = openMongoClient()
     
     db = client['NewsAggregator']
+    sourceIdx = 0
+    for source in results:
+        for story in source:
+            newTags = getArticleTags(feeds[sourceIdx][1]['hasTags'], story['title'], story['description'], tags)
+            if newTags is not None:
+                story['tags'] = newTags
+
+            resp = db.news_stories.update_one({ "title": story['title'], "description": story["description"], "source_name": story["source_name"] }, 
+                { 
+                    "$set": {
+                        'title': story['title'],
+                        'description': story['description'],
+                        'source_name': story['source_name'],
+                        'category': story['category'],
+                        'rss_link': story['rss_link'],
+                        'orig_link': story['orig_link'],
+                        'publish_date': story['publish_date'],
+                        'images': story['images'],
+                        'tags': story['tags'],
+                        'bias': story['bias']
+                    } 
+                }, 
+                upsert=True
+            )
+            story['_id'] = resp.upserted_id
+        sourceIdx += 1
     
     articles = get_articles(client)
     new_articles = combine_old_and_new_articles(articles, results)
-
     #instantiate our text processor class
     tp = TextProcessor(new_articles)
 
@@ -226,38 +251,17 @@ def main():
     sourceIdx = 0
     for source in results:
         for story in source:
-            resp = get_article(client, story['title'], story['description'], story['source_name'])
-            item = None
-            for i in resp:
-                item = i
-            
-            newTags = getArticleTags(feeds[sourceIdx][1]['hasTags'], story['title'], story['description'], tags)
-            if newTags is not None:
-                story['tags'] = newTags
-            # If the item does not exist in the DB or its similar articles list has 2 or less items
-            #   then update/insert the item in the DB
-            
-            if ( item is None or "similar_articles" not in item or (len(item["similar_articles"]) > 0 and item["similar_articles"][0]["similarity_score"] < REJECT_SIMILARITY)):
+            if ("similar_articles" not in source or (len(source["similar_articles"]) > 0 and source["similar_articles"][0]["similarity_score"] < REJECT_SIMILARITY)):
                 similar_articles = tp.get_similar_articles(story, new_articles, publish_date=story['publish_date'])
-                if (item is not None and "similar_articles" in item):
-                    similar_articles.extend(item["similar_articles"])
+                if ("similar_articles" in source):
+                    similar_articles.extend(source["similar_articles"])
                     similar_articles = sorted(similar_articles, key=lambda article: article["similarity_score"], reverse=True)[:5]
 
                 ops.append(
-                    UpdateOne({ "title": story['title'], "description": story["description"], "source_name": story["source"] }, 
+                    UpdateOne({ "_id": story['_id'] }, 
                         { 
                             "$set": {
-                                'title': story['title'],
-                                'description': story['description'],
-                                'source_name': story['source_name'],
-                                'category': story['category'],
-                                'rss_link': story['rss_link'],
-                                'orig_link': story['orig_link'],
-                                'publish_date': story['publish_date'],
                                 'similar_articles': similar_articles,
-                                'images': story['images'],
-                                'tags': story['tags'],
-                                'bias': story['bias']
                             } 
                         }, 
                         upsert=True

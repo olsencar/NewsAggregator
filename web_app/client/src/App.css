@@ -24,21 +24,26 @@
 }
 
 .banner-source {
-  background-color: black;
+  background-color: gray;
   color: white;
   padding-left: 20px;
   padding-right: 20px;
 }
 
+.banner-source-far-left {
+  border-right: 1em solid rgb(0, 50, 110);
+}
+
 .banner-source-left {
   border-right: 1em solid rgb(9, 91, 192);
-  background-color: gray;
+}
+
+.banner-source-far-right {
+  border-right: 1em solid rgb(114, 8, 0);
 }
 
 .banner-source-right {
   border-right: 1em solid rgb(189, 23, 11);
-  background-color: gray;
-  /* background-color: rgb(189, 23, 11) */
 }
 .grouped-articles {
   margin-top: 20px;
@@ -181,14 +186,29 @@ body{
   left: 50%;
   transform: translate(-50%, -50%);
 }
-#leftupvote {
-  background-color: rgb(20,90,188);
-  font-size: 30px;
+
+.leftupvote-unclicked {
+  background-color: white !important;
+  font-size: 30px !important;
+  color: rgb(20,90,188) !important;
   border-color: rgb(20,90,188) !important;
 }
-#rightupvote {
-  background-color: rgb(188,23,12);
-  font-size: 30px;
+
+.leftupvote-clicked {
+  background-color: rgb(20,90,188) !important;
+  font-size: 30px !important;
+  border-color: rgb(20,90,188) !important;
+}
+
+.rightupvote-unclicked {
+  background-color: white !important;
+  font-size: 30px !important;
+  color: rgb(188,23,12) !important;
+  border-color: rgb(188,23,12) !important;
+}
+.rightupvote-clicked {
+  background-color: rgb(188,23,12) !important;
+  font-size: 30px !important;
   border-color: rgb(188,23,12) !important;
 }
 #feed-container {
