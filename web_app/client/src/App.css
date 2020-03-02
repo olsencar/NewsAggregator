@@ -31,11 +31,14 @@
 }
 
 .banner-source-left {
-  background-color: rgb(9, 91, 192);
+  border-right: 1em solid rgb(9, 91, 192);
+  background-color: gray;
 }
 
 .banner-source-right {
-  background-color: rgb(189, 23, 11)
+  border-right: 1em solid rgb(189, 23, 11);
+  background-color: gray;
+  /* background-color: rgb(189, 23, 11) */
 }
 .grouped-articles {
   margin-top: 20px;
