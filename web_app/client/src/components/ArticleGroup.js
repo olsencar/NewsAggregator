@@ -109,7 +109,7 @@ class ArticleGroup extends Component {
 
     getTagsToDisplay(tags1, tags2) {
         const doNotDisplayTags = new Set([
-            'cnn', 'fox', 'breitbart', 'huffington-post', 
+            'cnn', 'fox', 'breitbart', 'huffington-post',
             'washington-post', 'washington-times',
             'this', 'that', 'he', 'she', 'politics', 'false', 'true'
         ]);
@@ -130,7 +130,7 @@ class ArticleGroup extends Component {
             if (idx < 3) {
                 return (
                     <Carousel.Item key={idx}>
-                        <img 
+                        <img
                             onError={this.addDefaultImg}
                             src={item}
                             alt={source1}
@@ -149,7 +149,7 @@ class ArticleGroup extends Component {
                 if (idx < 3) {
                     return (
                         <Carousel.Item key={idx + curIdx} >
-                            <img 
+                            <img
                                 onError={this.addDefaultImg}
                                 className="img-fluid"
                                 src={item}
@@ -184,7 +184,7 @@ class ArticleGroup extends Component {
                         //use service worker to get comments on mongodb lookup
                         comments: article_group_comments.group_comments
                     });
-                }       
+                }
             }
         }
         // keep track of if the accordion is showing or not
@@ -222,17 +222,17 @@ class ArticleGroup extends Component {
         let rightUpvoteButton;
         //change/rerender upvote button if its already been pressed
         if(this.state.leftVotesPressed){
-            leftUpvoteButton = <button type="button" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+            leftUpvoteButton = <button type="button" id="leftupvote" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
         }
         else{//not pressed
-            leftUpvoteButton = <button type="button" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("left")}>Upvote</button>
+            leftUpvoteButton = <button type="button" id="leftupvote" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("left")}>⇧</button>
         }
         //change/rerender upvote button if its already been pressed
         if(this.state.rightVotesPressed){
-            rightUpvoteButton = <button type="button" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+            rightUpvoteButton = <button type="button" id="rightupvote" className="btn btn-secondary triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
         }
         else{//not pressed
-            rightUpvoteButton = <button type="button" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("right")}>Upvote</button>
+            rightUpvoteButton = <button type="button" id="rightupvote" className="btn btn-primary triangle-up" onClick={() => this.handleUpvotes("right")}>⇧</button>
         }
         return (
             <div className="container grouped-articles shadow bg-light rounded">
@@ -250,7 +250,7 @@ class ArticleGroup extends Component {
                     <div className="card-deck-wrapper">
                         <div className="card-deck">
                             <div>
-                                <div className="p-3 mb-2 bg-info text-white votes" >{this.state.leftVotes}</div>
+                                <div id="number" className="p-3 mb-2 bg-info text-white votes" >{this.state.leftVotes}</div>
                                 {leftUpvoteButton}
                             </div>
                             <Article key={0} title={this.state.leftArticle.title}
@@ -267,7 +267,7 @@ class ArticleGroup extends Component {
                                 link={this.state.rightArticle.orig_link}
                                 published={this.state.rightArticle.publish_date} />
                             <div>
-                                <div className="p-3 mb-2 bg-info text-white votes" >{this.state.rightVotes}</div>
+                                <div id="number" className="p-3 mb-2 bg-info text-white votes" >{this.state.rightVotes}</div>
                                 {rightUpvoteButton}
                             </div>
                         </div>
@@ -289,7 +289,7 @@ class ArticleGroup extends Component {
                         </Accordion>
                     </div>
                 </div>
-                
+
             </div>
         )
     }
