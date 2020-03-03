@@ -3,7 +3,6 @@ import Media from 'react-bootstrap/Media'
 
 class Comment extends Component {
     render() {
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       const commentTime = new Date(this.props.time).toLocaleString("en-US")
       return (
         <Media as="li">
