@@ -1,27 +1,36 @@
 import React, { Component } from 'react'
 import Comment from './Comment'
-import commentService from './../services/commentService';
 
 class CommentSection extends Component {
     constructor(props) {
         super(props);
-        this.commentText = React.createRef();
+        this.state = {
+            commentText: ''
+        };
     }
 
     postComment = () => {
-        this.props.postComment(this.props.pid, this.props.sid, this.commentText.current.value);
+        this.props.postComment(this.props.pid, this.props.sid, this.state.commentText);
         //clear input field
-        this.commentText.current.value = "";
+        this.setState({
+            commentText: ''
+        });
+    }
+
+    updateCommentText = (text) => {
+        this.setState({
+            commentText: text.target.value
+        });
     }
     
     render() {
         return (
-          <div className="row bootstrap snippets">
-              <div className="col-md-11">
+          <div className="row justify-content-center">
+              <div className="col no-padding">
                   <div className="comment-wrapper">
                       <div className="panel panel-info">
                           <div className="panel-body">
-                              <textarea className="form-control" ref={this.commentText} placeholder="write a comment..." rows="3"></textarea>
+                              <textarea className="form-control" value={this.state.commentText} onChange={e => this.updateCommentText(e)} placeholder="Write a comment..." rows="3"></textarea>
                               <br></br>
                               <button type="button" className="btn btn-info float-right" onClick={this.postComment}>Post</button>
                               <div className="clearfix"></div>
