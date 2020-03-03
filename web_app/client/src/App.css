@@ -211,6 +211,11 @@ body{
   font-size: 30px !important;
   border-color: rgb(188,23,12) !important;
 }
+
+.no-padding {
+  padding: 0px !important;
+}
+
 #feed-container {
   margin-top: 50px;
 }
