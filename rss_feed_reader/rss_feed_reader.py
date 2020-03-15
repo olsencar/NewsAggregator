@@ -85,7 +85,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                 if (feed_info['hasTags']):
                     politics = False
                     for tag in item.get('tags', []):
-                        if (tag.term.lower() == 'politics'):
+                        if ('term' in tag and tag.term.lower() == 'politics'):
                             politics = True
                         tags.append(tag.term)
                     # If we did not find a politics tag, then this article
