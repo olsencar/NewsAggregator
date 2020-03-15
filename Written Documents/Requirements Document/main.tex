@@ -134,9 +134,9 @@ The News Aggregator web application will allow users to compare similar news sto
 The back-end will be programmed using Python 3 and will use the HTTP protocol to respond to user requests. It will also be the location where the machine learning model will be running.\par
 The front-end will be programmed using JavaScript, HTML, and CSS. It will be responsible for providing the interactive interface to the user.
 \subsection{Product Functions}
-The News Aggregator web application will have a home page that displays a scrolling feed of recent news stories. It will also have a search bar where the user can search for specific news stories. Each news story will have the various sources to choose from and the user will be able to read which one they want. When the user clicks on a news story, it will bring them to an page where they can see both sources side by side. These sources will have opposite and different bias, and it is up to the user to decide which one to read.\par
+The News Aggregator web application will have a home page that displays a scrolling feed of recent news stories. It will also have a search bar where the user can search for specific news stories. Each news story will have the various sources to choose from and the user will be able to read which one they want. These sources are chosen before hand and will be given a certain level of political bias based on various sources such as the University of Michigan Library \cite{mich_news_bias}, or AllSides Media Bias Ratings \cite{all_sides_bias}. When the user clicks on a news story, it will bring them to an page where they can see both sources side by side. These sources will have opposite and different bias, and it is up to the user to decide which one to read.\par
 For each news story, the user will be allowed to share the story on social media. The sharing link should route whoever clicks on it back to the individual story page where the user can see both sources side by side.\par
-There are many stretch goals for this web application. These include adding a slider bar to let the user choose the level of bias they want to read, and letting users create accounts so they can like and comment on news stories.
+There are many stretch goals for this web application. These include adding a slider bar to let the user choose the disparity of political opinion in turn automatically changing the news source pairing from the designated list, as well as letting users create accounts so they can like and comment on news stories.
 \subsection{User Characteristics}
 \begin  {itemize}
 \item The user is literate and capable of using a search bar.
@@ -161,14 +161,14 @@ The front-end of the web page will be programmed in Java Script, HTML, and CSS, 
 
 \subsection{Apportioning of Requirements}
 The application will be split intro three development parts: front-end user interface for user interaction, API integration to gather stories from RSS feeds, and natural language processing to cluster stories based off of their subject matter as well as sentiment.
-    The Gantt chart can be seen in the Appendix, Figure [WHAT].
+The Gantt chart can be seen in Figure \ref{fig:timeline}.
 
 \begin{figure}[h!]
     \begin{flushright}
         \begin{PstGanttChart}[unit=2,ChartShowIntervals,ChartUnitIntervalName=Month,ChartUnitBasicIntervalName=Month]{5}{5}
             \PstGanttTask[TaskOutsideLabel={Develop the front-end of the application}]{0}{1}
-            \PstGanttTask[TaskOutsideLabel={Develop the back-end of the application}]{0}{1}
-            \PstGanttTask[TaskOutsideLabel={Develop machine learning model}]{1}{2}
+            \PstGanttTask[TaskOutsideLabel={Develop the back-end of the application}]{1}{2}
+            \PstGanttTask[TaskOutsideLabel={Develop NLP model}]{0}{2}
             \PstGanttTask[TaskOutsideLabel={Integrate the model with the web application}]{2}{1}
             \PstGanttTask[TaskOutsideLabel={Perform usability tests}]{3}{2}
         \end{PstGanttChart}
@@ -178,10 +178,15 @@ The application will be split intro three development parts: front-end user inte
 \end{figure}
 
 \section{Specific Requirements}
+\subsection{Functions}
+While using the website, users should maintain the ability to view all news documents on a robust yet intuitive front end web page. These news documents will be sourced from the RSS feeds of the following designated news outlets, each representing a respective polarity of political stance (-2 being very liberal leaning and 2 being very conservative leaning:\par
+-2: Huffington Post\par
+-1: CNN\par
+1: Fox News\par
+2: Breitbart\par
+Along with providing a feed of the latest news stories from the designated news outlets, the website should also accurately cluster these news stories by extracting and labelling their keywords and sentiment through a natural language processing model. The result of this clustering will enable users to view the paired (opposing perspective) news stories side by side. The web page should also offer the ability for users to change the degree of political polarization they want to view, which in turn will adjust the article sources accordingly. Once a user has viewed a cluster of news stories created by the website, they should be able to then seamlessly share the pairing to one of the offered social media platforms through the click of that platforms icon (as well as potential logging in). Lastly, this platform should enable users to vote and comment on the news stories generated on the feed, creating another social aspect to the platform where users can share their thoughts, opinions, and ideas. The designated shareable social media platforms will be Facebook and Twitter.
 \subsection{Interfaces}
 News Aggregator will take the form of an online website where users will be able to utilize all the features and functionality through the front end user interface. All of the web pages content will be served on a single landing page, where this content will be dynamically rendered and clustered in a content feed for the user. When sharing a news story cluster, depending on if they’re already signed in or not, a user might be redirected to a third party login portal for the social media platform they are trying to share. After completing this login process, whether its a successful or failed log in, users will return back to the News Aggregator web page. As part of the front end interface, News Aggregator will also possess input fields for commenting and voting on news articles shared on the feed.
-\subsection{Functions}
-While using the website, users should maintain the ability to view all news documents on a robust yet intuitive front end web page. Along with providing a feed of the latest news stories, the website should also accurately cluster these news stories based off their content or subjects, enabling users to view the clusters of news stories from differing sources. The web page should also offer the ability for users to change the degree of political polarization they want to view, which in turn will adjust the article sources accordingly. Once a user has viewed a cluster of news stories created by the website, they should be able to then seamlessly share the pairing to one of the offered social media platforms through the click of that platforms icon (as well as potential logging in). Lastly, this platform should enable users to vote and comment on the news stories generated on the feed, creating another social aspect to the platform where users can share their thoughts, opinions, and ideas.
 \subsection{Performance Requirements}
 The final News Aggregator website should be able to accurately classify the subject and content of an article with at least 90\% accuracy to ensure that stories are properly clustered for users on the platform. The website should also be able to pull the latest news stories from the designated news stations within a reasonable time of their initial upload, to allow users to view the most up to date content.
 \subsection{Usability Requirements}

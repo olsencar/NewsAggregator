@@ -1,0 +1,116 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+\usepackage[pdf]{pstricks}
+\usepackage{pst-gantt}
+
+% 1. Fill in these details
+\def \CapstoneTeamName{Aggregators}
+\def \CapstoneTeamNumber{71}
+\def \GroupMemberOne{Carter Olsen}
+\def \GroupMemberTwo{Megan Liles}
+\def \GroupMemberThree{Aalok Borkar}
+\def \GroupMemberFour{Race Stewart}
+\def \CapstoneProjectName{News Aggregator Web Development}
+% \def \CapstoneSponsorCompany{	Cheap Robots, Inc}
+\def \CapstoneSponsorPerson{Joseph Louis}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				Requirements Document
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfill 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfill		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+% \renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{.5in}
+            \textbf{\Huge\CapstoneProjectName}\par
+            \vfill
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            \vspace{5pt}
+            {\Large\CapstoneSponsorPerson\par}
+            {\large Prepared by }\par
+            Group \CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{5pt}
+            {\Large
+                \GroupMemberOne\par
+                \GroupMemberTwo\par
+                \GroupMemberThree\par
+                \GroupMemberFour\par
+            }
+            \vspace{20pt}
+        }
+        \begin{abstract}
+        % 6. Fill in your abstract    
+        Our project's purpose is to solve the issue of echo chambers that are created when people only get one side of the story in the news or social media.
+        To solve this issue, we plan to develop a web application that groups together similar news stories from multiple RSS feeds and displays each source to the user. We will use machine learning to develop a model that can detect similar news stories.
+        This document describes how we will implement the requirements of this project and what technologies we will use to meet those requirements.
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+\section{Introduction}
+There are multiple sides to every story. The way that we receive our news in modern times can keep us from seeing all sides of the story. That is why we are creating an application that will allow users to get their daily news, while still being able to see the story from multiple point of views. In order to accomplish this, we have to develop a way to detect similar news stories from different sources and group them together. \par
+My responsibilities in this project are to 1) develop a script to gather the news stories, 2) process the data into an easily accessible way, and 3) help develop the machine learning model that will be able to detect similar stories. These three tasks will be accomplished using the scripting language Python because of its community support and amount of useful libraries that help with each task. \par
+The following sections will talk more in detail about how I will accomplish these tasks and why I chose certain technologies over others.
+\section{Gathering Data}
+\subsection{Source of Data}
+We will gather data through RSS feeds hosted by news sites. The reason for this is that RSS feeds are generally consistent in their format and most online news sources have at least one feed. This format for each news feed is the title, description, media, link to the RSS article, link to the original article, and publication date. This gives us all the information that we need. Most online news sources also have different RSS feeds for each news category, such as politics, or sports. This is beneficial for our use because we will be only looking for news stories in the political category, as this tends to have the most contention between the left and right.\par
+The other option would be to scrape the HTML of each source's website and extract the text from there. This would be difficult because not every source structures their HTML the same. That is why we have chosen to use RSS feeds as our main point for news stories. \par
+\subsection{Script to Gather Data}
+In order to gather data, we will use Python. The reason we chose Python is that it has very useful libraries readily available for us to use. This makes it so we don't have to program everything by scratch and speeds up the development process. For example, the two main libraries we will use to gather the data from the RSS feeds are grequests and feedparser \cite{grequests}\cite{feedparser}. The grequests library is used to make concurrent HTTP requests so we can keep the script fast as we increase the number of feeds that we want to pull from. The feedparser is the most popular library for parsing RSS feeds. All that we have to do is give it the HTTP response text from the grequests call, and it parses it for us and puts it in an easily accessible way.\par
+As I will talk about in the next section, there are also many other reasons for choosing Python as our main language for gathering and managing the data.
+\section{Processing Data}
+Our team's main challenge is to be able to find similar news articles from different sources based solely on a few sentences. This may seem easy, but when you delve into it and get into the details, it becomes quite a challenge.
+\subsection{Finding Similar Articles}
+After thoroughly researching this topic, we found that developing our own implementation of natural language processing to match news articles would be out of the scope of this project. Instead, we found that there are already implementations out there that are meant to match up similar documents based on the text in them. In the NLP (Natural Language Processing) world, there are a few ways to detect similarity between texts. The first way involves TF-IDF or Term Frequency-Inverse Document Frequency. The TF-IDF is useful for finding important words in a piece of text \cite{tfidf}. In this method, you must have a list of documents (separate texts) and a single text that you want to test against. You first parse the documents to gather information on the frequency of each term. Then you pass in the text that you want to find keywords for. To extract keywords from the text, it uses the TF-IDF calculation on each term in the text. For example, if the word "dog" appears 10 times in a document and there are 1000 terms in the document, the TF score is $10 / 1000=0.01$. The IDF portion is calculated as $log($Total Number of Documents / Number of documents with the term in it). Going with the example above, let's say that there are 10,000,000 documents and the word "dog" appears in 1000 of them. Thus, the IDF score is $log(10,000,000 / 1000)=4$. Now to get the TF-IDF, you multiply them together. This gives you 0.04. With the keywords that TF-IDF gives you, you can use them to match other documents up based on their keywords. \par
+The second method in natural language processing is to use the cosine similarity between documents. The cosine similarity is more accurate than extracting keywords from a document and using TF-IDF because, in TF-IDF, it only extracts important keywords that are seen as unique compared to the other documents in the test. It is more accurate because it is unaffected by the length of the document. It uses the term frequency and the document size to create a vector in a multi-dimensional space representing a single document. To get the cosine similarity between two documents, it takes the cosine of the angle between the two vectors (documents) in this multi-dimensional space \cite{cosine_similarity}. This allows us to get an accurate numerical value for the document similarity.\par
+In both of the methods mentioned above, it is very important to pre-process the text before you start parsing for term frequency and keywords. This is important because if you don't, words like "the", "and", and "because" will have the highest term frequencies in the documents and will make the document similarity inaccurate. These types of words are called "stop words" and are unnecessary in the text when processing it because it doesn't add to the meaning of the text. It is also important to remove and digits, special characters and punctuation before using the methods above. 
+\section{Libraries Used for Machine Learning}
+Calculating the cosine similarity and term frequency of multiple documents and storing that information would very hard to do by ourselves and complete within the siz-month time frame. That is also out of the scope for this project and is why we have chosen a library to do that for us. The most popular and reputable library for creating document vectors is called Gensim Doc2vec \cite{gensim}. Document vectors allow us to pass in a line of text and Gensim will tell us what documents are similar to the line of text provided. Gensim is a very popular Python library for all things in NLP as well as machine learning that has to deal with text. It is extremely fast and easy to use.\par
+\subsection{Gensim Library}
+The Gensim library provides methods for vectorizing the documents, creating the model, training the model, and testing documents against it. This makes it very useful for our use case and allows us to focus more on the high-level portions of the Machine Learning, as developing code for each one of the parts above would involve learning a lot about each subject and then figuring out a way to make the code efficient. \par
+\subsection{NLTK Library}
+We will use the NLTK Python library for a list of common stop words. This library is recognized as the leading platform for Python developers examining language data \cite{NLTK}. It allows us to remove these stop words from our documents and remove unnecessary characters as well. This lets us pass in a pre-processed document to the Gensim Doc2Vec library and not worry about unnecessary strings or characters interfering with the similarity scores.
+\section{References}
+\begingroup
+\renewcommand{\addcontentsline}[3]{}% Remove functionality of \addcontentsline
+\renewcommand{\section}[2]{}% Remove functionality of \section
+\bibliographystyle{IEEEtran}
+\bibliography{sources}
+\endgroup
+\end{document}
