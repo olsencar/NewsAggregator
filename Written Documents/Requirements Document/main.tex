@@ -1,0 +1,214 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+\usepackage[pdf]{pstricks}
+\usepackage{pst-gantt}
+
+% 1. Fill in these details
+\def \CapstoneTeamName{Aggregators}
+\def \CapstoneTeamNumber{71}
+\def \GroupMemberOne{Carter Olsen}
+\def \GroupMemberTwo{Megan Liles}
+\def \GroupMemberThree{Aalok Borkar}
+\def \GroupMemberFour{Race Stewart}
+\def \CapstoneProjectName{News Aggregator Web Development}
+% \def \CapstoneSponsorCompany{	Cheap Robots, Inc}
+\def \CapstoneSponsorPerson{Joseph Louis}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				Requirements Document
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfill 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfill		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+% \renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large\today}\par
+            \vspace{.5in}
+            \textbf{\Huge\CapstoneProjectName}\par
+            \vfill
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            \vspace{5pt}
+            {\Large\CapstoneSponsorPerson\par}
+            {\large Prepared by }\par
+            Group \CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{5pt}
+            {\Large
+                \GroupMemberOne\par
+                \GroupMemberTwo\par
+                \GroupMemberThree\par
+                \GroupMemberFour\par
+            }
+            \vspace{20pt}
+        }
+        \begin{abstract}
+        % 6. Fill in your abstract    
+        Our project's purpose is to solve the issue of echo chambers that are created when people only get one side of the story in the news or social media.\par
+        To solve this issue, we plan to develop a web application that groups together similar news stories from multiple RSS feeds and displays each source to the user. We will use machine learning to develop a model that can detect similar news stories.\par
+        This document describes the requirements that must be met to develop a web application that aggregates news stories from multiple sources. These requirements include developing the machine learning model, and building the web application to use the model. 
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+
+% 8. now you write!
+\section{Introduction}
+\subsection{Purpose}
+This project serves to combat the effectiveness of fake news and the creation of echo chambers from consumers of the media only viewing or listening to one side of the story. This document's purpose is to describe in detail the requirements of this project, as well as give an overview of what this project will accomplish.
+\subsection{Scope}
+This project will include (1) the creation of a machine learning model that can detect similar in-text news stories from multiple sources, (2) creating a web application that displays the similar news stories to the user, (3) allowing the user to share the news stories to social media of choice, and (4) allowing the user to like/comment the news stories
+\subsection{Definitions, Acronyms and Abbreviations}
+\begin{figure}[h!]
+    \begin{center}
+    	\begin{tabular}{ |c|c| }
+    	    \hline
+    	    \textbf{Term} & \textbf{Definition} \\
+    		\hline
+    		Front-end & The visible user interface for the web application. \\
+    		\hline
+    		Back-end & The server-side of the web application that responds to users' requests. \\
+    		\hline
+    		Python & A high-level programming language. \\
+    		\hline
+    		Machine Learning Model & The outcome of the training process in machine learning. \\
+    		\hline
+    		CSS & Cascading Style Sheet\\
+    		\hline 
+    		HTML & Hypertext Markup Language \\
+    		\hline
+    		TensorFlow & A Python Library created by Google to use Machine Learning features. \\
+    		\hline
+    		WordPress & A web based interface to build websites. \\
+    		\hline 
+    	\end{tabular}
+    	\caption{Table of Definitions}
+    \end{center}
+    \label{fig:definition_table}
+\end{figure}
+
+\subsection{References}
+\begingroup
+\renewcommand{\addcontentsline}[3]{}% Remove functionality of \addcontentsline
+\renewcommand{\section}[2]{}% Remove functionality of \section
+\bibliographystyle{IEEEtran}
+\bibliography{sources}
+\endgroup
+\subsection{Overview}
+The following sections will cover the description of our project, the purpose it serves, the various functions of the web application, and its constraints. It will also include the specific requirements for the project, including but not limited to, the functional requirements, performance requirements, usability requirements, and various software attributes for the project.
+\section{Overall Description}
+\subsection{Product Perspective}
+The News Aggregator web application will allow users to compare similar news stories from multiple sources. It will be split into a back-end, where the model will analyze various news stories using RSS feeds. The model will then return a set of similar news stories to the front-end where the user will be able to view the similar news stories that the model detected.\par
+The back-end will be programmed using Python 3 and will use the HTTP protocol to respond to user requests. It will also be the location where the machine learning model will be running.\par
+The front-end will be programmed using JavaScript, HTML, and CSS. It will be responsible for providing the interactive interface to the user.
+\subsection{Product Functions}
+The News Aggregator web application will have a home page that displays a scrolling feed of recent news stories. It will also have a search bar where the user can search for specific news stories. Each news story will have the various sources to choose from and the user will be able to read which one they want. These sources are chosen before hand and will be given a certain level of political bias based on various sources such as the University of Michigan Library \cite{mich_news_bias}, or AllSides Media Bias Ratings \cite{all_sides_bias}. When the user clicks on a news story, it will bring them to an page where they can see both sources side by side. These sources will have opposite and different bias, and it is up to the user to decide which one to read.\par
+For each news story, the user will be allowed to share the story on social media. The sharing link should route whoever clicks on it back to the individual story page where the user can see both sources side by side.\par
+There are many stretch goals for this web application. These include adding a slider bar to let the user choose the disparity of political opinion in turn automatically changing the news source pairing from the designated list, as well as letting users create accounts so they can like and comment on news stories.
+\subsection{User Characteristics}
+\begin  {itemize}
+\item The user is literate and capable of using a search bar.
+\item The user is capable of clicking buttons, navigating menus, and scrolling.
+\item The user is capable of sharing articles via personal social media applications.
+\item The user is adequate in learning how to use the site.
+\item The user is capable of retaining steps of navigating the site.
+\item The user understands the political spectrum.
+\end {itemize}
+
+\subsection{Constraints}
+\begin {itemize}
+\item The site must have accessibility options for users. 
+\item The site must be accessible over a network.
+\item The minimum viable product shall be complete by May 1st, 2020.
+\item The site will be built using a Website Builder, WordPress.
+\end {itemize}
+
+\subsection{Assumptions and Dependencies}
+The front-end of the web page will be programmed in Java Script, HTML, and CSS, while the back-end will be programmed using Java Script (Node.js) and Python, specifically utilizing the TensorFlow library for its machine learning and natural language processing capabilities.
+
+
+\subsection{Apportioning of Requirements}
+The application will be split intro three development parts: front-end user interface for user interaction, API integration to gather stories from RSS feeds, and natural language processing to cluster stories based off of their subject matter as well as sentiment.
+The Gantt chart can be seen in Figure \ref{fig:timeline}.
+
+\begin{figure}[h!]
+    \begin{flushright}
+        \begin{PstGanttChart}[unit=2,ChartShowIntervals,ChartUnitIntervalName=Month,ChartUnitBasicIntervalName=Month]{5}{5}
+            \PstGanttTask[TaskOutsideLabel={Develop the front-end of the application}]{0}{1}
+            \PstGanttTask[TaskOutsideLabel={Develop the back-end of the application}]{1}{2}
+            \PstGanttTask[TaskOutsideLabel={Develop NLP model}]{0}{2}
+            \PstGanttTask[TaskOutsideLabel={Integrate the model with the web application}]{2}{1}
+            \PstGanttTask[TaskOutsideLabel={Perform usability tests}]{3}{2}
+        \end{PstGanttChart}
+        \caption{Development of News Aggregator Timeline}
+        \label{fig:timeline}
+    \end{flushright}
+\end{figure}
+
+\section{Specific Requirements}
+\subsection{Functions}
+While using the website, users should maintain the ability to view all news documents on a robust yet intuitive front end web page. These news documents will be sourced from the RSS feeds of the following designated news outlets, each representing a respective polarity of political stance (-2 being very liberal leaning and 2 being very conservative leaning:\par
+-2: Huffington Post\par
+-1: CNN\par
+1: Fox News\par
+2: Breitbart\par
+Along with providing a feed of the latest news stories from the designated news outlets, the website should also accurately cluster these news stories by extracting and labelling their keywords and sentiment through a natural language processing model. The result of this clustering will enable users to view the paired (opposing perspective) news stories side by side. The web page should also offer the ability for users to change the degree of political polarization they want to view, which in turn will adjust the article sources accordingly. Once a user has viewed a cluster of news stories created by the website, they should be able to then seamlessly share the pairing to one of the offered social media platforms through the click of that platforms icon (as well as potential logging in). Lastly, this platform should enable users to vote and comment on the news stories generated on the feed, creating another social aspect to the platform where users can share their thoughts, opinions, and ideas. The designated shareable social media platforms will be Facebook and Twitter.
+\subsection{Interfaces}
+News Aggregator will take the form of an online website where users will be able to utilize all the features and functionality through the front end user interface. All of the web pages content will be served on a single landing page, where this content will be dynamically rendered and clustered in a content feed for the user. When sharing a news story cluster, depending on if they’re already signed in or not, a user might be redirected to a third party login portal for the social media platform they are trying to share. After completing this login process, whether its a successful or failed log in, users will return back to the News Aggregator web page. As part of the front end interface, News Aggregator will also possess input fields for commenting and voting on news articles shared on the feed.
+\subsection{Performance Requirements}
+The final News Aggregator website should be able to accurately classify the subject and content of an article with at least 90\% accuracy to ensure that stories are properly clustered for users on the platform. The website should also be able to pull the latest news stories from the designated news stations within a reasonable time of their initial upload, to allow users to view the most up to date content.
+\subsection{Usability Requirements}
+The completed News Aggregator website should have an extremely intuitive and simplistic design by maintaining well defined button layouts and input fields for designated functionality to ultimately allow user to complete their tasks without confusion or wasted time. This web application should be designed with both mobile and desktop devices in mind. While viewing a pair of news stories that they want to share on a social platform, users should be able to share by simply clicking on the icon of the desired social media platform, with the only other potential steps being a third party log-in portal if they are not signed in, and the push of the share button. In terms of user accessibility, the News Aggregator website should also follow Google’s Material Design User Accessibility guidelines to ensure that all users, regardless of visual disability, will be able to utilize all of it's features without complication. \cite{accessibility_guidelines}.
+\subsection{Software System Attributes}
+\subsubsection{Reliability}
+The system can be considered reliable if it is capable of providing the user with all aforementioned features without fail. User interface should be seamless, intuitive, and appealing. Failure could be considered any issue that makes the website difficult to interact with, such as non-functioning on mobile platforms, broken sliders, news stories not displaying properly, sharing function not working, etc.
+\subsubsection{Availability}
+The system should be available to the user on any common device, regardless of resolution or screen dimensions. This includes mobile devices such as phones and tablets.
+\subsubsection{Security}
+The system will use a few security standards to help minimize security threats. This includes salted hashes for passwords, header obscurities to hide how the site is configured from malicious users, HTTPS, form validation, and protection from SQL injection. Sharing via social media will open a third party login independent from the site.
+\subsubsection{Maintainability}
+The layout should be as simple and timeless as possible. That being said, it should be designed in such a way that it can be easily updated in the future by others with other ideas in mind.
+
+
+\clearpage
+\section{Signatures}
+{\Large
+                \NameSigPair{\CapstoneSponsorPerson}\par
+                \NameSigPair{\GroupMemberOne}\par
+                \NameSigPair{\GroupMemberTwo}\par
+                \NameSigPair{\GroupMemberThree}\par
+                \NameSigPair{\GroupMemberFour}\par
+}
+\end{document}

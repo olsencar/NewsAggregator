@@ -3,6 +3,7 @@ import Media from 'react-bootstrap/Media'
 
 class Comment extends Component {
     render() {
+      const commentTime = new Date(this.props.time).toLocaleString("en-US")
       return (
         <Media as="li">
             <img
@@ -13,13 +14,14 @@ class Comment extends Component {
               alt=""
             />
             <div className="text-left">
-                <span className="text-muted float-right">
-                    <small className="text-muted">{this.props.time}</small>
-                </span>
-                <strong className="text-success mt-0">{this.props.user}</strong>
-                <p>
-                    {this.props.text}
-                </p>
+              <strong className="text-success mt-0">{this.props.user}</strong>
+              <span className="text-muted float-right">
+                  &nbsp;
+                  <small className="text-muted">{commentTime}</small>
+              </span>
+              <p>
+                  {this.props.text}
+              </p>
             </div>
         </Media> 
       );

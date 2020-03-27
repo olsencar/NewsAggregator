@@ -52,7 +52,7 @@ class ArticleGroup extends Component {
                 //update local state
                 this.setState({
                     //use service worker to get comments on mongodb lookup
-                    leftVotes: this.state.leftVotes+1,
+                    leftVotes: +this.state.leftVotes+1,
                     leftVotesPressed: true,
                 },        //state is updated asynchronously, so add updated value
                 () => votesService.addVotes(pid, sid, +this.state.leftVotes, +this.state.rightVotes)
@@ -198,24 +198,23 @@ class ArticleGroup extends Component {
         });
     }
     //get called within CommentSection
-    postComment = (pid, sid, left_votes, right_votes, comment) => {
+    postComment = (pid, sid, comment) => {
         //we want to just add this comment to the specific document with the below pid and sid
         //so we'll send all this data then the service worker will extract pid sid, and the comment data
         //do a look up on pid-sid, then append its array (update) with the comment data in this json
         var d = new Date();
-        var time_data = String(d.getMonth())+"/"+String(d.getDate())+"/"+String(d.getFullYear());
         var comment_data = {
             "primary_id": pid,
             "secondary_id": sid,
             "group_comments": [
                 {
-                "user": "Anonymous",
-                "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
-                "time": time_data,
-                "text": comment
+                    "user": "Anonymous",
+                    "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                    "text": comment
                 }
             ]
         };
+        console.log(comment_data);
         commentService.addComment(comment_data);
         //then append to this.state.comments so the change gets reflected
         this.setState({
@@ -277,7 +276,10 @@ class ArticleGroup extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="container bg-white">
+
+                </div>
+                <div className="row justify-content-center bg-white">
+                    <div className="col no-padding">
                         <Accordion>
                             <Card>
                                 <Card.Header>
@@ -293,7 +295,7 @@ class ArticleGroup extends Component {
                             </Card>
                         </Accordion>
                     </div>
-                </div>
+                    </div>
 
             </div>
         )

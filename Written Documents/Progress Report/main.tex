@@ -1,0 +1,148 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage[parfill]{parskip}
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+\usepackage[pdf]{pstricks}
+\usepackage{pst-gantt}
+\usepackage{tabularx}
+
+% 1. Fill in these details
+\def \CapstoneTeamName{Aggregators}
+\def \CapstoneTeamNumber{71}
+\def \GroupMemberOne{Carter Olsen}
+\def \GroupMemberTwo{Megan Liles}
+\def \GroupMemberThree{Aalok Borkar}
+\def \GroupMemberFour{Race Stewart}
+\def \CapstoneProjectName{News Aggregator Web Development}
+% \def \CapstoneSponsorCompany{	Cheap Robots, Inc}
+\def \CapstoneSponsorPerson{Joseph Louis}
+
+% 2. Uncomment the appropriate line below so that the document type works
+\def \DocType{		%Problem Statement
+				Progress Report
+				%Technology Review
+				%Design Document
+				%Progress Report
+				}
+			
+\newcommand{\NameSigPair}[1]{\par
+\makebox[2.75in][r]{#1} \hfill 	\makebox[3.25in]{\makebox[2.25in]{\hrulefill} \hfill		\makebox[.75in]{\hrulefill}}
+\par\vspace{-12pt} \textit{\tiny\noindent
+\makebox[2.75in]{} \hfill		\makebox[3.25in]{\makebox[2.25in][r]{Signature} \hfill	\makebox[.75in][r]{Date}}}}
+% 3. If the document is not to be signed, uncomment the RENEWcommand below
+% \renewcommand{\NameSigPair}[1]{#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+    	\includegraphics[height=4cm]{coe_v_spot1}
+        \hfill 
+        % 4. If you have a logo, use this includegraphics command to put it on the coversheet.
+        %\includegraphics[height=4cm]{CompanyLogo}   
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS Capstone \DocType \par
+            {\large December 6, 2019}\par
+            \vspace{.5in}
+            \textbf{\Huge\CapstoneProjectName}\par
+            \vfill
+            {\large Prepared for}\par
+            % \Huge \CapstoneSponsorCompany\par
+            \vspace{5pt}
+            {\Large\CapstoneSponsorPerson\par}
+            {\large Prepared by }\par
+            Group \CapstoneTeamNumber\par
+            % 5. comment out the line below this one if you do not wish to name your team
+            \CapstoneTeamName\par 
+            \vspace{5pt}
+            {\Large
+                \GroupMemberOne\par
+                \GroupMemberTwo\par
+                \GroupMemberThree\par
+                \GroupMemberFour\par
+            }
+            \vspace{20pt}
+        }
+        \begin{abstract}
+        % 6. Fill in your abstract   
+        This document gives an overview of the progress of our project for the Fall term. It includes the project overview, the problems encountered, the current status of the project, a week to week summary of our our project's progress and a retrospective of the project.
+        \end{abstract}     
+    \end{singlespace}
+\end{titlepage}
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+% 7. uncomment this (if applicable). Consider adding a page break.
+%\listoffigures
+%\listoftables
+\clearpage
+\section{Project Overview}
+With the rise of the digital age and the subsequent influx of online news sources readily available to the general
+public, it comes as no surprise that instances of confirmation bias through user-optimized media consumption known
+as ‘echo-chambers’ has increased heavily in recent years. Constant advancements in internet technologies and search
+engine optimization, coupled with the extremely popular media outlets purposefully biasing user content, has not only
+exacerbated this issue, but also given rise to a plethora of issues in regards to journalistic integrity. With users constantly
+consuming media that is directly tailored towards their socio-political bias and polarized views, positive feedback loops
+begin to emerge, as users read self-confirming journalistic pieces, leading them towards the same opinions and skewed
+outlets, until ultimately they become their only window into events happening around the world. To alleviate this issue
+of self serving bias in modern media consumption, the proposed solution is that of News Aggregator: a web based tool
+with the ability to scrape the internet’s popular news sites, match and cluster news stories based off of their political
+sentiment, and provide readers with all sides to the current news stories. By giving users the ability to see every side of
+a news story, News Aggregator aims to create an unbiased environment where users are able to absorb the full spectrum
+of a news story, and form their own opinions on current events and modern political issues. The ultimate goal of News
+Aggregator is to dissolve the self serving bias currently faced in modern media outlets, and provide a platform that
+liberates users by offering a full spectrum of political views behind modern news stories.
+
+\section{Problems Encountered}
+Over the course of developing the various parts of our project, we encountered a few issues. \par
+First, the whole premise of our project lies on the fact that all news sources cover the same stories. As it turns out, that is not true. We found that many news sources refrained from covering stories that wouldn't align with their typical viewer's bias. This made it difficult for us to find news stories from the conflicting bias that matched the news story we were examining. \par
+Second, matching similar pieces of text together is difficult. This is mainly because RSS feeds only give us 1-2 sentences of information about the article. That means that we need to match up articles based on a few sentences, which is hard because many natural language processing methods need more words in a piece of text to be more accurate. \par 
+Lastly, implementing the natural language processing model with our RSS feed scraper has turned out to be more difficult than we thought. It will take much more thought and design before we implement it.
+
+\section{Current Status}
+The current status of the News Aggregator Website is that the website itself is in the development stage. The team has made excellent progress in the back end development of the site. The designs and wire frames for the news aggregator site have been completed and approved. The RSS feed of the news articles is not yet displayed on the site itself but the back end functionality of gathering news articles from various news sources is working. The user interface has not yet been configured using CSS. The social media sharing buttons and commenting features have yet to be implemented. 
+
+\section{Weekly Summary}
+\subsection{Week 3}
+This week we focused on finishing up the requirements document, but we had to wait because our client Joseph was out of town. We had to wait until Thursday to get all of the specific requirements. We also discussed how we were going to split up the project and the schedule of development.
+\subsection{Week 4}
+This week we went over possible designs for the web application and the specifics about how we could implement the idea. Joseph gave us examples of what he wanted the site to look like and his ideas on how it should function. We planned that the following week we would provide a mock up of the application and a functional RSS feed scraper.
+\subsection{Week 5}
+This week we finished the RSS feed scraper and started the scraping. By this point we had gathered around 1000 news stories, so it was going well. We discussed the use of machine learning in our application and how we could use it. We also created a mock up of the web application for Joe and demonstrated it to him in the meeting.
+\subsection{Week 6}
+This week we tested some models for natural language processing. We developed a solution using GenSim Doc2Vec, but found that it had pretty inaccurate results. We were looking into other models as well to improve our accuracy. 
+\subsection{Week 7}
+This week we deployed our RSS feed scraper Python script to AWS Lambda so we didn't need to worry about uptime of our machines at home. We also finished the first draft of the design document. We also created a proof of concept of the web application in ReactJS to show to Joe during our meeting.
+\subsection{Week 8}
+This week we showed Joe our proof of concept of the website and got his feedback. He gave us some ideas of structure and also showed us examples of other sites that are similar that he liked the design of. We also found a new NLP model in GenSim that gave better results than Doc2Vec.
+\subsection{Week 9}
+This was the Thanksgiving week, so we did not get much done this week.
+\subsection{Week 10}
+This week we worked on bringing the RSS feed scraper and the program that finds similar articles together.
+\section{Retrospective}
+The following table describes our positives, changes that need to be implemented and the actions required to implement the changes for each task of our project.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabularx}{1.05\textwidth}{| X | X | X | X |}
+        \hline
+        Positives & Deltas & Actions    \\ \hline
+        We were able to successfully create a content feed that pulls data directly from a data source and renders the articles side by side across the page.
+        & We need to modify the source of the article data, changing it from the current JSON file to a live connection to the MongoDB data store that currently stores all of the article data.
+        & To make the needed data source modification, we will establish a live connection with our MongoDB data store within the React App, and set it to re-render the page after every data update. \\ \hline
+        We created a mock up of our application using React. & Joseph gave us a few ideas on some changes to be made and how he would like the website to look. This involved where to place the social bar, what should happen when a user clicks an article, etc. & We need to implement these changes in the code and style the components accordingly using CSS. \\ \hline
+        We created a Python script that pulls data from multiple pre-defined RSS feeds and inserts them into a MongoDB database. & Now that we have the script that gathers the data, we need to do a little bit more processing on the data by looking for similar articles before inserting into the database. & We already have a separate Python script that is able to find similar articles for a piece of text. We need to use that code in our RSS feed scraper script before we insert into the database. \\ \hline
+        We designed wire frames of the application using Balsamiq. &Joseph gave us feedback about some ideas he would like to see on the site and requested to see multiple instances of the site to compare the user interfaces of them. We discussed the idea of having most recent stories at the top, eliminating other stories in the margins, and changing the location and organization of the social media sharing buttons. &We will design multiple examples of the user interface with different layouts of the social media buttons and the stories in the margin. We will use Balsamiq to design skeleton layouts to show Joseph and then implement them using React later on. \\ \hline
+        We were successfully able to come to a decision about where the like and comment buttons should be and how it should be formatted. &We need to have a like button for each post that only lets the user like one post or the other and the comments will be one combined section for both articles located under the two articles. &We need to implement the like and comment buttons in the code and style them accordingly to the decisions we made with Joseph. \\ \hline
+        &We need to implement a search function so that we can filter out stories that we don't want to see and view only stories that match our search criteria. &We need to implement the search bar and submit button in the code and also implement the filter functionality. This could be done using an separate array for the filtered and unfiltered lists, and a mapping function that can map over the filtered list when a search is done. \\ \hline
+        
+    \end{tabularx}
+\end{table}
+
+\end{document}

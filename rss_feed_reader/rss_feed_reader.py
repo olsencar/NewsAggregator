@@ -4,7 +4,7 @@ curious_george.patch_all(thread=False, select=False)
 import feedparser
 import json
 import hashlib
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient, UpdateOne, ReturnDocument
 import grequests
 from threading import Thread
 import os
@@ -85,7 +85,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                 if (feed_info['hasTags']):
                     politics = False
                     for tag in item.get('tags', []):
-                        if (tag.term.lower() == 'politics'):
+                        if ('term' in tag and tag.term.lower() == 'politics'):
                             politics = True
                         tags.append(tag.term)
                     # If we did not find a politics tag, then this article
@@ -220,7 +220,7 @@ def main():
             if newTags is not None:
                 story['tags'] = newTags
 
-            resp = db.news_stories.update_one({ "title": story['title'], "description": story["description"], "source_name": story["source_name"] }, 
+            resp = db.news_stories.find_one_and_update({ "title": story['title'], "description": story["description"], "source_name": story["source_name"] }, 
                 { 
                     "$set": {
                         'title': story['title'],
@@ -235,9 +235,11 @@ def main():
                         'bias': story['bias']
                     } 
                 }, 
-                upsert=True
+                upsert=True,
+                return_document=ReturnDocument.AFTER,
+                projection={'_id': True}
             )
-            story['_id'] = resp.upserted_id
+            story['_id'] = resp['_id']
         sourceIdx += 1
     
     articles = get_articles(client)
@@ -264,7 +266,7 @@ def main():
                                 'similar_articles': similar_articles,
                             } 
                         }, 
-                        upsert=True
+                        upsert=False
                     )
                 )
             if ( len(ops) == 1000):

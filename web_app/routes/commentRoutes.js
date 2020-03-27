@@ -20,10 +20,11 @@ module.exports = (app) => {
     
     //add comment to db
     app.post('/api/comments/add', async (comment_data, res) => {
+        comment_data.body.group_comments[0].time = Date.now();
         //search_primary_key and search_secondary_key
         let s_primary_id = comment_data.body.primary_id;
         let s_secondary_id = comment_data.body.secondary_id;
-        let new_comment = comment_data.body.group_comments[0]
+        let new_comment = comment_data.body.group_comments[0];
         const filter = {primary_id: s_primary_id, secondary_id: s_secondary_id};
         const update = { $push: { group_comments: new_comment } };
         let doc = await Comment.findOneAndUpdate(filter, update, {
