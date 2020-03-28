@@ -22,11 +22,10 @@ export default {
         return res.data || [];
     },
     search: async (searchTerm) => {
-        const url = `/api/articles/search?q=${searchTerm}`;
-
-        if (searchTerm === '') return getRecentArticles();
-        
+        const url = `/api/articles/search?q=${searchTerm}`;        
         const res = await axios.get(url);
+
+        console.log(res.data);
         return res.data || [];
 
     }

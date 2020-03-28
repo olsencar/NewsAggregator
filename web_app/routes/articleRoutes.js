@@ -81,4 +81,40 @@ module.exports = (app) => {
             return res.status(500).send();
         }
     });
+
+    app.get('/api/articles/search', async (req, res) => {
+        let searchTerm = req.query.q;
+
+        try {
+            let articles = await Article.aggregate([
+                {
+                    $searchBeta: {
+                        "search": {
+                            query: searchTerm,
+                            path: ['description', 'title']
+                        }
+                    }
+                },
+                {
+                    $limit: 50
+                },
+                {
+                    $sort: {
+                        "publish_date": -1
+                    }
+                }
+            ]);
+
+            articles.forEach((article) => {
+                article.most_similar_article = getMostSimilarArticle(article);
+            });
+            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
+            
+            return res.status(200).send(articles);
+        } catch (error) {
+            console.error("Internal server error when querying MongoDB.")
+            console.error(error);
+            return res.status(500).send();
+        }
+    });
 }

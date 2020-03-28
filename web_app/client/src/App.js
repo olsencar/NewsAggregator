@@ -39,7 +39,10 @@ class App extends Component {
   }
 
   search = async (searchTerm) => {
+    if (searchTerm === '') this.getRecentArticles();
+
     let res = await articleService.search(searchTerm);
+
     this.setState({
       article_data: res,
       pageCount: Math.ceil(res.length / this.state.articlesPerPage)

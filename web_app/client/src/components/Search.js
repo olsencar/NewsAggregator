@@ -22,13 +22,17 @@ class Search extends Component {
     }
 
     render() {
-        <InputGroup>
-            <FormControl type="text" className="searchTerm" placeholder="Search..." onChange={e => this.handleChange(e)} />
-            <InputGroup.Append>
-                <button type="submit" className="searchButton">
-                    <FontAwesomeIcon icon={faSearch} />
-                </button>
-            </InputGroup.Append>
-        </InputGroup>
+        return (
+            <InputGroup>
+                <FormControl type="text" className="searchTerm" placeholder="Search..." onChange={e => this.handleChange(e)} />
+                <InputGroup.Append>
+                    <button type="submit" className="searchButton">
+                        <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                </InputGroup.Append>
+            </InputGroup>
+        );
     }
 }
+
+export default Search;
