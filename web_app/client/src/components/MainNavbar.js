@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Navbar, FormControl, InputGroup }  from 'react-bootstrap'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Navbar }  from 'react-bootstrap'
+import Search from './Search';
 
 class MainNavbar extends Component {
+
     render() {
         return (
             <Navbar collapseOnSelect sticky="top" expand="sm" bg="red-blue-gradient" variant="dark">
@@ -12,14 +12,7 @@ class MainNavbar extends Component {
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-center">
                     <div className="search-bar-wrapper">
                         <div className="search-container">
-                            <InputGroup>
-                                <FormControl type="text" className="searchTerm" placeholder="Search..." />
-                                <InputGroup.Append>
-                                    <button type="submit" className="searchButton">
-                                        <FontAwesomeIcon icon={faSearch} />
-                                    </button>
-                                </InputGroup.Append>
-                            </InputGroup>
+                            <Search search={this.props.search} />
                         </div>
                     </div>
                 </Navbar.Collapse>

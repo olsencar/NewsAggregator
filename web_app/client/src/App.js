@@ -38,6 +38,14 @@ class App extends Component {
     }, () => this.setArticlesToDisplay());
   }
 
+  search = async (searchTerm) => {
+    let res = await articleService.search(searchTerm);
+    this.setState({
+      article_data: res,
+      pageCount: Math.ceil(res.length / this.state.articlesPerPage)
+    }, () => this.setArticlesToDisplay());
+  }
+
   handlePageClick = (data) => {
     const selected = data.selected;
     this.setState({
@@ -88,7 +96,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <MainNavbar />
+        <MainNavbar search={this.search} />
         <div className="container" id="feed-container">
           <div className="col">
             {this.state.articlesToDisplay}
