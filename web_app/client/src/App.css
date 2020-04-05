@@ -149,6 +149,10 @@ body{
   font-family: 'Open Sans', sans-serif;
 }
 
+.main-loading-spinner {
+  margin-top: 5rem;
+}
+
 .search-container {
   width: 100%;
   position: relative;

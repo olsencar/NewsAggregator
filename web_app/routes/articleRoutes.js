@@ -21,7 +21,8 @@ getMostSimilarArticle = (article) => {
     return null;
 }
 
-module.exports = (app) => {
+module.exports = (app, cache) => {
+
     app.get('/api/articles/byId/:id', async (req, res) => {
         const id = req.params.id;
         try {
@@ -35,24 +36,40 @@ module.exports = (app) => {
         }
     });
 
+
     app.get('/api/articles/recent', async (req, res) => {
-        let beginDate = new Date();
-        beginDate.setDate(beginDate.getDate() - 7);
-        try {
-            let articles = await Article.find({
-                publish_date: {$gt: beginDate}
-            }).sort({'publish_date': -1}).lean();
+        const lastUpdatedArticle = await Article.findOne().sort({ _id: -1 });
+        const lastUpdateId = lastUpdatedArticle._id;
+        const cached = cache.get('recent_articles');
 
-            articles.forEach((article) => {
-                article.most_similar_article = getMostSimilarArticle(article);
-            });
-            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
-
-            return res.status(200).send(articles);
-        } catch (error) {
-            console.error(error);
-            return res.status(500).send(error);
+        if (cached && cached.lastCacheId.toString() === lastUpdateId.toString()) {
+            return res.json(cached.data);            
+        } else {
+            let beginDate = new Date();
+            beginDate.setDate(beginDate.getDate() - 7);
+            try {
+                let articles = await Article.find({
+                    publish_date: {$gt: beginDate}
+                }).sort({'publish_date': -1}).lean();
+                
+                articles.forEach((article) => {
+                    article.most_similar_article = getMostSimilarArticle(article);
+                });
+                articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
+                
+                // cache the response
+                cache.set('recent_articles', {
+                    lastCacheId: lastUpdateId,
+                    data: articles
+                });
+    
+                return res.status(200).json(articles);
+            } catch (error) {
+                console.error(error);
+                return res.status(500).send(error);
+            }   
         }
+                      
     });
 
     app.get('/api/articles/find', async (req, res) => {
