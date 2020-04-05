@@ -52,11 +52,22 @@ module.exports = (app, cache) => {
                     publish_date: {$gt: beginDate}
                 }).sort({'publish_date': -1}).lean();
                 
+                let articlesSeen = new Set();
+
                 articles.forEach((article) => {
                     article.most_similar_article = getMostSimilarArticle(article);
                 });
-                articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
+
+                articles = articles.filter((doc) => {
+                    if (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN && !(articlesSeen.has(doc._id.toString()) || articlesSeen.has(doc.most_similar_article._id.toString())) ) {
+                        articlesSeen.add(doc._id.toString());
+                        articlesSeen.add(doc.most_similar_article._id.toString());
+                        return true;
+                    }
+                    return false;
+                });
                 
+
                 // cache the response
                 cache.set('recent_articles', {
                     lastCacheId: lastUpdateId,
