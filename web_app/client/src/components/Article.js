@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBalanceScaleLeft, faBalanceScaleRight, faBalanceScale } from '@fortawesome/free-solid-svg-icons';
 
 class Article extends Component {
     getPartyColor(bias) {
@@ -16,6 +18,16 @@ class Article extends Component {
         }
     };
 
+    getScale = (bias) => {
+        if (bias < 0) {
+            return <FontAwesomeIcon icon={faBalanceScaleLeft} color='#145abc' />;
+        } else if (bias > 0) {
+            return <FontAwesomeIcon icon={faBalanceScaleRight} color='#bc170c' />;
+        } else {
+            return <FontAwesomeIcon icon={faBalanceScale} />;
+        }
+    }
+
     removeHTMLFromString = (html) => {
         let elem = document.createElement('div');
         elem.innerHTML = html;
@@ -32,7 +44,8 @@ class Article extends Component {
                     <p className="card-text">{this.removeHTMLFromString(this.props.content)}</p>
                 </div>
                 <div className="card-footer text-muted">
-                    <span className={"card-link banner-source banner-source-" + this.getPartyColor(this.props.bias)}>{this.props.source}</span>
+                    <span className='card-link'>{this.getScale(this.props.bias)}</span>
+                    <span className="card-link banner-source">{this.props.source}</span>
                     <span className="card-link">{this.props.published.substr(0,10)}</span>
                 </div>
             </div>
