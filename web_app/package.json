@@ -14,6 +14,8 @@
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
+    "build": "npm run build --prefix client",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build --prefix client",
     "client": "npm run start --prefix client",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
   },
@@ -32,5 +34,8 @@
   "devDependencies": {
     "concurrently": "^5.1.0",
     "nodemon": "^2.0.2"
+  },
+  "engines": {
+    "node": "10.16.0"
   }
 }
