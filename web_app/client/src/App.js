@@ -4,6 +4,7 @@ import ArticleGroup from './components/ArticleGroup.js';
 import MainNavbar from './components/MainNavbar'
 import articleService from './services/articleService';
 import ReactPaginate from 'react-paginate';
+import { Spinner } from 'react-bootstrap';
 
 class App extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class App extends Component {
       articlesToDisplay: [],
       offset: 0,
       article_data: [],
+      loading: false
     };
   }
 
@@ -31,7 +33,24 @@ class App extends Component {
   }
 
   getRecentArticles = async () => {
+    this.setState({
+      loading: true
+    });
     let res = await articleService.getRecentArticles();
+    this.setState({
+      loading: false
+    });
+    this.setState({
+      article_data: res,
+      pageCount: Math.ceil(res.length / this.state.articlesPerPage)
+    }, () => this.setArticlesToDisplay());
+  }
+
+  search = async (searchTerm) => {
+    if (searchTerm === '') this.getRecentArticles();
+
+    let res = await articleService.search(searchTerm);
+
     this.setState({
       article_data: res,
       pageCount: Math.ceil(res.length / this.state.articlesPerPage)
@@ -88,7 +107,8 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <MainNavbar />
+        <MainNavbar search={this.search} />
+        {this.state.loading ? <Spinner animation='border' variant='primary' className='main-loading-spinner' /> : null}
         <div className="container" id="feed-container">
           <div className="col">
             {this.state.articlesToDisplay}

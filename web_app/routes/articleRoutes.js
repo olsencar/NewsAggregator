@@ -21,7 +21,8 @@ getMostSimilarArticle = (article) => {
     return null;
 }
 
-module.exports = (app) => {
+module.exports = (app, cache) => {
+
     app.get('/api/articles/byId/:id', async (req, res) => {
         const id = req.params.id;
         try {
@@ -35,24 +36,51 @@ module.exports = (app) => {
         }
     });
 
+
     app.get('/api/articles/recent', async (req, res) => {
-        let beginDate = new Date();
-        beginDate.setDate(beginDate.getDate() - 7);
-        try {
-            let articles = await Article.find({
-                publish_date: {$gt: beginDate}
-            }).sort({'publish_date': -1}).lean();
+        const lastUpdatedArticle = await Article.findOne().sort({ _id: -1 });
+        const lastUpdateId = lastUpdatedArticle._id;
+        const cached = cache.get('recent_articles');
 
-            articles.forEach((article) => {
-                article.most_similar_article = getMostSimilarArticle(article);
-            });
-            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
+        if (cached && cached.lastCacheId.toString() === lastUpdateId.toString()) {
+            return res.json(cached.data);            
+        } else {
+            let beginDate = new Date();
+            beginDate.setDate(beginDate.getDate() - 7);
+            try {
+                let articles = await Article.find({
+                    publish_date: {$gt: beginDate}
+                }).sort({'publish_date': -1}).lean();
+                
+                let articlesSeen = new Set();
 
-            return res.status(200).send(articles);
-        } catch (error) {
-            console.error(error);
-            return res.status(500).send(error);
+                articles.forEach((article) => {
+                    article.most_similar_article = getMostSimilarArticle(article);
+                });
+
+                articles = articles.filter((doc) => {
+                    if (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN && !(articlesSeen.has(doc._id.toString()) || articlesSeen.has(doc.most_similar_article._id.toString())) ) {
+                        articlesSeen.add(doc._id.toString());
+                        articlesSeen.add(doc.most_similar_article._id.toString());
+                        return true;
+                    }
+                    return false;
+                });
+                
+
+                // cache the response
+                cache.set('recent_articles', {
+                    lastCacheId: lastUpdateId,
+                    data: articles
+                });
+    
+                return res.status(200).json(articles);
+            } catch (error) {
+                console.error(error);
+                return res.status(500).send(error);
+            }   
         }
+                      
     });
 
     app.get('/api/articles/find', async (req, res) => {
@@ -75,6 +103,42 @@ module.exports = (app) => {
                 
             if (article == undefined) return res.status(404).send(`No article found for \n\ttitle: ${title}\n\tdescription: ${description}\n\tsource_name: ${source_name}`);
             return res.status(200).send(article);
+        } catch (error) {
+            console.error("Internal server error when querying MongoDB.")
+            console.error(error);
+            return res.status(500).send();
+        }
+    });
+
+    app.get('/api/articles/search', async (req, res) => {
+        let searchTerm = req.query.q;
+
+        try {
+            let articles = await Article.aggregate([
+                {
+                    $searchBeta: {
+                        "search": {
+                            query: searchTerm,
+                            path: ['description', 'title']
+                        }
+                    }
+                },
+                {
+                    $limit: 50
+                },
+                {
+                    $sort: {
+                        "publish_date": -1
+                    }
+                }
+            ]);
+
+            articles.forEach((article) => {
+                article.most_similar_article = getMostSimilarArticle(article);
+            });
+            articles = articles.filter((doc) => (doc.most_similar_article && doc.most_similar_article.similarity_score > SIMILARITY_SCORE_MIN));
+            
+            return res.status(200).send(articles);
         } catch (error) {
             console.error("Internal server error when querying MongoDB.")
             console.error(error);

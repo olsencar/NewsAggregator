@@ -1,14 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const NodeCache = require('node-cache');
 const bodyParser = require ('body-parser');
 const dbConfig = require('./config/config');
 
+const cache = new NodeCache();
 // Import the DB Models
 require('./models/Article').default;
 require('./models/Comment').default;
 require('./models/Votes').default;
 
 const app = express();
+
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -25,7 +28,7 @@ db.once('open', () => {
 app.use(bodyParser.json());
 
 // Import routes
-require('./routes/articleRoutes')(app);
+require('./routes/articleRoutes')(app, cache);
 require('./routes/commentRoutes')(app);
 require('./routes/votesRoutes')(app);
 

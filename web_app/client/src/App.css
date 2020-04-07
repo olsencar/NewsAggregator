@@ -149,6 +149,10 @@ body{
   font-family: 'Open Sans', sans-serif;
 }
 
+.main-loading-spinner {
+  margin-top: 5rem;
+}
+
 .search-container {
   width: 100%;
   position: relative;
@@ -170,13 +174,17 @@ body{
 
 .searchButton {
   border: 1px solid rgb(47, 45, 45);
-  background: rgb(47, 45, 45);
+  background: rgb(155, 155, 155);
   text-align: center;
   color: #fff;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   font-size: 20px;
   width: 60px;
+}
+
+.searchButton:focus {
+  background: rgb(97, 97, 97);
 }
 
 .search-bar-wrapper {

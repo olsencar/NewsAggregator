@@ -20,5 +20,12 @@ export default {
     getRecentArticles: async () => {
         let res = await axios.get('/api/articles/recent');
         return res.data || [];
+    },
+    search: async (searchTerm) => {
+        const url = `/api/articles/search?q=${searchTerm}`;        
+        const res = await axios.get(url);
+
+        return res.data || [];
+
     }
 }
