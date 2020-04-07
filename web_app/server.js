@@ -2,11 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const NodeCache = require('node-cache');
 const bodyParser = require ('body-parser');
-const dbConfig = require('./config/config');
 const cors = require('cors');
 
+if (!('MONGO_USERNAME' in process.env) || !('MONGO_PASSWORD' in process.env)) {
+    console.error('Missing either MONGO_USERNAME or MONGO_PASSWORD environment variables.');
+    console.error('These are needed in order to run the application');
+    throw 'Missing Credentials';
+}
 
 const cache = new NodeCache();
+
 // Import the DB Models
 require('./models/Article').default;
 require('./models/Comment').default;
@@ -21,7 +26,7 @@ app.use(cors());
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(`mongodb+srv://${dbConfig.readWrite.user}:${dbConfig.readWrite.password}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`, {useNewUrlParser: true,  useUnifiedTopology: true});
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@newsaggregator-0ys1l.mongodb.net/NewsAggregator?retryWrites=true&w=majority`, {useNewUrlParser: true,  useUnifiedTopology: true});
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', () => {
