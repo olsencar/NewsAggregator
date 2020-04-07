@@ -1,0 +1,3 @@
+[submodule "web_app"]
+	path = web_app
+	url = https://github.com/olsencar/purple-news.git
