@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const NodeCache = require('node-cache');
 const bodyParser = require ('body-parser');
 const dbConfig = require('./config/config');
+const cors = require('cors');
+
 
 const cache = new NodeCache();
 // Import the DB Models
@@ -15,6 +17,7 @@ const app = express();
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 mongoose.Promise = global.Promise;
 
