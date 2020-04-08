@@ -16,7 +16,9 @@ Clone this repo to your local machine using https://github.com/olsencar/NewsAggr
 ```javascript
   npm install
 ```
-5) Lastly, drag the `config.json` file into the `/web_app/config` folder.
+5) You must have the following environment variables set to valid credentials:
+  - ```MONGO_USERNAME```
+  - ```MONGO_PASSWORD```
 
 ## Usage
 To run Purple News:
