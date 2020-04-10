@@ -12,7 +12,6 @@
     "minimist": "^1.2.5",
     "mongoose": "^5.9.4",
     "node-cache": "^5.1.0",
-    "react-router-dom": "^5.1.2",
     "recompose": "^0.30.0"
   },
   "scripts": {

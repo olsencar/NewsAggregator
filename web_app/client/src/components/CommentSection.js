@@ -32,7 +32,7 @@ class CommentSection extends Component {
                           <div className="panel-body">
                               <textarea className="form-control" value={this.state.commentText} onChange={e => this.updateCommentText(e)} placeholder="Write a comment..." rows="3"></textarea>
                               <br></br>
-                              <button type="button" className="btn btn-info float-right" onClick={this.postComment}>Post</button>
+                              <button type="button" className="btn btn-dark float-left" onClick={this.postComment}>Post</button>
                               <div className="clearfix"></div>
                               <hr></hr>
                               <ul className="media-list">

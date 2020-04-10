@@ -284,7 +284,7 @@ class ArticleGroup extends Component {
                             <Card>
                                 <Card.Header>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={this.handleAccordion}>
-                                        Discussion
+                                        {this.state.comments.length} Comments
                                     </Accordion.Toggle>
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="0">
