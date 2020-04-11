@@ -208,13 +208,13 @@ class ArticleGroup extends Component {
             "secondary_id": sid,
             "group_comments": [
                 {
-                    "user": "Anonymous",
-                    "profilePic": "https://bootdey.com/img/Content/user_1.jpg",
+                    "user": this.props.authUser.displayName,
+                    "uid": this.props.authUser.uid,
+                    "profilePic": this.props.authUser.photoUrl,
                     "text": comment
                 }
             ]
         };
-        console.log(comment_data);
         commentService.addComment(comment_data);
         //then append to this.state.comments so the change gets reflected
         this.setState({
@@ -284,12 +284,12 @@ class ArticleGroup extends Component {
                             <Card>
                                 <Card.Header>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={this.handleAccordion}>
-                                        {this.state.comments.length} Comments
+                                        Comments
                                     </Accordion.Toggle>
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="0">
                                     <Card.Body>
-                                        <CommentSection comments={this.state.comments} pid={this.props.article_data._id} sid={this.props.article_data.most_similar_article._id} postComment={this.postComment} />
+                                        <CommentSection comments={this.state.comments} authUser={this.props.authUser} pid={this.props.article_data._id} sid={this.props.article_data.most_similar_article._id} postComment={this.postComment} />
                                     </Card.Body>
                                 </Accordion.Collapse>
                             </Card>

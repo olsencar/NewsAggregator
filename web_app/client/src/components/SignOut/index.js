@@ -1,9 +1,23 @@
 import React from 'react';
 import { withFirebase } from '../Firebase';
-import { Button } from 'react-bootstrap';
-const SignOutButton = ({ firebase }) => (
-  <Button variant='light' onClick={firebase.doSignOut}>
+import { withRouter } from 'react-router-dom';
+import {compose} from 'recompose';
+
+const signOut =  (props) => {
+  props.firebase.doSignOut();
+  props.history.push('/');
+}
+
+const SignOutButton = (props) => (
+  <div onClick={ e => signOut(props)}>
     Sign Out
-  </Button>
+  </div>
 );
-export default withFirebase(SignOutButton);
+
+const SignOutBase = compose(
+  withRouter,
+  withFirebase,
+)(SignOutButton);
+
+export default SignOutBase;
+

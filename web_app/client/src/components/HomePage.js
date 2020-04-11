@@ -4,27 +4,32 @@ import ArticleGroup from "./ArticleGroup";
 import articleService from "../services/articleService";
 import ReactPaginate from "react-paginate";
 import { Spinner } from "react-bootstrap";
-import { withFirebase } from "./Firebase";
-import Search from './Search';
 
 class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      articlesPerPage: 15,
       articlesToDisplay: [],
+      articlesPerPage: 15,
       offset: 0,
-      article_data: [],
-      loading: false,
-      userAuth: null,
+      pageCount: 0
     };
   }
 
   componentDidMount() {
-    console.log(this.props);
-    this.getRecentArticles();
+    this.setArticlesToDisplay(this.props);
   }
 
+  static getDerivedStateFromProps(props, state) {
+    if (!props.loading) {
+      return {
+        articlesToDisplay: props.article_data.slice(
+        state.offset,
+        state.offset + state.articlesPerPage)
+      }
+    }
+    return null;
+  }
   getArticleById = async (id) => {
     let res = await articleService.getArticleById(id);
     this.setState({ item: res });
@@ -35,44 +40,13 @@ class HomePage extends Component {
     this.setState({ item: res });
   };
 
-  getRecentArticles = async () => {
-    this.setState({
-      loading: true,
-    });
-    let res = await articleService.getRecentArticles();
-    this.setState({
-      loading: false,
-    });
-    this.setState(
-      {
-        article_data: res,
-        pageCount: Math.ceil(res.length / this.state.articlesPerPage),
-      },
-      () => this.setArticlesToDisplay()
-    );
-  };
-
-  search = async (searchTerm) => {
-    if (searchTerm === "") this.getRecentArticles();
-
-    let res = await articleService.search(searchTerm);
-
-    this.setState(
-      {
-        article_data: res,
-        pageCount: Math.ceil(res.length / this.state.articlesPerPage),
-      },
-      () => this.setArticlesToDisplay()
-    );
-  };
-
   handlePageClick = (data) => {
     const selected = data.selected;
     this.setState(
       {
         offset: selected * this.state.articlesPerPage,
       },
-      () => this.setArticlesToDisplay()
+      () => this.setArticlesToDisplay(this.props)
     );
   };
 
@@ -86,22 +60,11 @@ class HomePage extends Component {
 
   setArticlesToDisplay = () => {
     this.setState({
-      articlesToDisplay: this.state.article_data
+      articlesToDisplay: this.props.article_data
         .slice(
           this.state.offset,
           this.state.offset + this.state.articlesPerPage
         )
-        .map((article, index) => {
-          return (
-            <ArticleGroup
-              key={index}
-              key_id={index}
-              id={index}
-              article_data={article}
-              removeArticleGroup={this.removeArticleGroup}
-            />
-          );
-        }),
     });
     window.scrollTo(0, 0);
   };
@@ -133,8 +96,7 @@ class HomePage extends Component {
 
     return (
       <div className="App">
-        <Search search={this.search} />
-        {this.state.loading ? (
+        {this.props.loading ? (
           <Spinner
             animation="border"
             variant="primary"
@@ -143,7 +105,19 @@ class HomePage extends Component {
         ) : null}
         <div className="container" id="feed-container">
           <div className="col">
-            {this.state.articlesToDisplay}
+            {this.state.articlesToDisplay
+              .map((article, index) => {
+                return (
+                  <ArticleGroup
+                    key={index}
+                    key_id={index}
+                    id={index}
+                    article_data={article}
+                    authUser={this.props.authUser}
+                    removeArticleGroup={this.removeArticleGroup}
+                  />
+                );
+              })}
             <div className="pagination">{paginationElement}</div>
           </div>
           <div className="col"></div>

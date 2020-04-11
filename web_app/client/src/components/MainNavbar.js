@@ -1,50 +1,25 @@
 import React, { Component } from "react";
-import { Navbar, NavItem, Nav, Button } from "react-bootstrap";
+import { Navbar, NavItem, Nav, NavDropdown } from "react-bootstrap";
 import Search from "./Search";
 import * as ROUTES from "../constants/routes";
-import { Switch } from "react-router-dom";
-import SignUpPage from "./SignUp/index";
-import SignInPage from "./SignIn/index";
-import { Link, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../App.css";
 import { AuthUserContext } from "./Session";
 import SignOut from "./SignOut";
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const MainNavbar = () => (
-    <AuthUserContext.Consumer>
-        {(authUser) => (authUser ? <NavbarAuth /> : <NavbarNonAuth />)}
-    </AuthUserContext.Consumer>
+const MainNavbar = (props) => (
+  <AuthUserContext.Consumer>
+    {(authUser) => (authUser ? <NavbarAuth {...props} authUser={authUser} /> : <NavbarNonAuth {...props} />)}
+  </AuthUserContext.Consumer>
 )
 
 class NavbarAuth extends Component {
-    render() {
-      return (
-        <Navbar
-          collapseOnSelect
-          sticky="top"
-          expand="sm"
-          bg="red-blue-gradient"
-          variant="dark"
-        >
-          <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse
-            id="responsive-navbar-nav"
-            className="justify-content-center"
-          >
-            <Nav className='ml-auto'>
-              <NavItem>
-                <SignOut />
-              </NavItem>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-      );
-    }
+  constructor(props) {
+    super(props);
+    console.log(this.props);
   }
-
-
-class NavbarNonAuth extends Component {
   render() {
     return (
       <Navbar
@@ -54,7 +29,49 @@ class NavbarNonAuth extends Component {
         bg="red-blue-gradient"
         variant="dark"
       >
-        <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
+        <div className="d-flex flex-grow-1">
+          <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
+          <Search search={this.props.search} />
+        </div>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse
+          id="responsive-navbar-nav"
+        >
+          <Nav className='ml-auto'>
+            <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} size='lg' />} id='account-dropdown' alignRight>
+              <NavDropdown.Item as={Link} to={ROUTES.PROFILE_PAGE}>
+                {this.props.authUser.displayName}
+              </NavDropdown.Item> 
+              <NavDropdown.Divider />
+              <NavDropdown.Item>
+                  <SignOut />
+              </NavDropdown.Item>  
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    );
+  }
+}
+
+
+class NavbarNonAuth extends Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <Navbar
+        collapseOnSelect
+        sticky="top"
+        expand="sm"
+        bg="red-blue-gradient"
+        variant="dark"
+      >
+        <div className="d-flex flex-grow-1">
+          <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
+          <Search search={this.props.search} />
+        </div>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse
           id="responsive-navbar-nav"

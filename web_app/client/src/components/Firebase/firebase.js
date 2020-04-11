@@ -15,18 +15,23 @@ const config = {
 class Firebase {
   constructor() {
     app.initializeApp(config);
-
     this.auth = app.auth();
   }
 
   // *** Auth API ***
-  doCreateUserWithEmailAndPassword = (email, password) =>
-    this.auth.createUserWithEmailAndPassword(email, password);
+  doCreateUserWithEmailAndPassword = async (email, password, username) => {
+    let cred = await this.auth.createUserWithEmailAndPassword(email, password);
+    cred.user.updateProfile({
+      displayName: username
+    });
+  }
 
-  doSignInWithEmailAndPassword = (email, password) =>
+  doSignInWithEmailAndPassword = (email, password) => 
     this.auth.signInWithEmailAndPassword(email, password);
+  
 
-  doSignOut = () => this.auth.signOut();
+  doSignOut = () => 
+    this.auth.signOut();
 
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
