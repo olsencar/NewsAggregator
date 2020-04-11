@@ -1,18 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
-import Navigation from './components/Navigation';
 import './index.css';
-import App from './components/App';
-import SignIn from './SignIn';
+import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Firebase, { FirebaseContext } from './components/Firebase';
 
 ReactDOM.render(
-  <FirebaseContext.Provider value={new Firebase()}>
-    <App />
-  </FirebaseContext.Provider>,
+    <FirebaseContext.Provider value={new Firebase()}>
+        <App />
+    </FirebaseContext.Provider>
+,
   document.getElementById('root'),
 );
 

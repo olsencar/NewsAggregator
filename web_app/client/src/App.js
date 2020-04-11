@@ -1,126 +1,49 @@
 import React, { Component } from 'react';
-import './App.css';
-import ArticleGroup from './components/ArticleGroup.js';
-import MainNavbar from './components/MainNavbar'
-import articleService from './services/articleService';
-import ReactPaginate from 'react-paginate';
-import { Spinner } from 'react-bootstrap';
+
+import HomePage from './components/HomePage';
+import * as ROUTES from './constants/routes';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
+import { withFirebase } from './components/Firebase';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { AuthUserContext } from './components/Session';
+import MainNavbar from './components/MainNavbar';
+
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      articlesPerPage: 15,
-      articlesToDisplay: [],
-      offset: 0,
-      article_data: [],
-      loading: false
+      authUser: null
     };
   }
 
   componentDidMount() {
-    this.getRecentArticles();
-  }
-
-  getArticleById = async (id) => {
-    let res = await articleService.getArticleById(id);
-    this.setState({item: res});
-  }
-
-  getArticle = async (title, description, source) => {
-    let res = await articleService.getArticle(title, description, source);
-    this.setState({item: res});
-  }
-
-  getRecentArticles = async () => {
-    this.setState({
-      loading: true
+    console.log(this.props);
+    this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
+      authUser ? this.setState({ authUser }) : this.setState({ authUser: null });
     });
-    let res = await articleService.getRecentArticles();
-    this.setState({
-      loading: false
-    });
-    this.setState({
-      article_data: res,
-      pageCount: Math.ceil(res.length / this.state.articlesPerPage)
-    }, () => this.setArticlesToDisplay());
   }
 
-  search = async (searchTerm) => {
-    if (searchTerm === '') this.getRecentArticles();
-
-    let res = await articleService.search(searchTerm);
-
-    this.setState({
-      article_data: res,
-      pageCount: Math.ceil(res.length / this.state.articlesPerPage)
-    }, () => this.setArticlesToDisplay());
-  }
-
-  handlePageClick = (data) => {
-    const selected = data.selected;
-    this.setState({
-      offset: selected * this.state.articlesPerPage
-    }, () => this.setArticlesToDisplay());
-  }
-
-  removeArticleGroup = (index) => {
-    this.setState((prevState) => ({
-      articlesToDisplay: prevState.articlesToDisplay.filter((_, i) => i !== index)
-    }));
-  }
-
-  setArticlesToDisplay = () => {
-    this.setState({
-      articlesToDisplay: this.state.article_data.slice(this.state.offset, this.state.offset + this.state.articlesPerPage).map((article, index) => {
-        return (
-          <ArticleGroup key={index} key_id={index} id={index} article_data={article} removeArticleGroup={this.removeArticleGroup} />
-        )
-      })
-    });
-    window.scrollTo(0, 0);
+  componentWillUnmount() {
+    this.listener();
   }
 
   render() {
-    let paginationElement;
-    if (this.state.pageCount > 1) {
-      paginationElement = (
-        <ReactPaginate
-          pageRangeDisplayed={5}
-          marginPagesDisplayed={2}
-          previousLabel={<span aria-hidden="true">&laquo;</span>}
-          nextLabel={<span aria-hidden="true">&raquo;</span>}
-          breakLabel={<span className="gap">...</span>}
-          pageCount={this.state.pageCount}
-          onPageChange={this.handlePageClick}
-          containerClassName="pagination"
-          disabledClassName="disabled"
-          activeClassName="active"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-        />
-      );
-    }
     return (
-      <div className="App">
-        <MainNavbar search={this.search} />
-        {this.state.loading ? <Spinner animation='border' variant='primary' className='main-loading-spinner' /> : null}
-        <div className="container" id="feed-container">
-          <div className="col">
-            {this.state.articlesToDisplay}
-            <div className="pagination">
-              {paginationElement}
-            </div>
+      <AuthUserContext.Provider value={this.state.authUser}>
+        <Router>
+          <div>
+            <MainNavbar authUser={this.state.authUser} />
+            <Route exact path={ROUTES.HOME} component={HomePage} />
+            <Route path={ROUTES.SIGN_UP} component={SignUp} />
+            <Route path={ROUTES.SIGN_IN} component={SignIn} />
+            <Route path={ROUTES.PASSWORD_FORGET} component={SignIn} />
           </div>
-          <div className="col"></div>
-        </div>
-      </div>
+        </Router>
+      </AuthUserContext.Provider>
     )
   }
 }
 
-export default App;
+export default withFirebase(App);
