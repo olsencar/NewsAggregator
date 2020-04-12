@@ -36,7 +36,7 @@ class App extends Component {
     <Route {...rest} render={(props) => (
       this.state.authUser
         ? <Component {...props} />
-        : <Redirect to={ROUTES.HOME} />
+        : <Redirect to={ROUTES.SIGN_IN} />
     )} />
   )
 
