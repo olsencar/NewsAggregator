@@ -4,7 +4,7 @@ import * as ROUTES from './constants/routes';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import { withFirebase } from './components/Firebase';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { AuthUserContext } from './components/Session';
 import MainNavbar from './components/MainNavbar';
 import articleService from './services/articleService';
@@ -30,6 +30,15 @@ class App extends Component {
   componentWillUnmount() {
     this.listener();
   }
+
+
+  PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={(props) => (
+      this.state.authUser
+        ? <Component {...props} />
+        : <Redirect to={ROUTES.HOME} />
+    )} />
+  )
 
   search = async (searchTerm) => {
     if (searchTerm === "") {
@@ -76,7 +85,7 @@ class App extends Component {
             <Route path={ROUTES.SIGN_UP} component={SignUp} />
             <Route path={ROUTES.SIGN_IN} component={SignIn} />
             <Route path={ROUTES.PASSWORD_FORGET} component={SignIn} />
-            <Route path={ROUTES.PROFILE_PAGE} component={ProfilePage} />
+            <this.PrivateRoute path={ROUTES.PROFILE_PAGE} component={ProfilePage} />
           </div>
         </Router>
       </AuthUserContext.Provider>

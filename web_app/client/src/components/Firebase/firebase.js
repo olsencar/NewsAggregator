@@ -29,14 +29,30 @@ class Firebase {
   doSignInWithEmailAndPassword = (email, password) => 
     this.auth.signInWithEmailAndPassword(email, password);
   
+  doUpdateDisplayName = (name) => this.auth.currentUser.updateProfile({
+    displayName: name
+  });
 
-  doSignOut = () => 
-    this.auth.signOut();
+  doSignOut = () => this.auth.signOut();
 
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
-  doPasswordUpdate = password =>
-    this.auth.currentUser.updatePassword(password);
+  reauthenticate = async (currentPassword) => {
+    const user = this.auth.currentUser;
+    const cred = app.auth.EmailAuthProvider.credential(user.email, currentPassword);
+    return user.reauthenticateWithCredential(cred);
+  }
+
+  doPasswordUpdate = async (currentPassword, newPassword) => {
+    try {
+      const cred = await this.reauthenticate(currentPassword);
+      const user = this.auth.currentUser;
+      const res = await user.updatePassword(newPassword);
+      this.doSignOut();
+    } catch (err) {
+      return err.message;
+    }
+  }
 }
 
 export default Firebase;
