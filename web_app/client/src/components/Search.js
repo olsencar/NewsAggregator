@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FormControl, InputGroup }  from 'react-bootstrap'
+import { InputGroup }  from 'react-bootstrap'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -12,6 +12,8 @@ class Search extends Component {
             typingTimeout: 0,
             searchText: ''
         }
+
+        this.searchForm = React.createRef();
     }
 
     checkForEnter = (e) => {
@@ -33,16 +35,26 @@ class Search extends Component {
         
     }
 
+    formFocus = (e) => {
+        console.log("Focusing");
+        this.searchForm.current.focus();
+    }
+
     render() {
         return (
-            <InputGroup>
-                <FormControl type="text" className="searchTerm" placeholder="Search..." onChange={e => this.handleChange(e)} onKeyPress={e => this.checkForEnter(e)} value={this.state.searchText} />
-                <InputGroup.Append>
-                    <button type="submit" className="searchButton" onClick={e => this.props.search(this.state.searchText)}>
+            <form className="mr-2 my-auto w-100 d-inline-block order-1">
+                <InputGroup>
+                <input type="text" className="form-control border border-right-0" placeholder="Search..." 
+                    value={this.state.searchText}
+                    onChange={this.handleChange} 
+                    onKeyDown={this.checkForEnter}/>
+                <span className="input-group-append">
+                    <button className="btn btn-outline-light border border-left-0" type="button">
                         <FontAwesomeIcon icon={faSearch} />
                     </button>
-                </InputGroup.Append>
-            </InputGroup>
+                </span>
+                </InputGroup>
+            </form>
         );
     }
 }
