@@ -16,6 +16,7 @@ const cache = new NodeCache();
 require('./models/Article').default;
 require('./models/Comment').default;
 require('./models/Votes').default;
+require('./models/User').default;
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use(bodyParser.json());
 require('./routes/articleRoutes')(app, cache);
 require('./routes/commentRoutes')(app);
 require('./routes/votesRoutes')(app);
+require('./routes/userRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));

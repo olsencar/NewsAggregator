@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     _id: Schema.Types.ObjectId,
-    uid: Schema.Types.String,
+    uid: String,
     comments: { type: Array, default: [] },
     upvotes: { type: Array, default: [] }
 });
