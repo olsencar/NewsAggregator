@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Form, Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import { FirebaseContext } from './Firebase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+
 
 
 const Profile = () => (
@@ -55,7 +54,7 @@ class ProfilePage extends Component  {
             return (
                 <div>
                     <label htmlFor='displayNameInput'>Display Name</label>
-                    <InputGroup controlId='displayNameForm.ControlInput'>
+                    <InputGroup>
                         <FormControl type='text' id='displayNameInput' placeholder='Change your display name' onChange={this.handleDisplayNameChange} value={this.state.displayName} autoComplete='new-username' />
                     </InputGroup>
                     {

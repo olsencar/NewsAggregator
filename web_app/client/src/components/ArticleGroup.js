@@ -10,57 +10,29 @@ import userService from "../services/userService";
 class ArticleGroup extends Component {
   constructor(props) {
     super(props);
-    const chosenArticle = this.props.article_data.most_similar_article;
-
     //for comment section to use when inserting a new comment (taking with it the most udpated vote vals)
     this.state = {
-      leftArticle:
-        this.props.article_data.bias <= chosenArticle.bias
-          ? this.props.article_data
-          : chosenArticle,
-      rightArticle:
-        this.props.article_data.bias > chosenArticle.bias
-          ? this.props.article_data
-          : chosenArticle,
       leftVotes: 0,
       rightVotes: 0,
-      leftVotesPressed: false,
-      rightVotesPressed: false,
       comments: [], //cache -> set upon accordion click,
       accordionShowing: false,
-      similarity_score: chosenArticle.similarity_score,
-      tags: this.getTagsToDisplay(
-        this.props.article_data.tags,
-        chosenArticle.tags
-      ),
-      images: this.getImagesToDisplay(
-        this.props.article_data.images,
-        chosenArticle.images,
-        this.props.article_data.source_name,
-        chosenArticle.source_name
-      ),
-      showAlert: false,
+      showAlert: false
     };
   }
-  //on component render
-  loadVotes = async () => {
-    let pid = this.props.article_data._id;
-    let sid = this.props.article_data.most_similar_article._id;
-    let vote_group = await votesService.getVotes(pid, sid);
-    if (vote_group) {
-      this.setState({
-        //use service worker to get comments on mongodb lookup
-        leftVotes: vote_group.left_votes,
-        rightVotes: vote_group.right_votes,
-      });
+
+  componentDidMount() {
+    this.loadVotes(this.props.pid, this.props.sid)
+  }
+
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.pid !== prevProps.pid || this.props.sid !== prevProps.sid) {
+      this.loadVotes(this.props.pid, this.props.sid);
     }
-  };
+  } 
 
   //on upvote press
   handleUpvotes = async (side) => {
-    let pid = this.props.article_data._id;
-    let sid = this.props.article_data.most_similar_article._id;
-
     if (!this.props.authUser) {
       // Don't let them upvote
       this.setState({
@@ -70,178 +42,67 @@ class ArticleGroup extends Component {
     }
 
     if (side === "left") {
-      if (!this.state.leftVotesPressed) {
-        //update local state
-        this.setState(
-          (oldState) => ({
-            //use service worker to get comments on mongodb lookup
-            leftVotes: oldState.leftVotes + 1,
-            leftVotesPressed: true,
-            rightVotesPressed: false,
-            rightVotes: oldState.rightVotesPressed
-              ? oldState.rightVotes - 1
-              : oldState.rightVotes,
-          }), //state is updated asynchronously, so add updated value
-          () => this.updateVotes()
-        );
+      if (this.props.voteDirection > -1) {
+        this.updateVotes(-1, 1, this.props.voteDirection === 1 ? -1 : 0);
       } else {
         //if is pressed -> undo upvote
-        //update local state
-        this.setState(
-          (oldState) => ({
-            //use service worker to get comments on mongodb lookup
-            leftVotes: oldState.leftVotes - 1,
-            leftVotesPressed: false,
-          }), //state is updated asynchronously, so add updated value
-          () => this.updateVotes()
-        );
+        this.updateVotes(0, -1, 0);
       }
     } else if (side === "right") {
-      if (!this.state.rightVotesPressed) {
-        //update local state
-        this.setState(
-          (oldState) => ({
-            //use service worker to get comments on mongodb lookup
-            rightVotes: oldState.rightVotes + 1,
-            rightVotesPressed: true,
-            leftVotesPressed: false,
-            leftVotes: oldState.leftVotesPressed
-              ? oldState.leftVotes - 1
-              : oldState.leftVotes,
-          }), //state is updated asynchronously, so add updated value
-          () => this.updateVotes()
-        );
+      if (this.props.voteDirection < 1) {
+        this.updateVotes(1, this.props.voteDirection === -1 ? -1 : 0, 1);
       } else {
         //if is pressed -> undo upvote
-        //update local state
-        this.setState(
-          (oldState) => ({
-            //use service worker to get comments on mongodb lookup
-            rightVotes: oldState.rightVotes - 1,
-            rightVotesPressed: false,
-          }), //state is updated asynchronously, so add updated value
-          () => this.updateVotes()
-        );
+        this.updateVotes(0, 0, -1);
       }
     }
   };
 
-  updateVotes() {
-    let pid = this.props.article_data._id;
-    let sid = this.props.article_data.most_similar_article._id;
+  loadVotes = async (pid, sid) => {
+    const vote_group = await votesService.getVotes(pid, sid);
 
-    let voteDirection = 0;
-    if (this.state.leftVotesPressed) {
-      voteDirection = -1;
-    } else if (this.state.rightVotesPressed) {
-      voteDirection = 1;
+    if (vote_group) {
+      this.setState({
+        leftVotes: vote_group.left_votes,
+        rightVotes: vote_group.right_votes
+      });
+    } else {
+      this.setState({
+        leftVotes: 0,
+        rightVotes: 0
+      });
     }
-    votesService.addVotes(
-      pid,
-      sid,
+  };
+
+  updateVotes(voteDirection, addToLeft, addToRight) {
+    const pid = this.props.pid;
+    const sid = this.props.sid;
+
+    this.setState(oldState => ({
+      leftVotes: oldState.leftVotes + addToLeft,
+      rightVotes: oldState.rightVotes + addToRight
+    }), () => votesService.addVotes(pid, 
+      sid, 
       this.state.leftVotes,
       this.state.rightVotes
-    );
-    userService.upvote(this.props.authUser.uid, pid, sid, voteDirection);
+    ));
+    
+    this.props.upvote(this.props.id, voteDirection);
   }
 
-  //loaded upon component load
-  componentDidMount() {
-    this.loadVotes();
-  }
-
-  componentWillReceiveProps(newProps) {
-    const chosenArticle = newProps.article_data.most_similar_article;
-
-    this.setState({
-      leftArticle:
-        newProps.article_data.bias <= chosenArticle.bias
-          ? newProps.article_data
-          : chosenArticle,
-      rightArticle:
-        newProps.article_data.bias > chosenArticle.bias
-          ? newProps.article_data
-          : chosenArticle,
-      tags: this.getTagsToDisplay(
-        newProps.article_data.tags,
-        chosenArticle.tags
-      ),
-      images: this.getImagesToDisplay(
-        newProps.article_data.images,
-        chosenArticle.images,
-        newProps.article_data.source_name,
-        chosenArticle.source_name
-      ),
-    });
-  }
-
-  getTagsToDisplay(tags1, tags2) {
-    const doNotDisplayTags = new Set([
-      "cnn",
-      "fox",
-      "breitbart",
-      "huffington-post",
-      "washington-post",
-      "washington-times",
-      "this",
-      "that",
-      "he",
-      "she",
-      "politics",
-      "false",
-      "true",
-    ]);
-
-    let tags = new Set(tags1.concat(tags2));
-
-    let arr = [];
-
-    for (const tag of tags.values()) {
-      if (!doNotDisplayTags.has(tag.toLowerCase())) {
-        arr.push(tag);
-      }
-    }
-    arr.sort();
-
-    return arr.slice(0, 5);
-  }
-
-  getImagesToDisplay(images1, images2, source1, source2) {
-    let images = [];
-    images = images1.map((item, idx) => {
+  getImagesToDisplay() {
+    return this.props.images.map((item, idx) => {
       if (idx < 3) {
         return (
           <Carousel.Item key={idx}>
-            <img onError={this.addDefaultImg} src={item} alt={source1} />
+            <img onError={this.addDefaultImg} src={item.src} alt={item.sourceName} />
             <Carousel.Caption>
-              <p>{source1}</p>
+              <p>{item.sourceName}</p>
             </Carousel.Caption>
           </Carousel.Item>
         );
       }
     });
-    const curIdx = images.length + 1;
-
-    images = images.concat(
-      images2.map((item, idx) => {
-        if (idx < 3) {
-          return (
-            <Carousel.Item key={idx + curIdx}>
-              <img
-                onError={this.addDefaultImg}
-                className="img-fluid"
-                src={item}
-                alt={source2}
-              />
-              <Carousel.Caption>
-                <p>{source2}</p>
-              </Carousel.Caption>
-            </Carousel.Item>
-          );
-        }
-      })
-    );
-    return images;
   }
 
   addDefaultImg = (event) => {
@@ -253,8 +114,9 @@ class ArticleGroup extends Component {
     // Only fetch comments when user opens the accordion
     if (!this.state.accordionShowing) {
       //check if we've already checked for comments before (in cache/state):
-      let pid = this.props.article_data._id;
-      let sid = this.props.article_data.most_similar_article._id;
+      let pid = this.props.pid;
+      let sid = this.props.sid;
+
       if (this.state.comments.length === 0) {
         //empty -> not filled with comments from previous API call
         let article_group_comments = await commentService.getComments(pid, sid);
@@ -276,7 +138,6 @@ class ArticleGroup extends Component {
     //we want to just add this comment to the specific document with the below pid and sid
     //so we'll send all this data then the service worker will extract pid sid, and the comment data
     //do a look up on pid-sid, then append its array (update) with the comment data in this json
-    var d = new Date();
     var comment_data = {
       primary_id: pid,
       secondary_id: sid,
@@ -323,7 +184,7 @@ class ArticleGroup extends Component {
     let leftUpvoteButton;
     let rightUpvoteButton;
     //change/rerender upvote button if its already been pressed
-    if (this.state.leftVotesPressed) {
+    if (this.props.voteDirection === -1) {
       leftUpvoteButton = (
         <button
           type="button"
@@ -346,7 +207,7 @@ class ArticleGroup extends Component {
       );
     }
     //change/rerender upvote button if its already been pressed
-    if (this.state.rightVotesPressed) {
+    if (this.props.voteDirection === 1) {
       rightUpvoteButton = (
         <button
           type="button"
@@ -374,10 +235,10 @@ class ArticleGroup extends Component {
         <div className="container grouped-articles shadow bg-light rounded">
           <div className="row justify-content-center">
             <Carousel interval={null} slide={false}>
-              {this.state.images.map((img) => img)}
+              {this.getImagesToDisplay()}
             </Carousel>
           </div>
-          {this.state.tags.map((t, idx) => {
+          {this.props.tags.map((t, idx) => {
             return (
               <span key={idx} className="badge badge-secondary">
                 #{t}
@@ -390,7 +251,7 @@ class ArticleGroup extends Component {
                 <div>
                   <div
                     id="number"
-                    className="p-3 mb-2 bg-info text-white votes"
+                    className="p-3 mb-2 mt-2 bg-info text-white votes"
                   >
                     {this.state.leftVotes}
                   </div>
@@ -398,27 +259,27 @@ class ArticleGroup extends Component {
                 </div>
                 <Article
                   key={0}
-                  title={this.state.leftArticle.title}
-                  content={this.state.leftArticle.description}
-                  source={this.state.leftArticle.source_name}
-                  bias={this.state.leftArticle.bias}
-                  link={this.state.leftArticle.orig_link}
-                  published={this.state.leftArticle.publish_date}
+                  title={this.props.leftArticle.title}
+                  content={this.props.leftArticle.description}
+                  source={this.props.leftArticle.source_name}
+                  bias={this.props.leftArticle.bias}
+                  link={this.props.leftArticle.orig_link}
+                  published={this.props.leftArticle.publish_date}
                 />
 
                 <Article
                   key={1}
-                  title={this.state.rightArticle.title}
-                  content={this.state.rightArticle.description}
-                  source={this.state.rightArticle.source_name}
-                  bias={this.state.rightArticle.bias}
-                  link={this.state.rightArticle.orig_link}
-                  published={this.state.rightArticle.publish_date}
+                  title={this.props.rightArticle.title}
+                  content={this.props.rightArticle.description}
+                  source={this.props.rightArticle.source_name}
+                  bias={this.props.rightArticle.bias}
+                  link={this.props.rightArticle.orig_link}
+                  published={this.props.rightArticle.publish_date}
                 />
                 <div>
                   <div
                     id="number"
-                    className="p-3 mb-2 bg-info text-white votes"
+                    className="p-3 mb-2 mt-2 bg-info text-white votes"
                   >
                     {this.state.rightVotes}
                   </div>
@@ -446,8 +307,8 @@ class ArticleGroup extends Component {
                       <CommentSection
                         comments={this.state.comments}
                         authUser={this.props.authUser}
-                        pid={this.props.article_data._id}
-                        sid={this.props.article_data.most_similar_article._id}
+                        pid={this.props.pid}
+                        sid={this.props.sid}
                         postComment={this.postComment}
                       />
                     </Card.Body>

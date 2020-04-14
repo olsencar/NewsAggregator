@@ -16,10 +16,6 @@ const MainNavbar = (props) => (
 )
 
 class NavbarAuth extends Component {
-  constructor(props) {
-    super(props);
-    console.log(this.props);
-  }
   render() {
     return (
       <Navbar
@@ -56,9 +52,6 @@ class NavbarAuth extends Component {
 
 
 class NavbarNonAuth extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return (
       <Navbar

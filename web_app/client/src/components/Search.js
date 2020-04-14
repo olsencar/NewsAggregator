@@ -29,9 +29,12 @@ class Search extends Component {
         });
         
         if (this.state.typingTimeout) clearTimeout(this.state.typingTimeout);
-        this.state.typingTimeout = setTimeout(() => {
-            this.props.search(searchTerm);
-        }, 300);
+        
+        this.setState({
+            typingTimeout: setTimeout(() => {
+                this.props.search(searchTerm);
+            }, 300)
+        });
         
     }
 

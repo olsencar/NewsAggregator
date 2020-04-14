@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default {
     getUser: async (uid) => {
-        const res = axios.get(`/api/user/${uid}`);
+        const res = await axios.get(`/api/user/${uid}`);
         return res.data || null;
     },
 
@@ -18,10 +18,11 @@ export default {
 
     upvote: async (uid, pid, sid, voteDirection) => {
         try {
-            await axios.post(`/api/user/${uid}/upvote`, {
+            return await axios.post(`/api/user/${uid}/upvote`, {
                 data: {
                     primary_id: pid,
                     secondary_id: sid,
+                    update_time: Date.now(),
                     voteDirection: voteDirection
                 }
             });
