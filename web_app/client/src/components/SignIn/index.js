@@ -9,7 +9,7 @@ import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
-  <div>
+  <div className="sign-container">
     <h1>Sign In</h1>
     <FirebaseContext.Consumer>
       {firebase => <SignInForm firebase={firebase} />}
@@ -49,16 +49,21 @@ class SignInFormBase extends Component {
     const { email, password, error } = this.state;
     const isInvalid = password === '' || email === '';
     return (
-      <form onSubmit={this.onSubmit}>
+      <form className="sign-form" onSubmit={this.onSubmit}>
+        <div>
+          <input
+            className="sign"
+            name="email"
+            value={email}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Email"
+            autoComplete='username'
+          />
+        </div>
+        <div>
         <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-          autoComplete='username'
-        />
-        <input
+          className="sign"
           name="password"
           value={password}
           onChange={this.onChange}
@@ -66,9 +71,12 @@ class SignInFormBase extends Component {
           placeholder="Password"
           autoComplete='current-password'
         />
-        <button disabled={isInvalid} type="submit">
+        </div>
+        <div>
+        <button disabled={isInvalid} type="submit" className="sign" className="btn btn-primary" id="sign-submit">
           Sign In
         </button>
+        </div>
         {error && <p>{error.message}</p>}
       </form>
     );

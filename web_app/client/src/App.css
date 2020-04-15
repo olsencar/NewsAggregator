@@ -286,3 +286,30 @@ a .navbar-brand-custom {
 #feed-container {
   margin-top: 20px;
 }
+
+.sign-form {
+  vertical-align: top;
+}
+
+.sign-container {
+  padding-top: 15px;
+  border-style: solid;
+  border-color: black;
+  border-width: thin;
+  width: 25%;
+  text-align: center;
+  margin: auto;
+  margin-top: 75px;
+}
+
+.sign {
+  margin-top: 15px;
+  padding-left: 5px;
+  width: 60%;
+}
+
+#sign-submit{
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 20%;
+}

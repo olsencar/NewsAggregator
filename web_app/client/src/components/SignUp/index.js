@@ -7,7 +7,7 @@ import {FirebaseContext} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
 
 const SignUpPage = () => (
-  <div>
+  <div className="sign-container">
     <h1>Sign Up</h1>
     <FirebaseContext.Consumer>
       {firebase => <SignUpForm firebase={firebase} />}
@@ -61,36 +61,48 @@ class SignUpForm extends Component {
       username === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          name="passwordTwo"
-          value={passwordTwo}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <button disabled={isInvalid} type="submit">Sign Up</button>
+      <form className="sign-form" onSubmit={this.onSubmit}>
+        <div>
+          <input
+            className="sign"
+            name="username"
+            value={username}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Full Name"
+          />
+        </div>
+        <div>
+          <input
+            className="sign"
+            name="email"
+            value={email}
+            onChange={this.onChange}
+            type="text"
+            placeholder="Email"
+          />
+        </div>
+        <div>
+          <input
+            className="sign"
+            name="passwordOne"
+            value={passwordOne}
+            onChange={this.onChange}
+            type="password"
+            placeholder="Password"
+          />
+        </div>
+        <div>
+          <input
+            className="sign"
+            name="passwordTwo"
+            value={passwordTwo}
+            onChange={this.onChange}
+            type="password"
+            placeholder="Confirm Password"
+          />
+        </div>
+        <button disabled={isInvalid} type="submit" className="sign" className="btn btn-primary" id="sign-submit">Sign Up</button>
         {error && <p>{error.message}</p>}
       </form>
     );
