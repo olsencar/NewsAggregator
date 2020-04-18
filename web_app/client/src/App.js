@@ -3,6 +3,7 @@ import HomePage from './components/HomePage';
 import * as ROUTES from './constants/routes';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import ForgotPassword from './components/ForgotPassword';
 import { withFirebase } from './components/Firebase';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { AuthUserContext } from './components/Session';
@@ -39,7 +40,7 @@ class App extends Component {
       userInfo: res
     });
   }
-  
+
   PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
       this.state.authUser
@@ -84,12 +85,12 @@ class App extends Component {
     this.setState(oldState => {
       let foundVote = false;
       const newUserInfo = {...oldState.userInfo};
-      
+
       const newUpvotes = oldState.userInfo.upvotes.map((vote) => {
         if (vote.primary_id === pid && vote.secondary_id === sid) {
           vote.voteDirection = voteDirection;
           foundVote = true;
-        } 
+        }
         return vote;
       });
 
@@ -106,9 +107,9 @@ class App extends Component {
       return {
         userInfo: newUserInfo
       }
-    }, () => userService.upvote(this.state.authUser.uid, 
-      pid, 
-      sid, 
+    }, () => userService.upvote(this.state.authUser.uid,
+      pid,
+      sid,
       voteDirection
     ));
   }
@@ -119,16 +120,16 @@ class App extends Component {
         <Router>
           <div>
             <MainNavbar search={this.search} loading={this.state.loading} />
-            <Route exact path={ROUTES.HOME} render={(props) => <HomePage {...props} 
-              article_data={this.state.article_data} 
+            <Route exact path={ROUTES.HOME} render={(props) => <HomePage {...props}
+              article_data={this.state.article_data}
               authUser={this.state.authUser}
               loading={this.state.loading}
               upvotes={this.state.userInfo ? this.state.userInfo.upvotes : null}
-              handleUpvote={this.handleUpvote} /> } 
+              handleUpvote={this.handleUpvote} /> }
             />
             <Route path={ROUTES.SIGN_UP} component={SignUp} />
             <Route path={ROUTES.SIGN_IN} component={SignIn} />
-            <Route path={ROUTES.PASSWORD_FORGET} component={SignIn} />
+            <Route path={ROUTES.PASSWORD_FORGET} component={ForgotPassword} />
             <this.PrivateRoute path={ROUTES.PROFILE_PAGE} component={ProfilePage} />
           </div>
         </Router>
