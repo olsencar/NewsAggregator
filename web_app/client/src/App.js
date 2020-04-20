@@ -9,6 +9,7 @@ import { AuthUserContext } from './components/Session';
 import MainNavbar from './components/MainNavbar';
 import articleService from './services/articleService';
 import ProfilePage from './components/Profile';
+import userService from './services/userService';
 
 class App extends Component {
   constructor(props) {
@@ -16,13 +17,14 @@ class App extends Component {
     this.state = {
       authUser: null,
       loading: false,
-      article_data: []
+      article_data: [],
+      userInfo: null
     };
   }
 
   componentDidMount() {
     this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-      authUser ? this.setState({ authUser }) : this.setState({ authUser: null });
+      authUser ? this.setState({ authUser }, () => this.getUserInfo()) : this.setState({ authUser: null, userInfo: null });
     });
     this.getRecentArticles();
   }
@@ -31,12 +33,18 @@ class App extends Component {
     this.listener();
   }
 
-
+  getUserInfo = async () => {
+    const res = await userService.getUser(this.state.authUser.uid);
+    this.setState({
+      userInfo: res
+    });
+  }
+  
   PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
       this.state.authUser
         ? <Component {...props} />
-        : <Redirect to={ROUTES.HOME} />
+        : <Redirect to={ROUTES.SIGN_IN} />
     )} />
   )
 
@@ -71,6 +79,40 @@ class App extends Component {
     });
   };
 
+  handleUpvote = (pid, sid, voteDirection) => {
+
+    this.setState(oldState => {
+      let foundVote = false;
+      const newUserInfo = {...oldState.userInfo};
+      
+      const newUpvotes = oldState.userInfo.upvotes.map((vote) => {
+        if (vote.primary_id === pid && vote.secondary_id === sid) {
+          vote.voteDirection = voteDirection;
+          foundVote = true;
+        } 
+        return vote;
+      });
+
+      if (!foundVote) {
+        newUpvotes.push({
+          primary_id: pid,
+          secondary_id: sid,
+          voteDirection: voteDirection
+        });
+      }
+
+      newUserInfo.upvotes = newUpvotes;
+
+      return {
+        userInfo: newUserInfo
+      }
+    }, () => userService.upvote(this.state.authUser.uid, 
+      pid, 
+      sid, 
+      voteDirection
+    ));
+  }
+
   render() {
     return (
       <AuthUserContext.Provider value={this.state.authUser}>
@@ -80,7 +122,9 @@ class App extends Component {
             <Route exact path={ROUTES.HOME} render={(props) => <HomePage {...props} 
               article_data={this.state.article_data} 
               authUser={this.state.authUser}
-              loading={this.state.loading} /> } 
+              loading={this.state.loading}
+              upvotes={this.state.userInfo ? this.state.userInfo.upvotes : null}
+              handleUpvote={this.handleUpvote} /> } 
             />
             <Route path={ROUTES.SIGN_UP} component={SignUp} />
             <Route path={ROUTES.SIGN_IN} component={SignIn} />

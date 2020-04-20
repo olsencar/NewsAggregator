@@ -16,10 +16,6 @@ const MainNavbar = (props) => (
 )
 
 class NavbarAuth extends Component {
-  constructor(props) {
-    super(props);
-    console.log(this.props);
-  }
   render() {
     return (
       <Navbar
@@ -56,9 +52,6 @@ class NavbarAuth extends Component {
 
 
 class NavbarNonAuth extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return (
       <Navbar
@@ -80,12 +73,12 @@ class NavbarNonAuth extends Component {
           <Nav className='ml-auto'>
             <NavItem href={ROUTES.SIGN_IN}>
               <Nav.Link as={Link} to={ROUTES.SIGN_IN}>
-                Log in
+                Log In
               </Nav.Link>
             </NavItem>
             <NavItem href={ROUTES.SIGN_UP}>
               <Nav.Link as={Link} to={ROUTES.SIGN_UP}>
-                Register
+                Sign Up
               </Nav.Link>
             </NavItem>
           </Nav>

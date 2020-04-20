@@ -40,14 +40,14 @@ class Firebase {
   reauthenticate = async (currentPassword) => {
     const user = this.auth.currentUser;
     const cred = app.auth.EmailAuthProvider.credential(user.email, currentPassword);
-    return user.reauthenticateWithCredential(cred);
+    user.reauthenticateWithCredential(cred);
   }
 
   doPasswordUpdate = async (currentPassword, newPassword) => {
     try {
-      const cred = await this.reauthenticate(currentPassword);
+      await this.reauthenticate(currentPassword);
       const user = this.auth.currentUser;
-      const res = await user.updatePassword(newPassword);
+      await user.updatePassword(newPassword);
       this.doSignOut();
     } catch (err) {
       return err.message;
