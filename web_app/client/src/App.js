@@ -22,6 +22,10 @@ class App extends Component {
     };
   }
 
+  
+  //  On App mount, set up a listener that checks to see if the authentication state
+  //  has changed. This allows us to make sure that we are presenting the correct
+  //  user's data.
   componentDidMount() {
     this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
       authUser ? this.setState({ authUser }, () => this.getUserInfo()) : this.setState({ authUser: null, userInfo: null });
@@ -33,6 +37,7 @@ class App extends Component {
     this.listener();
   }
 
+  // This function fetches the user's information such as comments, upvotes, etc.
   getUserInfo = async () => {
     const res = await userService.getUser(this.state.authUser.uid);
     this.setState({
@@ -40,6 +45,8 @@ class App extends Component {
     });
   }
   
+  // We create a private route component here that only shows the 
+  // private route if the user is authenticated.
   PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
       this.state.authUser
@@ -48,6 +55,8 @@ class App extends Component {
     )} />
   )
 
+  // This function searches for articles. It is passed down to the
+  // Search component.
   search = async (searchTerm) => {
     if (searchTerm === "") {
       this.getRecentArticles();
@@ -68,6 +77,7 @@ class App extends Component {
     );
   };
 
+  // This function fetches all recent articles
   getRecentArticles = async () => {
     this.setState({
       loading: true,
@@ -79,6 +89,8 @@ class App extends Component {
     });
   };
 
+  // When a user upvotes, send a POST request to the server to
+  // add the upvote to the DB.
   handleUpvote = (pid, sid, voteDirection) => {
 
     this.setState(oldState => {
