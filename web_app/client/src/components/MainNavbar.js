@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, NavItem, Nav, NavDropdown } from "react-bootstrap";
+import { Navbar, NavItem, Nav, NavDropdown, Container, Row, Col } from "react-bootstrap";
 import Search from "./Search";
 import * as ROUTES from "../constants/routes";
 import { Link } from "react-router-dom";
@@ -25,26 +25,33 @@ class NavbarAuth extends Component {
         bg="red-blue-gradient"
         variant="dark"
       >
-        <div className="d-flex flex-grow-1">
-          <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
-          <Search search={this.props.search} />
-        </div>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse
-          id="responsive-navbar-nav"
-        >
-          <Nav className='ml-auto'>
-            <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} size='lg' />} id='account-dropdown' alignRight>
-              <NavDropdown.Item as={Link} to={ROUTES.PROFILE_PAGE}>
-                {this.props.authUser.displayName}
-              </NavDropdown.Item> 
-              <NavDropdown.Divider />
-              <NavDropdown.Item>
-                  <SignOut />
-              </NavDropdown.Item>  
-            </NavDropdown>
-          </Nav>
-        </Navbar.Collapse>
+        <Container className='no-margin no-padding' fluid>
+          
+            <Col className='no-padding'>
+              <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
+            </Col>
+            <Col className='no-padding d-flex justify-content-center' sm={6} xs={4}>
+              <Search search={this.props.search} />
+            </Col>
+            <Col className='no-padding'>
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+              <Navbar.Collapse
+                id="responsive-navbar-nav"
+              >
+                <Nav className='ml-auto'>
+                  <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} size='lg' />} id='account-dropdown' alignRight>
+                    <NavDropdown.Item as={Link} to={ROUTES.PROFILE_PAGE}>
+                      {this.props.authUser.displayName}
+                    </NavDropdown.Item> 
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item>
+                        <SignOut />
+                    </NavDropdown.Item>  
+                  </NavDropdown>
+                </Nav>
+              </Navbar.Collapse>
+            </Col>
+        </Container>
       </Navbar>
     );
   }
@@ -61,28 +68,34 @@ class NavbarNonAuth extends Component {
         bg="red-blue-gradient"
         variant="dark"
       >
-        <div className="d-flex flex-grow-1">
-          <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
-          <Search search={this.props.search} />
-        </div>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse
-          id="responsive-navbar-nav"
-          className="justify-content-center"
-        >
-          <Nav className='ml-auto'>
-            <NavItem href={ROUTES.SIGN_IN}>
-              <Nav.Link as={Link} to={ROUTES.SIGN_IN}>
-                Log In
-              </Nav.Link>
-            </NavItem>
-            <NavItem href={ROUTES.SIGN_UP}>
-              <Nav.Link as={Link} to={ROUTES.SIGN_UP}>
-                Sign Up
-              </Nav.Link>
-            </NavItem>
-          </Nav>
-        </Navbar.Collapse>
+        <Container className='no-margin no-padding' fluid>
+          <Col className='no-padding'>
+            <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
+          </Col>
+          <Col className='no-padding d-flex justify-content-center' sm={6} xs={4}>
+            <Search search={this.props.search} />
+          </Col>
+          <Col className='no-padding'>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse
+              id="responsive-navbar-nav"
+              className="justify-content-center"
+            >
+              <Nav className='ml-auto'>
+                <NavItem href={ROUTES.SIGN_IN}>
+                  <Nav.Link as={Link} to={ROUTES.SIGN_IN}>
+                    Log In
+                  </Nav.Link>
+                </NavItem>
+                <NavItem href={ROUTES.SIGN_UP}>
+                  <Nav.Link as={Link} to={ROUTES.SIGN_UP}>
+                    Sign Up
+                  </Nav.Link>
+                </NavItem>
+              </Nav>
+            </Navbar.Collapse>
+          </Col>
+        </Container>
       </Navbar>
     );
   }

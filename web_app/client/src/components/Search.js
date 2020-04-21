@@ -45,7 +45,7 @@ class Search extends Component {
 
     render() {
         return (
-            <form className="mr-2 my-auto w-100 d-inline-block order-1">
+            <form className="my-auto search-form">
                 <InputGroup>
                 <input type="text" className="form-control border border-right-0" placeholder="Search..." 
                     value={this.state.searchText}

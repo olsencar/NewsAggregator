@@ -159,12 +159,6 @@ body{
   margin-bottom: 10px !important;
 }
 
-.search-container {
-  width: 100%;
-  position: relative;
-  display: flex;
-}
-
 a .navbar-brand-custom {
   color: white;
   text-decoration: none;
@@ -176,72 +170,8 @@ a .navbar-brand-custom {
 }
 
 .search-form {
-  /* max-width: 650px; */
-  /* width: 100%; */
-  padding-left: 10px;
-  height: 40px;
-  border-radius: 40px;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-  background: #fff;
-  transition: all 0.3s ease;
-}
-
-.search-form:focus {
-  background-color: #09d3ac;
-  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.15);
-}
-
-.search-input {
-  font-size: 14px;
-  background: none;
-  color: #5a6674;
   width: 100%;
-  height: 20px;
-  border: none;
-  appearance: none;
-  outline: none;
-}
-
-.search-button {
-  height: 20px;
-  width: 20px;
-  padding: 0;
-  margin-right: 2px;
-  border: none;
-  background: none;
-  outline: none!important;
-  cursor: pointer;
-}
-
-.search-button svg {
-  width: 20px;
-  height: 20px;
-  fill: #5a6674;
-}
-
-
-.searchTerm {
-  width: 100%;
-  border-right: none;
-  padding: 5px;
-  height: 20px;
-  border-radius: 10px 0 0 10px;
-  outline: none;
-}
-
-.searchTerm:focus{
-  color: #00B4CC;
-}
-
-.searchButton {
-  border: 1px solid rgb(47, 45, 45);
-  background: rgb(155, 155, 155);
-  text-align: center;
-  color: #fff;
-  border-radius: 0 5px 5px 0;
-  cursor: pointer;
-  font-size: 20px;
-  width: 60px;
+  max-width: 70rem;
 }
 
 .upvote-button-left {
@@ -303,6 +233,10 @@ a .navbar-brand-custom {
 
 .no-padding {
   padding: 0px !important;
+}
+
+.no-margin {
+  margin: 0px !important;
 }
 
 #feed-container {
