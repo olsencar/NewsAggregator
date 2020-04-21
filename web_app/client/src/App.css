@@ -244,6 +244,28 @@ a .navbar-brand-custom {
   width: 60px;
 }
 
+.upvote-button-left {
+  cursor: pointer;
+}
+
+.upvote-button-left:hover {
+  color: rgb(20,90,188);
+}
+
+.upvote-button-left:active, .upvote-button-right:active {
+  border: 1px solid black;
+  border-radius: 50%;
+}
+
+.upvote-button-right {
+  cursor: pointer;
+}
+
+.upvote-button-right:hover {
+  color: rgb(188,23,12);
+}
+
+
 .searchButton:focus {
   background: rgb(97, 97, 97);
 }

@@ -69,7 +69,7 @@ class SignUpForm extends Component {
             value={username}
             onChange={this.onChange}
             type="text"
-            placeholder="Full Name"
+            placeholder="Display Name"
           />
         </div>
         <div>
@@ -80,6 +80,7 @@ class SignUpForm extends Component {
             onChange={this.onChange}
             type="text"
             placeholder="Email"
+            autoComplete="new-username"
           />
         </div>
         <div>
@@ -90,6 +91,7 @@ class SignUpForm extends Component {
             onChange={this.onChange}
             type="password"
             placeholder="Password"
+            autoComplete="new-password"
           />
         </div>
         <div>
@@ -100,9 +102,10 @@ class SignUpForm extends Component {
             onChange={this.onChange}
             type="password"
             placeholder="Confirm Password"
+            autoComplete="new-password"
           />
         </div>
-        <button disabled={isInvalid} type="submit" className="sign" className="btn btn-primary" id="sign-submit">Sign Up</button>
+        <button disabled={isInvalid} type="submit" className="btn btn-primary sign" id="sign-submit">Sign Up</button>
         {error && <p>{error.message}</p>}
       </form>
     );
