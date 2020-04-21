@@ -6,6 +6,8 @@ import votesService from "./../services/votesService";
 import { Accordion, Card, Button, Carousel, Alert } from "react-bootstrap";
 import DefaultImage from "../assets/onErrorFallback.png";
 import userService from "../services/userService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 
 class ArticleGroup extends Component {
   constructor(props) {
@@ -186,49 +188,26 @@ class ArticleGroup extends Component {
     //change/rerender upvote button if its already been pressed
     if (this.props.voteDirection === -1) {
       leftUpvoteButton = (
-        <button
-          type="button"
-          className="btn btn-secondary leftupvote-clicked triangle-up"
-          onClick={() => this.handleUpvotes("left")}
-        >
-          ⇧
-        </button>
+        <FontAwesomeIcon className='upvote-button-left' onClick={() => this.handleUpvotes('left')} icon={faArrowAltCircleUp} color='rgb(20,90,188)' size='3x' />
       );
     } else {
       //not pressed
       leftUpvoteButton = (
-        <button
-          type="button"
-          className="btn btn-primary leftupvote-unclicked triangle-up"
-          onClick={() => this.handleUpvotes("left")}
-        >
-          ⇧
-        </button>
+        <FontAwesomeIcon className='upvote-button-left' onClick={() => this.handleUpvotes('left')} icon={faArrowAltCircleUp} color='grey' size='3x' />
       );
     }
     //change/rerender upvote button if its already been pressed
     if (this.props.voteDirection === 1) {
       rightUpvoteButton = (
-        <button
-          type="button"
-          className="btn btn-secondary rightupvote-clicked triangle-up"
-          onClick={() => this.handleUpvotes("right")}
-        >
-          ⇧
-        </button>
+        <FontAwesomeIcon className='upvote-button-right' onClick={() => this.handleUpvotes('right')} icon={faArrowAltCircleUp} color='rgb(188,23,12)' size='3x' />
       );
     } else {
       //not pressed
       rightUpvoteButton = (
-        <button
-          type="button"
-          className="btn btn-primary rightupvote-unclicked triangle-up"
-          onClick={() => this.handleUpvotes("right")}
-        >
-          ⇧
-        </button>
+        <FontAwesomeIcon className='upvote-button-right' onClick={() => this.handleUpvotes('right')} icon={faArrowAltCircleUp} color='grey' size='3x' />
       );
     }
+    
     return (
       <div>
         {this.alertNotSignedIn()}
