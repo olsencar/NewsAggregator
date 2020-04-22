@@ -1,7 +1,4 @@
 # Purple News
-## Public URL
-If you want to see the up and running version of this Web Application, you can visit this url: https://sleepy-reaches-94722.herokuapp.com/
-
 ## About the App
 Purple News is a website that scrapes popular news sites and pairs politically polarized news articles of the same topic to give readers the ability to both visualize the bias in their news as well as view media coverage from every perspective.
 
