@@ -77,7 +77,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
         
         for item in feed['entries']:
             # only parse if the item has a publish date
-            if ('published' in item):
+            if ('published' in item and 'description' in item):
                 # remove the html tags from the description
                 # this description is used in the UI, so keep case and special characters in it.
                 desc = TextProcessor.remove_html(item['description'])                    
@@ -85,7 +85,7 @@ def parse_feed(source_name, feed_info, text, results, givenTags, idx):
                 if (feed_info['hasTags']):
                     politics = False
                     for tag in item.get('tags', []):
-                        if ('term' in tag and tag.term.lower() == 'politics'):
+                        if ('term' in tag and tag is not None and tag.term.lower() == 'politics'):
                             politics = True
                         tags.append(tag.term)
                     # If we did not find a politics tag, then this article
