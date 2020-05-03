@@ -136,11 +136,11 @@ class ArticleGroup extends Component {
     });
   };
   //get called within CommentSection
-  postComment = (pid, sid, comment) => {
+  postComment = async (pid, sid, comment) => {
     //we want to just add this comment to the specific document with the below pid and sid
     //so we'll send all this data then the service worker will extract pid sid, and the comment data
     //do a look up on pid-sid, then append its array (update) with the comment data in this json
-    var comment_data = {
+    let comment_data = {
       primary_id: pid,
       secondary_id: sid,
       group_comments: [
@@ -159,12 +159,19 @@ class ArticleGroup extends Component {
       comment: comment,
     };
 
+    
     userService.addComment(this.props.authUser.uid, commentDataUser);
-    commentService.addComment(comment_data);
+    const resp = await commentService.addComment(comment_data);
+    
+    if (resp) {
+      comment_data.group_comments[0].time = resp.commentTime;
+    } else {
+      console.error("Unable to add comment");
+    }
     //then append to this.state.comments so the change gets reflected
-    this.setState({
-      comments: this.state.comments.concat([comment_data.group_comments[0]]),
-    });
+    this.setState(oldState => ({
+      comments: oldState.comments.concat([comment_data.group_comments[0]]),
+    }));
   };
 
   alertNotSignedIn = () => {

@@ -2,10 +2,11 @@ import React from 'react';
 import { withFirebase } from '../Firebase';
 import { withRouter } from 'react-router-dom';
 import {compose} from 'recompose';
+import { HOME } from '../../constants/routes'
 
-const signOut =  (props) => {
-  props.firebase.doSignOut();
-  props.history.push('/');
+const signOut = (props) => {
+  props.firebase.doSignOut()
+  props.history.push(HOME);
 }
 
 const SignOutButton = (props) => (

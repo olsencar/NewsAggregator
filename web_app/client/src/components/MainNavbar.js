@@ -102,3 +102,4 @@ class NavbarNonAuth extends Component {
 }
 
 export default MainNavbar;
+export { NavbarAuth, NavbarNonAuth };

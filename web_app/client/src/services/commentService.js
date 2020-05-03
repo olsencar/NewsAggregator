@@ -6,11 +6,7 @@ export default {
         return res.data || null;
     },
     addComment: async (comment_data) => {
-        await axios.post(`/api/comments/add`, comment_data).then(function (response) {
-            console.log('Comment Added.');
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+        const resp = await axios.post(`/api/comments/add`, comment_data);
+        return resp.data || null;
     }
 }

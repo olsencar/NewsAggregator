@@ -21,9 +21,9 @@ class CommentSection extends Component {
         });
     }
 
-    updateCommentText = (text) => {
+    updateCommentText = (e) => {
         this.setState({
-            commentText: text.target.value
+            commentText: e.target.value
         });
     }
 
