@@ -17,7 +17,6 @@ const MainNavbar = (props) => (
 
 class NavbarAuth extends Component {
   render() {
-    console.log(this.props.authUser);
     return (
       <Navbar
         collapseOnSelect
