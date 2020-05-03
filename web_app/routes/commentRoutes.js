@@ -20,6 +20,7 @@ module.exports = (app) => {
     
     //add comment to db
     app.post('/api/comments/add', async (comment_data, res) => {
+        const commentTime = Date.now();
         comment_data.body.group_comments[0].time = Date.now();
         //search_primary_key and search_secondary_key
         let s_primary_id = comment_data.body.primary_id;
@@ -32,6 +33,6 @@ module.exports = (app) => {
             upsert: true, // Make this update into an upsert
             useFindAndModify: false
         });
-        return res.status(200).send(doc);
+        return res.status(200).json({commentTime});
     });
 }

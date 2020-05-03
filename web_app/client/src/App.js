@@ -95,16 +95,21 @@ class App extends Component {
 
     this.setState(oldState => {
       let foundVote = false;
-      const newUserInfo = {...oldState.userInfo};
-      
-      const newUpvotes = oldState.userInfo.upvotes.map((vote) => {
-        if (vote.primary_id === pid && vote.secondary_id === sid) {
-          vote.voteDirection = voteDirection;
-          foundVote = true;
-        } 
-        return vote;
-      });
+      let newUserInfo = {...oldState.userInfo};
+      let newUpvotes = [];
+      // We need to check for null values here because a new user who just signed up will not have a userInfo object.
+      if (oldState.userInfo && oldState.userInfo.upvotes) {
+        // Here we find and update the current upvote in the upvotes array.
+        newUpvotes = oldState.userInfo.upvotes.map((vote) => {
+          if (vote.primary_id === pid && vote.secondary_id === sid) {
+            vote.voteDirection = voteDirection;
+            foundVote = true;
+          } 
+          return vote;
+        });
+      } 
 
+      // If the user has not upvoted this article group before, then we need to add it to the upvotes array
       if (!foundVote) {
         newUpvotes.push({
           primary_id: pid,
