@@ -269,3 +269,16 @@ a .navbar-brand-custom {
   margin-bottom: 15px;
   width: 20%;
 }
+
+.about-container {
+  padding-top: 15px;
+  padding-left: 50px;
+  padding-right: 50px;
+  border-style: solid;
+  border-color: black;
+  border-width: thin;
+  width: 50%;
+  text-align: center;
+  margin: auto;
+  margin-top: 75px;
+}

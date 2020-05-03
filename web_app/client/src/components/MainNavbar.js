@@ -26,7 +26,7 @@ class NavbarAuth extends Component {
         variant="dark"
       >
         <Container className='no-margin no-padding' fluid>
-          
+
             <Col className='no-padding'>
               <Navbar.Brand href="/">PURPLE NEWS</Navbar.Brand>
             </Col>
@@ -39,14 +39,19 @@ class NavbarAuth extends Component {
                 id="responsive-navbar-nav"
               >
                 <Nav className='ml-auto'>
+                  <NavItem href={ROUTES.ABOUT_US}>
+                    <Nav.Link as={Link} to={ROUTES.ABOUT_US}>
+                      About us
+                    </Nav.Link>
+                  </NavItem>
                   <NavDropdown title={<FontAwesomeIcon icon={faUserCircle} size='lg' />} id='account-dropdown' alignRight>
                     <NavDropdown.Item as={Link} to={ROUTES.PROFILE_PAGE}>
                       {this.props.authUser.displayName}
-                    </NavDropdown.Item> 
+                    </NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item>
                         <SignOut />
-                    </NavDropdown.Item>  
+                    </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
               </Navbar.Collapse>
@@ -82,6 +87,11 @@ class NavbarNonAuth extends Component {
               className="justify-content-center"
             >
               <Nav className='ml-auto'>
+                <NavItem href={ROUTES.ABOUT_US}>
+                  <Nav.Link as={Link} to={ROUTES.ABOUT_US}>
+                    About
+                  </Nav.Link>
+                </NavItem>
                 <NavItem href={ROUTES.SIGN_IN}>
                   <Nav.Link as={Link} to={ROUTES.SIGN_IN}>
                     Log In
