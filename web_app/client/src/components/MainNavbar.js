@@ -17,6 +17,7 @@ const MainNavbar = (props) => (
 
 class NavbarAuth extends Component {
   render() {
+    console.log(this.props.authUser);
     return (
       <Navbar
         collapseOnSelect
@@ -102,3 +103,4 @@ class NavbarNonAuth extends Component {
 }
 
 export default MainNavbar;
+export { NavbarAuth, NavbarNonAuth };

@@ -18,7 +18,7 @@ class Search extends Component {
 
     checkForEnter = (e) => {
         if (e.key === "Enter") {
-            this.props.search(this.state.searchText);
+            e.preventDefault();
         }
     }
 
@@ -39,7 +39,6 @@ class Search extends Component {
     }
 
     formFocus = (e) => {
-        console.log("Focusing");
         this.searchForm.current.focus();
     }
 
