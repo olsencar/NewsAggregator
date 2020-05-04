@@ -6,16 +6,28 @@ import {FirebaseContext} from '../Firebase';
 import {compose} from 'recompose';
 import {withRouter} from 'react-router-dom';
 import {withFirebase} from '../Firebase';
+import { Container, Col, Card, Row } from 'react-bootstrap';
 
 import * as ROUTES from '../../constants/routes';
 
 const SignUpPage = () => (
-  <div className="sign-container">
-    <h1>Sign Up</h1>
-    <FirebaseContext.Consumer>
-      {firebase => <SignUpForm firebase={firebase} />}
-    </FirebaseContext.Consumer>
-  </div>
+  <Container>
+    <Row className="text-center justify-content-center">
+      <Col md="8">
+        <Card className="shadow">
+          <Card.Body>
+            <Card.Title>Sign Up</Card.Title>
+            <Card.Text>
+              <FirebaseContext.Consumer>
+                {firebase => <SignUpForm firebase={firebase} />}
+              </FirebaseContext.Consumer>
+              <SignUpLink />
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  </Container>
 );
 
 const INITIAL_STATE = {
@@ -108,7 +120,7 @@ class SignUpFormBase extends Component {
             autoComplete="new-password"
           />
         </div>
-        <button disabled={isInvalid} type="submit" className="btn btn-primary sign" id="sign-submit">Sign Up</button>
+        <button disabled={isInvalid} type="submit" className="btn btn-primary" id="sign-submit">Sign Up</button>
         {error && <p>{error.message}</p>}
       </form>
     );

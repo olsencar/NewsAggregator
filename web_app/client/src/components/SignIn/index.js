@@ -7,15 +7,26 @@ import {compose} from 'recompose';
 import {SignUpLink} from '../SignUp';
 import {withFirebase} from '../Firebase';
 import * as ROUTES from '../../constants/routes';
+import { Container, Col, Card, Row } from 'react-bootstrap';
 
 const SignInPage = () => (
-  <div className="sign-container">
-    <h1>Sign In</h1>
-    <FirebaseContext.Consumer>
-      {firebase => <SignInForm firebase={firebase} />}
-    </FirebaseContext.Consumer>
-    <SignUpLink />
-  </div>
+  <Container>
+    <Row className="text-center justify-content-center">
+      <Col md="8">
+        <Card className="shadow">
+          <Card.Body>
+            <Card.Title>Sign In</Card.Title>
+            <Card.Text>
+              <FirebaseContext.Consumer>
+                {firebase => <SignInForm firebase={firebase} />}
+              </FirebaseContext.Consumer>
+              <SignUpLink />
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  </Container>
 );
 
 const INITIAL_STATE = {
@@ -73,7 +84,7 @@ class SignInFormBase extends Component {
         />
         </div>
         <div>
-        <button disabled={isInvalid} type="submit" className="btn btn-primary sign" id="sign-submit">
+        <button disabled={isInvalid} type="submit" className="btn btn-primary" id="sign-submit">
           Sign In
         </button>
         </div>
