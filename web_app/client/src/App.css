@@ -282,3 +282,9 @@ a .navbar-brand-custom {
   margin: auto;
   margin-top: 75px;
 }
+
+.BiasChart {
+  margin-left: 190px;
+  mergin-right: auto;
+  width: 50%;
+}
