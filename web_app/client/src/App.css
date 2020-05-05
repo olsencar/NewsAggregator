@@ -288,7 +288,7 @@ a .navbar-brand-custom {
 }
 
 .sharing-buttons {
-  margin-top: 15px !important; 
+  margin-top: 15px !important;
   margin-bottom: 15px !important;
 }
 
@@ -351,4 +351,9 @@ a .navbar-brand-custom {
   background-color: #2795e9;
   border-color: #2795e9;
   color: white;
+}
+.BiasChart {
+  margin-left: 190px;
+  mergin-right: auto;
+  width: 50%;
 }
