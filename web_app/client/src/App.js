@@ -23,7 +23,6 @@ class App extends Component {
     };
   }
 
-
   //  On App mount, set up a listener that checks to see if the authentication state
   //  has changed. This allows us to make sure that we are presenting the correct
   //  user's data.

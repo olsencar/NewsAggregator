@@ -12,6 +12,7 @@ import { faArrowAltCircleUp } from "@fortawesome/free-solid-svg-icons";
 class ArticleGroup extends Component {
   constructor(props) {
     super(props);
+    this.twitterLink = "";
     //for comment section to use when inserting a new comment (taking with it the most udpated vote vals)
     this.state = {
       leftVotes: 0,
@@ -24,15 +25,29 @@ class ArticleGroup extends Component {
 
   componentDidMount() {
     this.loadVotes(this.props.pid, this.props.sid)
+    this.formatLinks(this.props.rightArticle.orig_link, this.props.leftArticle.orig_link)
   }
-
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.pid !== prevProps.pid || this.props.sid !== prevProps.sid) {
       this.loadVotes(this.props.pid, this.props.sid);
     }
-  } 
+  }
 
+  //format the links to meet Twitters API specs
+  formatLinks = (rl, ll) => {
+    var rightLink = "";
+    var leftLink = "";
+    if (rl) {
+      rightLink = "%20%20%20" + encodeURI(rl);
+    }
+    if (ll) {
+      leftLink =  "&url=" + encodeURI(ll);
+    }
+    var message = "text=Check%20out%20how%20political%20bias%20makes%20these%20stories%20of%20the%20same%20topic%20so%20different!"
+    this.twitterLink = "https://twitter.com/intent/tweet?" + message + rightLink + leftLink
+    console.log(this.twitterLink)
+  }
   //on upvote press
   handleUpvotes = async (side) => {
     if (!this.props.authUser) {
@@ -62,7 +77,6 @@ class ArticleGroup extends Component {
 
   loadVotes = async (pid, sid) => {
     const vote_group = await votesService.getVotes(pid, sid);
-
     if (vote_group) {
       this.setState({
         leftVotes: vote_group.left_votes,
@@ -173,7 +187,7 @@ class ArticleGroup extends Component {
       comments: oldState.comments.concat([comment_data.group_comments[0]]),
     }));
   };
-
+    
   alertNotSignedIn = () => {
     if (this.state.showAlert) {
       return (
@@ -252,7 +266,6 @@ class ArticleGroup extends Component {
                   link={this.props.leftArticle.orig_link}
                   published={this.props.leftArticle.publish_date}
                 />
-
                 <Article
                   key={1}
                   title={this.props.rightArticle.title}
@@ -272,7 +285,15 @@ class ArticleGroup extends Component {
                   {rightUpvoteButton}
                 </div>
               </div>
-            </div>
+            </div> 
+          </div>
+        
+          <div className="sharing-buttons"> 
+          <a className="resp-sharing-button__link" href={this.twitterLink} target="_blank" rel="noopener" aria-label="Twitter">
+            <div className="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--medium"><div aria-hidden="true" className="resp-sharing-button__icon resp-sharing-button__icon--solid">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/></svg>
+            </div>Share</div>
+          </a>
           </div>
           <div className="row justify-content-center bg-white">
             <div className="col no-padding">
