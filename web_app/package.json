@@ -9,7 +9,8 @@
     "express": "^4.17.1",
     "minimist": "^1.2.5",
     "mongoose": "^5.9.4",
-    "node-cache": "^5.1.0"
+    "node-cache": "^5.1.0",
+    "recompose": "^0.30.0"
   },
   "scripts": {
     "start": "npm install && node server.js",
